@@ -1,2 +1,2 @@
-# IPCLib
+# EasySocketLib
 
