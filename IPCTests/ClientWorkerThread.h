@@ -22,8 +22,10 @@ public:
 	ClientWorkerThread()
 	{
 		const char* m = "Hello from client";
-		strcpy(Message.m_message, m);
 		Message.m_size = strlen(m);
+		strcpy_s(Message.m_message, m);
+		strcpy_s()
+		
 	}
 
 	/// <summary>

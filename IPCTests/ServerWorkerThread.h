@@ -22,8 +22,8 @@ public:
 	ServerWorkerThread()
 	{
 		const char* m = "Hello from server";
-		strcpy(Message.m_message, m);
 		Message.m_size = strlen(m);
+		strcpy_s(Message.m_message, Message.m_size, m);
 	}
 
 	/// <summary>
