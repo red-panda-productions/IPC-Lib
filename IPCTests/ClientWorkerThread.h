@@ -23,8 +23,7 @@ public:
 	{
 		const char* m = "Hello from client";
 		Message.m_size = strlen(m);
-		strcpy_s(Message.m_message, m);
-		strcpy_s()
+		strcpy_s(Message.m_message, Message.m_size, m);
 		
 	}
 

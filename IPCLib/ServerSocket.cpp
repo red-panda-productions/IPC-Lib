@@ -1,5 +1,5 @@
 #include "ServerSocket.h"
-
+#include "DLLDefines.h"
 void CheckOpen(bool open)
 {
 	if (!open)
@@ -16,6 +16,7 @@ void CheckOpen(bool open)
 /// <param name="ip">Ip adress to host server on</param>
 /// <param name="port">Port to host server on</param>
 /// <param name="connections">Amount of connections that can be handled at the same time</param>
+
 ServerSocket::ServerSocket(PCWSTR ip, int port, int connections)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0)
