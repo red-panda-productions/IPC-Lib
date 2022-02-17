@@ -4,7 +4,7 @@
 class TestSerializer : public ISerializable, public IDeserializable
 {
 public:
-	char* m_message;
+	char m_message[MESSAGEBYTESIZE];
 	int m_size;
 
 	/// <summary>
@@ -12,7 +12,6 @@ public:
 	/// </summary>
 	TestSerializer()
 	{
-		m_message = NULL;
 		m_size = 0;
 	}
 
@@ -23,7 +22,6 @@ public:
 	/// <param name="size">the size of the message</param>
 	TestSerializer(char* message, int size)
 	{
-		m_message = message;
 		m_size = size;
 	}
 
