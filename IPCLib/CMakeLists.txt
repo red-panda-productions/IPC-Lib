@@ -4,6 +4,10 @@
 #cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
-add_library (IPCLib SHARED "Serialization.h" "ClientSocket.h" "ClientSocket.cpp" "ServerSocket.h" "ServerSocket.cpp" "DLLDefines.h")
+add_library (IPCLib SHARED "Serialization.h" "ClientSocket.h" "ClientSocket.cpp" "ServerSocket.h" "ServerSocket.cpp")
 
-# TODO: Add tests and install targets if needed.
+include(GenerateExportHeader)
+GENERATE_EXPORT_HEADER(IPCLib)
+
+message( ${CMAKE_BINARY_DIR}/exports)
+target_include_directories(IPCLib PUBLIC ${CMAKE_BINARY_DIR}/IPCLib)

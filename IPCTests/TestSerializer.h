@@ -1,3 +1,4 @@
+#pragma once
 #include "Serialization.h"
 
 class TestSerializer : public ISerializable, public IDeserializable

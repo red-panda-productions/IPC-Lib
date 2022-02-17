@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 project ("IPCLib")
 
 # Include sub-projects.
-add_subdirectory ("IPCTests")
 add_subdirectory ("IPCLib")
+add_subdirectory ("IPCTests")
 
 enable_testing()

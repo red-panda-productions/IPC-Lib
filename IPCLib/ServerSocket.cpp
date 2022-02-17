@@ -1,5 +1,5 @@
 #include "ServerSocket.h"
-#include "DLLDefines.h"
+
 void CheckOpen(bool open)
 {
 	if (!open)
