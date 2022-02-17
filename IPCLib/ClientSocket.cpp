@@ -42,7 +42,7 @@ ClientSocket::ClientSocket(PCWSTR ip, int port)
 /// Waits for data on the socket
 /// </summary>
 /// <param name="data">Expected data format that can be deseralized</param>
-void ClientSocket::WaitForData(IDeserializable& data)
+void ClientSocket::WaitForData(IDeserializable& data) const
 {
 	char message[MESSAGEBYTESIZE];
 	int size = recv(m_socket, message, MESSAGEBYTESIZE, 0);
@@ -59,7 +59,7 @@ void ClientSocket::WaitForData(IDeserializable& data)
 /// Sends data over the socket to the server
 /// </summary>
 /// <param name="data">The data to be send that can be serialized</param>
-void ClientSocket::SendData(ISerializable& data)
+void ClientSocket::SendData(ISerializable& data) const
 {
 	char message[MESSAGEBYTESIZE]; //chars are bytes, this is put on the stack
 	int messageSize = 0;
