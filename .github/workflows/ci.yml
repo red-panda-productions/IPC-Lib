@@ -16,7 +16,7 @@ env:
 
   # Enable colour output for GTEST and XML file generation
   GTEST_COLOR: yes
-  GTEST_OUTPUT: xml:test-results/
+  GTEST_OUTPUT: xml:${{runner.workspace}}/build/test-results
 
 jobs:
   build:
