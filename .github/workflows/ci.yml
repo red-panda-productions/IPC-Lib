@@ -16,7 +16,7 @@ env:
 
   # Enable colour output for GTEST and XML file generation
   GTEST_COLOR: yes
-  GTEST_OUTPUT: xml:${{runner.workspace}}/build/test-results
+  GTEST_OUTPUT: xml:test-results/
 
 jobs:
   build:
@@ -44,5 +44,5 @@ jobs:
       if: failure()
       with:
         name: test_results_xml
-        path: ${{runner.workspace}}/build/test-results/**/*.xml
+        path: ${{runner.workspace}}/build/IPCTests/test-results/**/*.xml
       
