@@ -6,9 +6,15 @@ on:
   pull_request:
     branches: [ main ]
 
+  # Allow manually triggering from the actions tab
+  workflow_dispatch:
+
+
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+
+  # Enable colour output for GTEST and XML file generation
   GTEST_COLOR: yes
   GTEST_OUTPUT: xml:test-results/
 
