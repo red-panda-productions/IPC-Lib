@@ -3,11 +3,15 @@
 #ifndef MESSAGEBYTESIZE
 #define MESSAGEBYTESIZE 512
 #endif
-__interface IPCLIB_EXPORT ISerializable
+class IPCLIB_EXPORT ISerializable
 {
-	void Serialize(char* buffer, int& size);
+public:
+	virtual ~ISerializable() = default;
+	virtual void Serialize(char* buffer, int& size) = 0;
 }; 
-__interface IDeserializable
+class IPCLIB_EXPORT IDeserializable
 {
-	void Deserialize(char* message, int size);
+public:
+	virtual ~IDeserializable() = default;
+	virtual void Deserialize(char* message, int size) = 0;
 };
