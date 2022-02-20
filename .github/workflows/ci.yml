@@ -6,9 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
+  # Allow manually triggering from the actions tab
+  workflow_dispatch:
+
+
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+
+  # Enable colour output for GTEST and XML file generation
+  GTEST_COLOR: yes
+  GTEST_OUTPUT: xml:test-results/
 
 jobs:
   build:
@@ -31,10 +39,10 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: ctest -V
 
-#     - name: Upload test results
-#       uses: actions/upload-artifact@v2
-#       if: failure()
-#       with:
-#         name: test_results_xml
-#         path: ${{runner.workspace}}/build/test-results/**/*.xml
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: test_results_xml
+        path: ${{runner.workspace}}/build/IPCTests/test-results/**/*.xml
       
