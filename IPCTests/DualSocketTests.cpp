@@ -7,18 +7,18 @@
 #include <chrono>
 
 /// <summary>
-/// 
+/// Test sending data from server to client
 /// </summary>
-/// <param name="swt"></param>
-/// <param name="cwt"></param>
+/// <param name="p_swt">server</param>
+/// <param name="p_cwt">client</param>
 /// <returns></returns>
-bool TestServerSend(ServerWorkerThread& swt, ClientWorkerThread& cwt)
+bool TestServerSend(ServerWorkerThread& p_swt, ClientWorkerThread& p_cwt)
 {
-	cwt.SetAction(READACTION);
-	swt.SetAction(WRITEACTION);
+	p_cwt.SetAction(ACTION_READ);
+	p_swt.SetAction(ACTION_WRITE);
 	char message[256];
 	int size = 256;
-	cwt.RetrieveMessage(message, size);
+	p_cwt.RetrieveMessage(message, size);
 	const char* expected = DEFAULT_SERVER_MESSAGE;
 	if (size != strlen(expected)) return false;
 	for(int i = 0; i < size; i++)
@@ -29,13 +29,19 @@ bool TestServerSend(ServerWorkerThread& swt, ClientWorkerThread& cwt)
 	return true;
 }
 
-bool TestClientSend(ServerWorkerThread& swt, ClientWorkerThread& cwt)
+/// <summary>
+/// Tests sending data from client to server
+/// </summary>
+/// <param name="p_swt">server</param>
+/// <param name="p_cwt">client</param>
+/// <returns></returns>
+bool TestClientSend(ServerWorkerThread& p_swt, ClientWorkerThread& p_cwt)
 {
-	cwt.SetAction(WRITEACTION);
-	swt.SetAction(READACTION);
+	p_cwt.SetAction(ACTION_WRITE);
+	p_swt.SetAction(ACTION_READ);
 	char message[256];
 	int size = 256;
-	swt.RetrieveMessage(message, size);
+	p_swt.RetrieveMessage(message, size);
 	const char* expected = DEFAULT_CLIENT_MESSAGE;
 	if (size != strlen(expected)) return false;
 	for(int i = 0; i < size; i++)
@@ -46,13 +52,16 @@ bool TestClientSend(ServerWorkerThread& swt, ClientWorkerThread& cwt)
 	return true;
 }
 
+/// <summary>
+/// Tests sending data between client and server
+/// </summary>
 TEST(CompleteSocketTest, ExampleSocketTest)
 {
 	ServerWorkerThread swt;
     ClientWorkerThread cwt;
 
 	swt.StartThread();
-	swt.SetAction(CONNECTACTION);
+	swt.SetAction(ACTION_CONNECT);
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	cwt.StartThread();
 
@@ -66,14 +75,14 @@ TEST(CompleteSocketTest, ExampleSocketTest)
 	cwt.Reset();
 	ASSERT_TRUE(result) << "TEST CLIENT SEND FAILED";
 
-	swt.SetAction(DISCONNECTACTION);
-	cwt.SetAction(DISCONNECTACTION);
+	swt.SetAction(ACTION_DISCONNECT);
+	cwt.SetAction(ACTION_DISCONNECT);
 
-	swt.SetAction(CLOSESERVERACTION);
+	swt.SetAction(ACTION_CLOSE_SERVER);
 
-	swt.SetAction(DECONSTRUCTACTION);
-    cwt.SetAction(DECONSTRUCTACTION);
+	swt.SetAction(ACTION_DECONSTRUCT);
+    cwt.SetAction(ACTION_DECONSTRUCT);
 
-	swt.SetAction(STOPACTION);
-	cwt.SetAction(STOPACTION);
+	swt.SetAction(ACTION_STOP);
+	cwt.SetAction(ACTION_STOP);
 }

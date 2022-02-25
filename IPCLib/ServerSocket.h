@@ -9,13 +9,13 @@
 class IPCLIB_EXPORT ServerSocket
 {
 public:
-	ServerSocket(PCWSTR ip = L"127.0.0.1", int port = 8888, int connections = 1);
+	ServerSocket(PCWSTR p_ip = L"127.0.0.1", int p_port = 8888, int p_connections = 1);
 
 	void WaitForClientConnection();
 
-	void WaitForData(char* dataBuffer, int& size) const;
+	void WaitForData(char* p_dataBuffer, int& p_size) const;
 
-	void SendData(char* data, int size) const;
+	void SendData(char* p_data, int p_size) const;
 
 	void Disconnect();
 

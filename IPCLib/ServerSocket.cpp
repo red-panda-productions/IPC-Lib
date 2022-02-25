@@ -1,8 +1,12 @@
 #include "ServerSocket.h"
 
-void CheckOpen(bool open)
+/// <summary>
+/// Checks if the server is still open
+/// </summary>
+/// <param name="open"></param>
+void CheckOpen(bool p_open)
 {
-	if (!open)
+	if (!p_open)
 	{
 		printf("Server was closed");
 		std::cin.get();
@@ -17,7 +21,7 @@ void CheckOpen(bool open)
 /// <param name="port">Port to host server on</param>
 /// <param name="connections">Amount of connections that can be handled at the same time</param>
 
-ServerSocket::ServerSocket(PCWSTR ip, int port, int connections)
+ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0)
 	{
@@ -32,14 +36,14 @@ ServerSocket::ServerSocket(PCWSTR ip, int port, int connections)
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
-	InetPtonW(AF_INET, ip, &m_server.sin_addr.s_addr);
+	InetPtonW(AF_INET, p_ip, &m_server.sin_addr.s_addr);
 	m_server.sin_family = AF_INET;
-	m_server.sin_port = htons(port);
+	m_server.sin_port = htons(p_port);
 
-	// init client otherwise vs is wining that it is not initialized
-	InetPtonW(AF_INET, ip, &m_client.sin_addr.s_addr);
+	// init client for c++ object purposes
+	InetPtonW(AF_INET, p_ip, &m_client.sin_addr.s_addr);
 	m_client.sin_family = AF_INET;
-	m_client.sin_port = htons(port);
+	m_client.sin_port = htons(p_port);
 
 	if (bind(m_socket, (struct sockaddr*)&m_server, sizeof(m_server)) == SOCKET_ERROR)
 	{
@@ -48,7 +52,7 @@ ServerSocket::ServerSocket(PCWSTR ip, int port, int connections)
 		// environment exit? exit(-1);
 	}
 
-	listen(m_socket, connections);
+	listen(m_socket, p_connections);
 
 	m_disconnected = true;
 	m_open = true;
@@ -72,15 +76,15 @@ void ServerSocket::WaitForClientConnection()
 }
 
 /// <summary>
-/// Waits for data from a client
+/// Waits for data from the client
 /// </summary>
-/// <param name="data">Expected data format that can be deseralized</param>
-/// <param name="size">Buffersize before and after data has been serialized</param>
-void ServerSocket::WaitForData(char* dataBuffer, int& size) const
+/// <param name="p_dataBuffer">The buffer in which data is received</param>
+/// <param name="p_size">The size of the buffer</param>
+void ServerSocket::WaitForData(char* p_dataBuffer, int& p_size) const
 {
 	CheckOpen(m_open);
-	size = recv(m_clientSocket, dataBuffer, size, 0);
-	if (size == SOCKET_ERROR)
+	p_size = recv(m_clientSocket, p_dataBuffer, p_size, 0);
+	if (p_size == SOCKET_ERROR)
 	{
 		printf("Failed to receive message");
 		std::cin.get();
@@ -91,12 +95,12 @@ void ServerSocket::WaitForData(char* dataBuffer, int& size) const
 /// <summary>
 /// Sends data to the client
 /// </summary>
-/// <param name="data">The data to be send that can be serialized</param>
-/// <param name="size">The size of the data in bytes</param>
-void ServerSocket::SendData(char* data, int size) const
+/// <param name="p_data">The data that needs to be send</param>
+/// <param name="p_size">The size of the data</param>
+void ServerSocket::SendData(char* p_data, int p_size) const
 {
 	CheckOpen(m_open);
-	send(m_clientSocket, data, size, 0);
+	send(m_clientSocket, p_data, p_size, 0);
 }
 
 /// <summary>

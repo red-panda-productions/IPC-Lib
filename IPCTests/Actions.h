@@ -1,10 +1,11 @@
 
+/// The different actions a worker thread can do
 #define ACTION int
-#define STOPACTION -2
-#define NOACTION -1
-#define WRITEACTION 0
-#define READACTION 1
-#define DISCONNECTACTION 2
-#define CLOSESERVERACTION 3
-#define DECONSTRUCTACTION 4
-#define CONNECTACTION 5
+#define ACTION_STOP -2
+#define ACTION_NONE -1
+#define ACTION_WRITE 0
+#define ACTION_READ 1
+#define ACTION_DISCONNECT 2
+#define ACTION_CLOSE_SERVER 3
+#define ACTION_DECONSTRUCT 4
+#define ACTION_CONNECT 5

@@ -3,14 +3,17 @@
 #include "ipclib_export.h"
 #include <WinSock2.h>
 
+/// <summary>
+/// Class that represents a client that connects to a socket
+/// </summary>
 class IPCLIB_EXPORT ClientSocket
 {
 public:
-	ClientSocket(PCWSTR ip = L"127.0.0.1", int port = 8888);
+	ClientSocket(PCWSTR p_ip = L"127.0.0.1", int p_port = 8888);
 
-	void WaitForData(char* dataBuffer, int& size) const;
+	void WaitForData(char* p_dataBuffer, int& p_size) const;
 
-	void SendData(char* data, int size) const;
+	void SendData(char* p_data, int p_size) const;
 
 	void Disconnect();
 
