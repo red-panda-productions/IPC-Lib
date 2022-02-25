@@ -25,3 +25,5 @@ private:
 	struct sockaddr_in m_server;
 	bool m_disconnected;
 };
+
+void ConnectToServer(const PCWSTR& p_ip, int p_port);

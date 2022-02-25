@@ -1,34 +1,31 @@
 #include "ClientSocket.h"
+#include "ClientSocketAsync.h"
 #include <WS2tcpip.h>
 #include <iostream>
 #include <stdio.h>
+#include <thread>
 
-/// <summary>
-/// Constructor of ClientSocket
-/// </summary>
-/// <param name="p_ip">Ip address of server</param>
-/// <param name="p_port">Port of server</param>
-ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
+void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, bool& p_disconnected)
 {
-	if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0)
+	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
 	{
 		printf("Failed. Error Code : %d", WSAGetLastError());
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
 
-	if ((m_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+	if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
 		printf("Could not create socket : %d", WSAGetLastError());
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
 
-	InetPtonW(AF_INET, p_ip, &m_server.sin_addr.s_addr);
-	m_server.sin_family = AF_INET;
-	m_server.sin_port = htons(p_port);
+	InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
+	p_server.sin_family = AF_INET;
+	p_server.sin_port = htons(p_port);
 
-	auto c = connect(m_socket, (struct sockaddr*)&m_server, sizeof(m_server));
+	auto c = connect(p_socket, (struct sockaddr*)&p_server, sizeof(p_server));
 	if (c < 0)
 	{
 		puts("connect error");
@@ -37,8 +34,22 @@ ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 		// environment exit? exit(-1);
 	}
 
-	m_disconnected = false;
+	p_disconnected = false;
 }
+
+//------------------------------------------------------------------ ClientSocket.h -------------------------------------------------------------------
+
+/// <summary>
+/// Constructor of ClientSocket
+/// </summary>
+/// <param name="p_ip">Ip address of server</param>
+/// <param name="p_port">Port of server</param>
+ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
+{
+	ConnectToServer(p_ip, p_port,m_wsa,m_socket,m_server,m_disconnected);
+}
+
+
 
 /// <summary>
 /// Waits for data on the socket
@@ -80,6 +91,63 @@ void ClientSocket::Disconnect()
 /// Deconstructor, if it is not disconnected it disconnects from the server
 /// </summary>
 ClientSocket::~ClientSocket()
+{
+	if (m_disconnected) return;
+	Disconnect();
+}
+
+//--------------------------------------------------------------------- ClientSocketAsync.h -------------------------------------------------------
+
+ClientSocketAsync::ClientSocketAsync(PCWSTR p_ip, int p_port)
+{
+	ConnectToServer(p_ip, p_port, m_wsa, m_socket, m_server, m_disconnected);
+}
+
+void ClientSocketAsync::ReceiveDataAsync()
+{
+	std::thread t(&ClientSocketAsync::ReceiveData,this);
+	t.detach();
+}
+
+void ClientSocketAsync::ReceiveData()
+{
+	m_size = recv(m_socket, m_dataBuffer, CLIENT_BUFFER_BYTE_SIZE, 0);
+	if (m_size == SOCKET_ERROR)
+	{
+		printf("Failed to receive message");
+		std::cin.get();
+		// environment exit? exit(-1);
+	}
+	m_received = true;
+}
+
+void ClientSocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
+{
+	while (!m_received) {}
+	GetData(p_dataBuffer, p_size);
+}
+
+bool ClientSocketAsync::GetData(char* p_dataBuffer, int& p_size)
+{
+	if (!m_received) return false;
+	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
+	m_received = false;
+	return true;
+}
+
+void ClientSocketAsync::SendData(char* p_data, int p_size)
+{
+	send(m_socket, p_data, p_size, 0);
+}
+
+void ClientSocketAsync::Disconnect()
+{
+	closesocket(m_socket);
+	WSACleanup();
+	m_disconnected = true;
+}
+
+ClientSocketAsync::~ClientSocketAsync()
 {
 	if (m_disconnected) return;
 	Disconnect();
