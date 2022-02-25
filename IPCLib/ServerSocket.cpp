@@ -75,7 +75,7 @@ void ServerSocket::WaitForClientConnection()
 /// Waits for data from a client
 /// </summary>
 /// <param name="data">Expected data format that can be deseralized</param>
-void ServerSocket::WaitForData(IDeserializable& data) const
+void ServerSocket::WaitForData(IDeserializable* data) const
 {
 	CheckOpen(m_open);
 	char message[MESSAGEBYTESIZE];
@@ -86,19 +86,19 @@ void ServerSocket::WaitForData(IDeserializable& data) const
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
-	data.Deserialize(message, size);
+	data->Deserialize(message, size);
 }
 
 /// <summary>
 /// Sends data to the client
 /// </summary>
 /// <param name="data">The data to be send that can be serialized</param>
-void ServerSocket::SendData(ISerializable& data) const
+void ServerSocket::SendData(ISerializable* data) const
 {
 	CheckOpen(m_open);
 	char message[MESSAGEBYTESIZE]; //chars are bytes, this is put on the stack
 	int messageSize = 0;
-	data.Serialize(message, messageSize); // needs to end with '\0'
+	data->Serialize(message, messageSize); // needs to end with '\0'
 	send(m_clientSocket, message, messageSize, 0);
 }
 

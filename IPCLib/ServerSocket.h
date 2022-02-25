@@ -14,9 +14,9 @@ public:
 
 	void WaitForClientConnection();
 
-	void WaitForData(IDeserializable& data) const;
+	void WaitForData(IDeserializable* data) const;
 
-	void SendData(ISerializable& data) const;
+	void SendData(ISerializable* data) const;
 
 	void Disconnect();
 

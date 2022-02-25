@@ -44,7 +44,7 @@ ClientSocket::ClientSocket(PCWSTR ip, int port)
 /// Waits for data on the socket
 /// </summary>
 /// <param name="data">Expected data format that can be deseralized</param>
-void ClientSocket::WaitForData(IDeserializable& data) const
+void ClientSocket::WaitForData(IDeserializable* data) const
 {
 	char message[MESSAGEBYTESIZE];
 	int size = recv(m_socket, message, MESSAGEBYTESIZE, 0);
@@ -54,18 +54,18 @@ void ClientSocket::WaitForData(IDeserializable& data) const
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
-	data.Deserialize(message, size);
+	data->Deserialize(message, size);
 }
 
 /// <summary>
 /// Sends data over the socket to the server
 /// </summary>
 /// <param name="data">The data to be send that can be serialized</param>
-void ClientSocket::SendData(ISerializable& data) const
+void ClientSocket::SendData(ISerializable* data) const
 {
 	char message[MESSAGEBYTESIZE]; //chars are bytes, this is put on the stack
 	int messageSize = 0;
-	data.Serialize(message, messageSize); // needs to end with '\0'
+	data->Serialize(message, messageSize); // needs to end with '\0'
 	send(m_socket, message, messageSize, 0);
 }
 

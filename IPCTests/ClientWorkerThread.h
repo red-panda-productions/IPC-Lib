@@ -16,7 +16,7 @@ private:
 	std::mutex mtx;
 	int m_action = -1;
 	ClientSocket m_socket;
-	TestSerializer m_message;
+	TestSerializer* m_message;
 	bool m_messageWritten;
 public:
 
@@ -52,15 +52,15 @@ public:
 	void RetrieveMessage(char* message, int& size)
 	{
 		while (!m_messageWritten) {};
-		message = m_message.Message;
-		size = m_message.Size;
+		message = m_message->Message;
+		size = m_message->Size;
 	}
 
 	void Reset()
 	{
 		const char* m = DEFAULT_CLIENT_MESSAGE;
-		m_message.Size = strlen(m);
-		strcpy_s(m_message.Message, m_message.Size + 1, m);
+		m_message->Size = strlen(m);
+		strcpy_s(m_message->Message, m_message->Size + 1, m);
 		m_messageWritten = false;
 	}
 

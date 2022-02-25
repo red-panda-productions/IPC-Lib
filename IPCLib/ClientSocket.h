@@ -12,9 +12,9 @@ class IPCLIB_EXPORT ClientSocket
 public:
 	ClientSocket(PCWSTR ip = L"127.0.0.1", int port = 8888);
 
-	void WaitForData(IDeserializable& data) const;
+	void WaitForData(IDeserializable* data) const;
 
-	void SendData(ISerializable& data) const;
+	void SendData(ISerializable* data) const;
 
 	void Disconnect();
 
