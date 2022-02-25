@@ -1,3 +1,4 @@
+#pragma once
 #include "ServerSocket.h"
 #include "WorkerThread.h"
 #include <thread>
