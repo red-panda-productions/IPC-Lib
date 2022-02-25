@@ -12,7 +12,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  IPCTests "Actions.h" "ClientWorkerThread.h" "ClientWorkerThread.cpp" "ServerWorkerThread.h" "ServerWorkerThread.cpp" "DualSocketTests.cpp" "WorkerThread.cpp" "WorkerThread.h" )
+  IPCTests "Actions.h" "ClientWorkerThread.h" "ClientWorkerThread.cpp" "ServerWorkerThread.h" "ServerWorkerThread.cpp" "DualSocketTests.cpp" "WorkerThread.cpp" "WorkerThread.h"  "AsyncSocketTest.cpp")
 target_link_libraries(
   IPCTests #moet het zelfde zijn
   IPCLib
