@@ -18,7 +18,6 @@ bool SendMessageTest(WorkerThread& p_from, WorkerThread& p_to, const char* p_exp
     char message[256];
     int size = 256;
     p_to.RetrieveMessage(message, size);
-    //const char* expected = DEFAULT_CLIENT_MESSAGE;
     if (size != strlen(p_expectedMessage)) return false;
     for(int i = 0; i < size; i++)
     {
