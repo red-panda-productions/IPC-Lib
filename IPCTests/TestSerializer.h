@@ -4,15 +4,15 @@
 class TestSerializer : public ISerializable, public IDeserializable
 {
 public:
-	char m_message[MESSAGEBYTESIZE];
-	int m_size;
+	char Message[MESSAGEBYTESIZE];
+	int Size;
 
 	/// <summary>
 	/// Constructs the message
 	/// </summary>
 	TestSerializer()
 	{
-		m_size = 0;
+		Size = 0;
 	}
 
 	/// <summary>
@@ -22,7 +22,7 @@ public:
 	/// <param name="size">the size of the message</param>
 	TestSerializer(char* message, int size)
 	{
-		m_size = size;
+		Deserialize(message, size);
 	}
 
 	/// <summary>
@@ -30,12 +30,12 @@ public:
 	/// </summary>
 	/// <param name="buffer">the socket buffer</param>
 	/// <param name="size">the size of the message (needs to be set)</param>
-	void Serialize(char* buffer, int& size)
+	void Serialize(char* buffer, int& size) override
 	{
-		size = this->m_size;
-		for (int i = 0; i < m_size; i++)
+		size = this->Size;
+		for (int i = 0; i < Size; i++)
 		{
-			buffer[i] = this->m_message[i];
+			buffer[i] = this->Message[i];
 		}
 	}
 
@@ -44,11 +44,12 @@ public:
 	/// </summary>
 	/// <param name="message">the message</param>
 	/// <param name="size">the size of the message</param>
-	void Deserialize(char* message, int size)
+	void Deserialize(char* message, int size) override
 	{
 		for (int i = 0; i < size; i++)
 		{
-			this->m_message[i] = message[i];
+			this->Message[i] = message[i];
 		}
+		this->Size = size;
 	}
 };

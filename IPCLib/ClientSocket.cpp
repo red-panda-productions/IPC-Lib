@@ -1,5 +1,7 @@
 #include "ClientSocket.h"
-
+#include <WS2tcpip.h>
+#include <iostream>
+#include <stdio.h>
 
 /// <summary>
 /// Constructor of ClientSocket

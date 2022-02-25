@@ -3,6 +3,7 @@
 #include <thread>
 #include <mutex>
 
+#define DEFAULT_SERVER_MESSAGE "Hello from server"
 
 /// <summary>
 /// Woker thread for client
@@ -13,17 +14,16 @@ private:
 	std::mutex mtx;
 	int m_action = -1;
 	ServerSocket m_socket;
+	TestSerializer m_message;
+	bool m_messageWritten;
 public:
-	TestSerializer Message;
-
+	
 	/// <summary>
 	/// Constructs the message that can be send
 	/// </summary>
 	ServerWorkerThread()
 	{
-		const char* m = "Hello from server";
-		Message.m_size = strlen(m);
-		strcpy_s(Message.m_message, Message.m_size + 1, m);
+		Reset();
 	}
 
 	/// <summary>
@@ -31,7 +31,8 @@ public:
 	/// </summary>
 	void StartThread()
 	{
-		std::thread(Loop);
+		std::thread t = std::thread(&ServerWorkerThread::Loop, this);
+		t.detach();
 	}
 
 	/// <summary>
@@ -51,9 +52,26 @@ public:
 	/// <param name="message"></param>
 	void SetMessage(const char* message)
 	{
-		strcpy(this->Message.m_message, message);
-		this->Message.m_size = strlen(message);
+		this->m_message.Size = strlen(message);
+		strcpy_s(this->m_message.Message, this->m_message.Size + 1, message);
 	}
+
+	void RetrieveMessage(char* message, int& size)
+	{
+		while (!m_messageWritten) {};
+		message = m_message.Message;
+		size = m_message.Size;
+	}
+
+
+	void Reset()
+	{
+		m_messageWritten = false;
+		const char* m = DEFAULT_SERVER_MESSAGE;
+		m_message.Size = strlen(m);
+		strcpy_s(m_message.Message, m_message.Size + 1, m);
+	}
+
 private:
 	/// <summary>
 	/// Loops the worker thread until stopped
@@ -77,10 +95,11 @@ private:
 		switch (action)
 		{
 		case WRITEACTION:
-			m_socket.SendData(Message);
+			m_socket.SendData(m_message);
 			return;
 		case READACTION:
-			m_socket.WaitForData(Message);
+			m_socket.WaitForData(m_message);
+			m_messageWritten = true;
 			return;
 		case DISCONNECTACTION:
 			m_socket.Disconnect();
