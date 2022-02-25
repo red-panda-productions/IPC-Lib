@@ -3,7 +3,6 @@
 #include "ipclib_export.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-#include "Serialization.h"
 #include <iostream>
 #include <stdio.h>
 
@@ -14,9 +13,9 @@ public:
 
 	void WaitForClientConnection();
 
-	void WaitForData(IDeserializable* data) const;
+	void WaitForData(char* dataBuffer, int& size) const;
 
-	void SendData(ISerializable* data) const;
+	void SendData(char* data, int size) const;
 
 	void Disconnect();
 

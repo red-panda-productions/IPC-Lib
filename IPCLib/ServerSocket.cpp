@@ -75,31 +75,28 @@ void ServerSocket::WaitForClientConnection()
 /// Waits for data from a client
 /// </summary>
 /// <param name="data">Expected data format that can be deseralized</param>
-void ServerSocket::WaitForData(IDeserializable* data) const
+/// <param name="size">Buffersize before and after data has been serialized</param>
+void ServerSocket::WaitForData(char* dataBuffer, int& size) const
 {
 	CheckOpen(m_open);
-	char message[MESSAGEBYTESIZE];
-	int size = recv(m_clientSocket, message, MESSAGEBYTESIZE, 0);
+	size = recv(m_clientSocket, dataBuffer, size, 0);
 	if (size == SOCKET_ERROR)
 	{
 		printf("Failed to receive message");
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
-	data->Deserialize(message, size);
 }
 
 /// <summary>
 /// Sends data to the client
 /// </summary>
 /// <param name="data">The data to be send that can be serialized</param>
-void ServerSocket::SendData(ISerializable* data) const
+/// <param name="size">The size of the data in bytes</param>
+void ServerSocket::SendData(char* data, int size) const
 {
 	CheckOpen(m_open);
-	char message[MESSAGEBYTESIZE]; //chars are bytes, this is put on the stack
-	int messageSize = 0;
-	data->Serialize(message, messageSize); // needs to end with '\0'
-	send(m_clientSocket, message, messageSize, 0);
+	send(m_clientSocket, data, size, 0);
 }
 
 /// <summary>

@@ -3,18 +3,14 @@
 #include "ipclib_export.h"
 #include <WinSock2.h>
 
-#include "Serialization.h"
-
-
-
 class IPCLIB_EXPORT ClientSocket
 {
 public:
 	ClientSocket(PCWSTR ip = L"127.0.0.1", int port = 8888);
 
-	void WaitForData(IDeserializable* data) const;
+	void WaitForData(char* dataBuffer, int& size) const;
 
-	void SendData(ISerializable* data) const;
+	void SendData(char* data, int size) const;
 
 	void Disconnect();
 

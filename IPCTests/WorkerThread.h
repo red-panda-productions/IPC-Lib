@@ -1,17 +1,15 @@
 #pragma once
-#include "TestSerializer.h"
 #include <thread>
 #include <mutex>
 class WorkerThread
 {
 protected:
 	std::mutex* Action_lock = new std::mutex();
-	std::mutex* Message_lock = new std::mutex();
 	ACTION* Action = new ACTION(-1);
-	TestSerializer* Message = new TestSerializer();
 	bool MessageWritten;
 	const char* defaultMessage;
-
+	char* Message = nullptr;
+	int* MessageSize = new int(-1);
 	/// <summary>
 	/// Gets the action from the main thread
 	/// </summary>
@@ -46,25 +44,23 @@ public:
 	WorkerThread(const char* defaultMessage)
 	{
 		this->defaultMessage = defaultMessage;
+		this->Message = new char[strlen(defaultMessage)];
 		Reset();
 	}
+	
 
 	void Reset()
 	{
-		Message_lock->lock();
-		Message->Size = strlen(defaultMessage);
-		strcpy_s(Message->Message, Message->Size + 1, defaultMessage);
+		*MessageSize = strlen(defaultMessage);
+		strcpy_s(Message, *MessageSize + 1, defaultMessage);
 		MessageWritten = false;
-		Message_lock->unlock();
 	}
 
 	void RetrieveMessage(char* message, int& size)
 	{
 		while (!MessageWritten) {};
-		Message_lock->lock();
-		size = Message->Size;
-		strcpy_s(message, 256, Message->Message);
-		Message_lock->unlock();
+		strcpy_s(message, size, this->Message);
+		size = *this->MessageSize;
 	}
 
 	/// <summary>

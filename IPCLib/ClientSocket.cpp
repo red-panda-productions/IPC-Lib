@@ -44,29 +44,24 @@ ClientSocket::ClientSocket(PCWSTR ip, int port)
 /// Waits for data on the socket
 /// </summary>
 /// <param name="data">Expected data format that can be deseralized</param>
-void ClientSocket::WaitForData(IDeserializable* data) const
+void ClientSocket::WaitForData(char* dataBuffer, int& size) const
 {
-	char message[MESSAGEBYTESIZE];
-	int size = recv(m_socket, message, MESSAGEBYTESIZE, 0);
+	size = recv(m_socket, dataBuffer, size, 0);
 	if (size == SOCKET_ERROR)
 	{
 		printf("Failed to receive message");
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
-	data->Deserialize(message, size);
 }
 
 /// <summary>
 /// Sends data over the socket to the server
 /// </summary>
 /// <param name="data">The data to be send that can be serialized</param>
-void ClientSocket::SendData(ISerializable* data) const
+void ClientSocket::SendData(char* data, int size) const
 {
-	char message[MESSAGEBYTESIZE]; //chars are bytes, this is put on the stack
-	int messageSize = 0;
-	data->Serialize(message, messageSize); // needs to end with '\0'
-	send(m_socket, message, messageSize, 0);
+	send(m_socket, data, size, 0);
 }
 
 /// <summary>

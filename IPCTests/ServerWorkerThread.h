@@ -1,5 +1,4 @@
 #include "ServerSocket.h"
-#include "TestSerializer.h"
 #include <thread>
 #include <mutex>
 
@@ -42,15 +41,11 @@ protected:
 		switch (action)
 		{
 		case WRITEACTION:
-			Message_lock->lock();
-			m_socket.SendData(Message);
-			Message_lock->unlock();
+			m_socket.SendData(Message,*MessageSize);
 			return;
 		case READACTION:
-			Message_lock->lock();
-			m_socket.WaitForData(Message);
+			m_socket.WaitForData(Message,*MessageSize);
 			MessageWritten = true;
-			Message_lock->unlock();
 			return;
 		case DISCONNECTACTION:
 			m_socket.Disconnect();

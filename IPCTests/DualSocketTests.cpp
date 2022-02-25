@@ -6,12 +6,18 @@
 #include <thread>
 #include <chrono>
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="swt"></param>
+/// <param name="cwt"></param>
+/// <returns></returns>
 bool TestServerSend(ServerWorkerThread& swt, ClientWorkerThread& cwt)
 {
 	cwt.SetAction(READACTION);
 	swt.SetAction(WRITEACTION);
 	char message[256];
-	int size = 0;
+	int size = 256;
 	cwt.RetrieveMessage(message, size);
 	const char* expected = DEFAULT_SERVER_MESSAGE;
 	if (size != strlen(expected)) return false;
@@ -28,7 +34,7 @@ bool TestClientSend(ServerWorkerThread& swt, ClientWorkerThread& cwt)
 	cwt.SetAction(WRITEACTION);
 	swt.SetAction(READACTION);
 	char message[256];
-	int size = 0;
+	int size = 256;
 	swt.RetrieveMessage(message, size);
 	const char* expected = DEFAULT_CLIENT_MESSAGE;
 	if (size != strlen(expected)) return false;

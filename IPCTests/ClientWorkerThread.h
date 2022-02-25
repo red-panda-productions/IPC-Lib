@@ -1,13 +1,12 @@
 #include "WorkerThread.h"
 #include "ClientSocket.h"
-#include "TestSerializer.h"
 #include <thread>
 #include <mutex>
 
 #define DEFAULT_CLIENT_MESSAGE "Hello from client"
 
 /// <summary>
-/// Woker thread for client
+/// Worker thread for client
 /// </summary>
 class ClientWorkerThread : public WorkerThread
 {
@@ -41,15 +40,11 @@ protected:
 		switch (action)
 		{
 		case WRITEACTION:
-			Message_lock->lock();
-			m_socket.SendData(Message);
-			Message_lock->unlock();
+			m_socket.SendData(Message,*MessageSize);
 			return;
 		case READACTION:
-			Message_lock->lock();
-			m_socket.WaitForData(Message);
+			m_socket.WaitForData(Message,*MessageSize);
 			MessageWritten = true;
-			Message_lock->unlock();
 			return;
 		case DISCONNECTACTION:
 			m_socket.Disconnect();
@@ -61,9 +56,4 @@ protected:
 			return;
 		}
 	}
-
-
-
-
-
 };
