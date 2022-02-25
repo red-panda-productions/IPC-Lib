@@ -1,4 +1,3 @@
-
 #include <gtest/gtest.h>
 #include "Actions.h"
 #include "ClientWorkerThread.h"
@@ -7,50 +6,28 @@
 #include <chrono>
 
 /// <summary>
-/// Test sending data from server to client
+/// Test sending data from one WorkerThread to another
 /// </summary>
-/// <param name="p_swt">server</param>
-/// <param name="p_cwt">client</param>
+/// <param name="p_from">sending WorkerThread</param>
+/// <param name="p_to">receiving WorkerThread</param>
 /// <returns></returns>
-bool TestServerSend(ServerWorkerThread& p_swt, ClientWorkerThread& p_cwt)
+bool SendMessageTest(WorkerThread& p_from, WorkerThread& p_to, const char* p_expectedMessage)
 {
-	p_cwt.SetAction(ACTION_READ);
-	p_swt.SetAction(ACTION_WRITE);
-	char message[256];
-	int size = 256;
-	p_cwt.RetrieveMessage(message, size);
-	const char* expected = DEFAULT_SERVER_MESSAGE;
-	if (size != strlen(expected)) return false;
-	for(int i = 0; i < size; i++)
-	{
-		if (message[i] == expected[i]) continue;
-		return false;
-	}
-	return true;
+    p_from.SetAction(ACTION_WRITE);
+    p_to.SetAction(ACTION_READ);
+    char message[256];
+    int size = 256;
+    p_to.RetrieveMessage(message, size);
+    //const char* expected = DEFAULT_CLIENT_MESSAGE;
+    if (size != strlen(p_expectedMessage)) return false;
+    for(int i = 0; i < size; i++)
+    {
+        if (message[i] == p_expectedMessage[i]) continue;
+        return false;
+    }
+    return true;
 }
 
-/// <summary>
-/// Tests sending data from client to server
-/// </summary>
-/// <param name="p_swt">server</param>
-/// <param name="p_cwt">client</param>
-/// <returns></returns>
-bool TestClientSend(ServerWorkerThread& p_swt, ClientWorkerThread& p_cwt)
-{
-	p_cwt.SetAction(ACTION_WRITE);
-	p_swt.SetAction(ACTION_READ);
-	char message[256];
-	int size = 256;
-	p_swt.RetrieveMessage(message, size);
-	const char* expected = DEFAULT_CLIENT_MESSAGE;
-	if (size != strlen(expected)) return false;
-	for(int i = 0; i < size; i++)
-	{
-		if (message[i] == expected[i]) continue;
-		return false;
-	}
-	return true;
-}
 
 /// <summary>
 /// Tests sending data between client and server
@@ -65,15 +42,15 @@ TEST(CompleteSocketTest, ExampleSocketTest)
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	cwt.StartThread();
 
-	bool result = TestServerSend(swt, cwt);
-	swt.Reset();
-	cwt.Reset();
-	ASSERT_TRUE(result) << "TEST SEVER SEND FAILED";
+    bool result = SendMessageTest(swt, cwt, DEFAULT_SERVER_MESSAGE);
+    swt.Reset();
+    cwt.Reset();
+    ASSERT_TRUE(result) << "TEST SERVER SEND FAILED";
 
-	result = TestClientSend(swt, cwt);
-	swt.Reset();
-	cwt.Reset();
-	ASSERT_TRUE(result) << "TEST CLIENT SEND FAILED";
+    result = SendMessageTest(cwt, swt, DEFAULT_CLIENT_MESSAGE);
+    swt.Reset();
+    cwt.Reset();
+    ASSERT_TRUE(result) << "TEST CLIENT SEND FAILED";
 
 	swt.SetAction(ACTION_DISCONNECT);
 	cwt.SetAction(ACTION_DISCONNECT);
