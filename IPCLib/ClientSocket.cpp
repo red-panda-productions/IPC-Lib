@@ -6,9 +6,9 @@
 /// <summary>
 /// Constructor of ClientSocket
 /// </summary>
-/// <param name="ip">Ip address of server</param>
-/// <param name="port">Port of server</param>
-ClientSocket::ClientSocket(PCWSTR ip, int port)
+/// <param name="p_ip">Ip address of server</param>
+/// <param name="p_port">Port of server</param>
+ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0)
 	{
@@ -24,9 +24,9 @@ ClientSocket::ClientSocket(PCWSTR ip, int port)
 		// environment exit? exit(-1);
 	}
 
-	InetPtonW(AF_INET, ip, &m_server.sin_addr.s_addr);
+	InetPtonW(AF_INET, p_ip, &m_server.sin_addr.s_addr);
 	m_server.sin_family = AF_INET;
-	m_server.sin_port = htons(port);
+	m_server.sin_port = htons(p_port);
 
 	auto c = connect(m_socket, (struct sockaddr*)&m_server, sizeof(m_server));
 	if (c < 0)
@@ -43,30 +43,27 @@ ClientSocket::ClientSocket(PCWSTR ip, int port)
 /// <summary>
 /// Waits for data on the socket
 /// </summary>
-/// <param name="data">Expected data format that can be deseralized</param>
-void ClientSocket::WaitForData(IDeserializable& data) const
+/// <param name="p_dataBuffer">The buffer in which data is received</param>
+/// <param name="p_size">The size of the buffer (changes on call)</param>
+void ClientSocket::WaitForData(char* p_dataBuffer, int& p_size) const
 {
-	char message[MESSAGEBYTESIZE];
-	int size = recv(m_socket, message, MESSAGEBYTESIZE, 0);
-	if (size == SOCKET_ERROR)
+	p_size = recv(m_socket, p_dataBuffer, p_size, 0);
+	if (p_size == SOCKET_ERROR)
 	{
 		printf("Failed to receive message");
 		std::cin.get();
 		// environment exit? exit(-1);
 	}
-	data.Deserialize(message, size);
 }
 
 /// <summary>
-/// Sends data over the socket to the server
+/// Sends data to the server
 /// </summary>
-/// <param name="data">The data to be send that can be serialized</param>
-void ClientSocket::SendData(ISerializable& data) const
+/// <param name="p_data">The data that needs to be send</param>
+/// <param name="p_size">The size of the data buffer</param>
+void ClientSocket::SendData(char* p_data, int p_size) const
 {
-	char message[MESSAGEBYTESIZE]; //chars are bytes, this is put on the stack
-	int messageSize = 0;
-	data.Serialize(message, messageSize); // needs to end with '\0'
-	send(m_socket, message, messageSize, 0);
+	send(m_socket, p_data, p_size, 0);
 }
 
 /// <summary>
