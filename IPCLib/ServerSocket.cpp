@@ -157,6 +157,31 @@ ServerSocketAsync::ServerSocketAsync(PCWSTR p_ip, int p_port, int p_connections)
 	StartServer(p_ip, p_port, p_connections, m_wsa, m_socket, m_server, m_client, m_disconnected, m_open);
 }
 
+void ServerSocketAsync::ConnectAsync()
+{
+	std::thread t(&ServerSocketAsync::Connect, this);
+	t.detach();
+}
+
+void ServerSocketAsync::Connect()
+{
+	CheckOpen(m_open);
+	int c = sizeof(struct sockaddr_in);
+
+	if ((m_clientSocket = accept(m_socket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
+	{
+		printf("Failed to bind with client");
+		std::cin.get();
+		// environment exit? exit(-1);
+	}
+	m_disconnected = false;
+}
+
+void ServerSocketAsync::AwaitClientConnection()
+{
+	while (m_disconnected) {}
+}
+
 void ServerSocketAsync::ReceiveDataAsync()
 {
 	std::thread t(&ServerSocketAsync::ReceiveData, this);

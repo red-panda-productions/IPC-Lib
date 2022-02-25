@@ -1,13 +1,20 @@
 #pragma once
+#pragma comment(lib,"ws2_32.lib")
+#include "ipclib_export.h"
+#include <WinSock2.h>
 
 #ifndef SERVER_BUFFER_BYTE_SIZE
 #define SERVER_BUFFER_BYTE_SIZE 512
 #endif
 
-class ServerSocketAsync 
+class IPCLIB_EXPORT ServerSocketAsync 
 {
 public:
 	ServerSocketAsync(PCWSTR p_ip = L"127.0.0.1", int p_port = 8888, int p_connections = 1);
+
+	void ConnectAsync();
+
+	void AwaitClientConnection();
 
 	void ReceiveDataAsync();
 
@@ -26,6 +33,8 @@ public:
 private:
 
 	void ReceiveData();
+
+	void Connect();
 
 	bool m_received = false;
 	WSAData m_wsa;
