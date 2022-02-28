@@ -4,7 +4,7 @@
 #cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
-add_library (IPCLib SHARED "ClientSocket.h" "ClientSocket.cpp" "ServerSocket.h" "ServerSocket.cpp" "ClientSocketAsync.h" "ServerSocketAsync.h"  )
+add_library (IPCLib SHARED "ClientSocket.h" "ClientSocket.cpp" "ServerSocket.h" "ServerSocket.cpp" "ClientSocketAsync.h" "ServerSocketAsync.h" "SocketAsync.h" "SocketAsync.cpp")
 
 include(GenerateExportHeader)
 GENERATE_EXPORT_HEADER(IPCLib)

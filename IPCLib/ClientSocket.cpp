@@ -103,39 +103,9 @@ ClientSocketAsync::ClientSocketAsync(PCWSTR p_ip, int p_port)
 	ConnectToServer(p_ip, p_port, m_wsa, m_socket, m_server, m_disconnected);
 }
 
-void ClientSocketAsync::ReceiveDataAsync()
-{
-	std::thread t(&ClientSocketAsync::ReceiveData,this);
-	t.detach();
-}
 
-void ClientSocketAsync::ReceiveData()
-{
-	m_size = recv(m_socket, m_dataBuffer, CLIENT_BUFFER_BYTE_SIZE, 0);
-	if (m_size == SOCKET_ERROR)
-	{
-		printf("Failed to receive message");
-		std::cin.get();
-		// environment exit? exit(-1);
-	}
-	m_received = true;
-}
 
-void ClientSocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
-{
-	while (!m_received) {}
-	GetData(p_dataBuffer, p_size);
-}
-
-bool ClientSocketAsync::GetData(char* p_dataBuffer, int& p_size)
-{
-	if (!m_received) return false;
-	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
-	m_received = false;
-	return true;
-}
-
-void ClientSocketAsync::SendData(char* p_data, int p_size)
+void ClientSocketAsync::SendData(const char* p_data, const int p_size) const
 {
 	send(m_socket, p_data, p_size, 0);
 }

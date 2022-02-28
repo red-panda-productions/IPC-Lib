@@ -154,7 +154,7 @@ ServerSocket::~ServerSocket()
 
 ServerSocketAsync::ServerSocketAsync(PCWSTR p_ip, int p_port, int p_connections)
 {
-	StartServer(p_ip, p_port, p_connections, m_wsa, m_socket, m_server, m_client, m_disconnected, m_open);
+	StartServer(p_ip, p_port, p_connections, m_wsa, m_serverSocket, m_server, m_client, m_disconnected, m_open);
 }
 
 void ServerSocketAsync::ConnectAsync()
@@ -168,7 +168,7 @@ void ServerSocketAsync::Connect()
 	CheckOpen(m_open);
 	int c = sizeof(struct sockaddr_in);
 
-	if ((m_clientSocket = accept(m_socket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
+	if ((m_socket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
 	{
 		printf("Failed to bind with client");
 		std::cin.get();
@@ -177,53 +177,21 @@ void ServerSocketAsync::Connect()
 	m_disconnected = false;
 }
 
-void ServerSocketAsync::AwaitClientConnection()
+void ServerSocketAsync::AwaitClientConnection() const
 {
 	while (m_disconnected) {}
 }
 
-void ServerSocketAsync::ReceiveDataAsync()
-{
-	std::thread t(&ServerSocketAsync::ReceiveData, this);
-	t.detach();
-}
-
-void ServerSocketAsync::ReceiveData()
-{
-	m_size = recv(m_socket, m_dataBuffer, SERVER_BUFFER_BYTE_SIZE, 0);
-	if (m_size == SOCKET_ERROR)
-	{
-		printf("Failed to receive message");
-		std::cin.get();
-		// environment exit? exit(-1);
-	}
-	m_received = true;
-}
-
-void ServerSocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
-{
-	while (!m_received) {}
-	GetData(p_dataBuffer, p_size);
-}
-
-bool ServerSocketAsync::GetData(char* p_dataBuffer, int& p_size)
-{
-	if (!m_received) return false;
-	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
-	m_received = false;
-	return true;
-}
-
-void ServerSocketAsync::SendData(char* p_data, int p_size)
+void ServerSocketAsync::SendData(const char* p_data, const int p_size) const
 {
 	CheckOpen(m_open);
-	send(m_clientSocket, p_data, p_size, 0);
+	send(m_socket, p_data, p_size, 0);
 }
 
 void ServerSocketAsync::Disconnect()
 {
 	CheckOpen(m_open);
-	closesocket(m_clientSocket);
+	closesocket(m_socket);
 	m_disconnected = true;
 }
 
@@ -234,7 +202,7 @@ void ServerSocketAsync::CloseServer()
 	{
 		Disconnect();
 	}
-	closesocket(m_socket);
+	closesocket(m_serverSocket);
 	WSACleanup();
 	m_open = false;
 }
