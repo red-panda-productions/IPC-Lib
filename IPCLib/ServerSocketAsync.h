@@ -33,7 +33,6 @@ private:
 
 	void Connect();
 
-	WSAData m_wsa;
 	SOCKET m_serverSocket = 0;
 	struct sockaddr_in m_client;
 	struct sockaddr_in m_server;

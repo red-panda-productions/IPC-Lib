@@ -21,6 +21,5 @@ public:
 	~ClientSocketAsync();
 
 private:
-	WSAData m_wsa;
 	struct sockaddr_in m_server;
 };

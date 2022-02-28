@@ -4,6 +4,11 @@
 #include <csetjmp>
 #include <csignal>
 
+/// <summary>
+/// Executes a statement, and fails if it takes too long
+/// </summary>
+/// <param name="secs"> The timeout parameter </param>
+/// <param name="stmt"> The statement to be executed </param>
 #define ASSERT_DURATION_LE(secs, stmt) { \
   std::promise<bool> completed; \
   auto stmt_future = completed.get_future(); \
@@ -49,6 +54,5 @@ inline void GenerateRandomString(char* dataBuffer, int stringLength)
 	{
 		dataBuffer[i] = static_cast<char>(65 + rand() % 60);
 	}
-
 	dataBuffer[stringLength] = '\0';
 }

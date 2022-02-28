@@ -29,4 +29,6 @@ protected:
 	bool m_disconnected = true;
 
 	SOCKET m_socket = -1;
+
+	WSAData m_wsa;
 };
