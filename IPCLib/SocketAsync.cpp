@@ -59,6 +59,7 @@ bool SocketAsync::GetData(char* p_dataBuffer, int& p_size)
 {
 	if (!m_received) return false;
 	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
+	if (m_size >= 0 && m_size < p_size) p_dataBuffer[m_size] = '\0';
 	m_received = false;
 	return true;
 }

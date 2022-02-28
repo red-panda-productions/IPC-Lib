@@ -102,17 +102,21 @@ TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 	// random send tests server -> client
 	for(int i = 0; i < 1000; i++)
 	{
-		GenerateRandomString(dataBuffer, 3 + rand() % (dataBufferSize - 4));
+		int length = 3 + rand() % (dataBufferSize - 4);
+		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		SendDataToServer(server, client2, dataBuffer, strlen(dataBuffer), late);
+		serverSend = SendDataToServer(server, client2, dataBuffer, length , late);
+		ASSERT_TRUE(serverSend);
 	}
 
 	// random send tests client -> server
 	for(int i = 0; i < 1000; i++)
 	{
-		GenerateRandomString(dataBuffer, 3 + rand() % (dataBufferSize - 4));
+		int length = 3 + rand() % (dataBufferSize - 4);
+		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		SendDataToClient(server, client2, dataBuffer, strlen(dataBuffer), late);
+		clientSend = SendDataToClient(server, client2, dataBuffer, length, late);
+		ASSERT_TRUE(clientSend);
 	}
 
 	server.CloseServer();

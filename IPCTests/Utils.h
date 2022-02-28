@@ -11,7 +11,8 @@ inline bool TestMessageEqual(const char* msg1, const char* msg2, int size)
 {
 	bool len1 = size == strlen(msg1);
 	if (!len1) return false;
-	bool len2 = size == strlen(msg2);
+	int length = strlen(msg2);
+	bool len2 = size == length;
 	if (!len2) return false;
 
 	for(int i = 0; i < size; i++)
