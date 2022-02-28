@@ -1,7 +1,6 @@
 #pragma once
-#include <gtest/gtest.h>
 #include <future>
-#include <csetjmp>
+#include <csetjmp> // is needed for ASSERT_DURATION_LE
 #include <csignal>
 
 /// <summary>

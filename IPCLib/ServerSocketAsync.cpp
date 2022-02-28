@@ -1,7 +1,7 @@
 #include "ServerSocketAsync.h"
 #include <WS2tcpip.h>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 #include <thread>
 
 /// <summary>
