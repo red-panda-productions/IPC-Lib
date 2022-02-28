@@ -1,9 +1,0 @@
-
-#define ACTION int
-#define STOPACTION -2
-#define NOACTION -1
-#define WRITEACTION 0
-#define READACTION 1
-#define DISCONNECTACTION 2
-#define CLOSESERVERACTION 3
-#define DECONSTRUCTACTION 4

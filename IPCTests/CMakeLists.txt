@@ -10,9 +10,9 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-
+set_tests_properties(${Tests} PROPERTIES TIMEOUT 2)
 add_executable(
-  IPCTests "Actions.h" "ClientWorkerThread.h" "ServerWorkerThread.h" "TestSerializer.h" "DualSocketTests.cpp")
+  IPCTests "AsyncSocketTest.cpp" "Utils.h")
 target_link_libraries(
   IPCTests #moet het zelfde zijn
   IPCLib
