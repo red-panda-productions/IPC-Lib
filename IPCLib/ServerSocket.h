@@ -2,10 +2,10 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "ipclib_export.h"
 #include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <iostream>
-#include <stdio.h>
 
+ /// <summary>
+ /// A class that represents a server that opens a socket
+ /// </summary>
 class IPCLIB_EXPORT ServerSocket
 {
 public:
