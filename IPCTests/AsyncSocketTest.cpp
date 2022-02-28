@@ -68,7 +68,7 @@ bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
 	ServerSocketAsync server; \
 	server.ConnectAsync(); \
 	ClientSocketAsync client; \
-	ASSERT_DURATION_LE(1, server.AwaitClientConnection()); \
+	ASSERT_DURATION_LE(1, server.AwaitClientConnection()) \
 
 
 
@@ -91,49 +91,53 @@ TEST(AsyncSocketTests, SendDataToClientTest)
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false)));
 }
 
-
-/// <summary>
-/// Tests a complete asynchronous socket system
-/// </summary>
-TEST(AsyncSocketTests, CompleteAsyncSocketTest)
+TEST(AsyncSocketTests, DisconnectTest)
 {
-	ServerSocketAsync server;
-	server.ConnectAsync();
-
-	ClientSocketAsync client;
-	server.AwaitClientConnection();
-
-	// client disconnect test
+	CONNECT();
 	server.Disconnect();
 	client.Disconnect();
+}
 
+TEST(AsyncSocketTests, TwoClientsTest)
+{
+	CONNECT();
+	server.Disconnect();
+	client.Disconnect();
 	server.ConnectAsync();
 	ClientSocketAsync client2;
-	server.AwaitClientConnection();
+	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
+}
+
+TEST(AsyncSocketTests, RandomSendToServerTests)
+{
+	CONNECT();
+	const int dataBufferSize = 512;
+	char dataBuffer[dataBufferSize] = { '\0' };
+
+	// random send tests server -> client
+	for (int i = 0; i < 1000; i++)
+	{
+		int length = 3 + rand() % (dataBufferSize - 4);
+		GenerateRandomString(dataBuffer, length);
+		bool late = rand() % 2 == 0;
+		bool serverSend = SendDataToServer(server, client, dataBuffer, length, late);
+		ASSERT_TRUE(serverSend);
+	}
+}
+
+TEST(AsyncSocketTests, RandomSendToClientTests)
+{
+	CONNECT();
 
 	const int dataBufferSize = 512;
 	char dataBuffer[dataBufferSize] = { '\0' };
-	
-	// random send tests server -> client
-	for(int i = 0; i < 1000; i++)
-	{
-		int length = 3 + rand() % (dataBufferSize - 4);
-		GenerateRandomString(dataBuffer, length);
-		bool late = rand() % 2 == 0;
-		bool serverSend = SendDataToServer(server, client2, dataBuffer, length , late);
-		ASSERT_TRUE(serverSend);
-	}
-
 	// random send tests client -> server
-	for(int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		int length = 3 + rand() % (dataBufferSize - 4);
 		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		bool clientSend = SendDataToClient(server, client2, dataBuffer, length, late);
+		bool clientSend = SendDataToClient(server, client, dataBuffer, length, late);
 		ASSERT_TRUE(clientSend);
 	}
-
-	server.CloseServer();
-	client2.Disconnect();
 }
