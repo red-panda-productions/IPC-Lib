@@ -8,6 +8,10 @@
 #define SERVER_BUFFER_BYTE_SIZE 512
 #endif
 
+/// <summary>
+/// A class that represents a server that can communicate with a client
+/// It can receive messages and connect asynchronously and send messages synchronously
+/// </summary>
 class IPCLIB_EXPORT ServerSocketAsync : public SocketAsync
 {
 public:

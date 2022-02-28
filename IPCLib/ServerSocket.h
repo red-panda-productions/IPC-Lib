@@ -3,6 +3,9 @@
 #include "ipclib_export.h"
 #include <WinSock2.h>
 
+ /// <summary>
+ /// A class that represents a server that opens a socket
+ /// </summary>
 class IPCLIB_EXPORT ServerSocket
 {
 public:

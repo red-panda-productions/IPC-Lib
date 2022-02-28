@@ -6,12 +6,18 @@
 #include <cstdio>
 #include <thread>
 
+/// <summary>
+/// Receive data asynchronously by spawning a thread
+/// </summary>
 void SocketAsync::ReceiveDataAsync()
 {
 	std::thread t(&SocketAsync::ReceiveData, this);
 	t.detach();
 }
 
+/// <summary>
+/// Receive data by waiting until data has been written on the socket
+/// </summary>
 void SocketAsync::ReceiveData()
 {
 	m_receiving = true;
@@ -26,6 +32,11 @@ void SocketAsync::ReceiveData()
 	m_receiving = false;
 }
 
+/// <summary>
+/// Awaits until data has been written to the socket
+/// </summary>
+/// <param name="p_dataBuffer"> The data buffer for storing the data </param>
+/// <param name="p_size"> The size of the buffer </param>
 void SocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
 {
 	if(!m_receiving)
@@ -38,6 +49,12 @@ void SocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
 	GetData(p_dataBuffer, p_size);
 }
 
+/// <summary>
+ /// Gets the data from the socket, but can receive no data if no data has been written
+ /// </summary>
+ /// <param name="p_dataBuffer"> The data buffer for storing the data </param>
+ /// <param name="p_size"> The size of the buffer </param>
+ /// <returns> If it received data or not </return>
 bool SocketAsync::GetData(char* p_dataBuffer, int& p_size)
 {
 	if (!m_received) return false;

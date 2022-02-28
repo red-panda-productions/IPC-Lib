@@ -5,6 +5,9 @@
 
 #define BUFFER_BYTE_SIZE 512
 
+/// <summary>
+/// A base class for ServerSocketAsync and ClientSocketAsync
+/// </summary>
 class IPCLIB_EXPORT SocketAsync
 {
 public:

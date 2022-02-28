@@ -2,9 +2,18 @@
 #include "ClientSocketAsync.h"
 #include <WS2tcpip.h>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 #include <thread>
 
+ /// <summary>
+ /// Connects a client to a server
+ /// </summary>
+ /// <param name="p_ip"> The IP adress of the server </param>
+ /// <param name="p_port"> The port of the server </param>
+ /// <param name="p_wsa"> WSAData from the client </param>
+ /// <param name="p_socket"> The socket of the client </param>
+ /// <param name="p_server"> The server information </param>
+ /// <param name="p_disconnected"> Disconnected bool of the client </param>
 void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, bool& p_disconnected)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
@@ -42,8 +51,8 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 /// <summary>
 /// Constructor of ClientSocket
 /// </summary>
-/// <param name="p_ip">Ip address of server</param>
-/// <param name="p_port">Port of server</param>
+/// <param name="p_ip"> Ip address of server </param>
+/// <param name="p_port"> Port of server </param>
 ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 {
 	ConnectToServer(p_ip, p_port,m_wsa,m_socket,m_server,m_disconnected);
@@ -98,18 +107,29 @@ ClientSocket::~ClientSocket()
 
 //--------------------------------------------------------------------- ClientSocketAsync.h -------------------------------------------------------
 
+/// <summary>
+/// Constructor of ClientSocketAsync
+/// </summary>
+/// <param name="p_ip"> IP address of the server </param>
+/// <param name="p_port"> The port of the server </param>
 ClientSocketAsync::ClientSocketAsync(PCWSTR p_ip, int p_port)
 {
 	ConnectToServer(p_ip, p_port, m_wsa, m_socket, m_server, m_disconnected);
 }
 
-
-
+/// <summary>
+/// Sends data over a socket to the server
+/// </summary>
+/// <param name="p_data"> Data that needs to be send </param>
+/// <param name="p_size"> The size of the data </param>
 void ClientSocketAsync::SendData(const char* p_data, const int p_size) const
 {
 	send(m_socket, p_data, p_size, 0);
 }
 
+/// <summary>
+/// Disconnects the client from the server
+/// </summary>
 void ClientSocketAsync::Disconnect()
 {
 	closesocket(m_socket);
@@ -117,6 +137,9 @@ void ClientSocketAsync::Disconnect()
 	m_disconnected = true;
 }
 
+/// <summary>
+/// Deconstructs the ClientSocketAsync class
+/// </summary>
 ClientSocketAsync::~ClientSocketAsync()
 {
 	if (m_disconnected) return;

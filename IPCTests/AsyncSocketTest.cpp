@@ -3,6 +3,15 @@
 #include "ServerSocketAsync.h"
 #include "Utils.h"
 
+/// <summary>
+/// Sends data from the client to the server
+/// </summary>
+/// <param name="p_server"> The server </param>
+/// <param name="p_client"> The client </param>
+/// <param name="p_message"> The message that needs to be send </param>
+/// <param name="p_messageLength"> The length of the message </param>
+/// <param name="p_lateData"> If the data should arrive late </param>
+/// <returns> Whether the test succeeded or failed </return>
 bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_lateData)
 {
 	p_server.ReceiveDataAsync();
@@ -23,7 +32,17 @@ bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
-
+/// <summary>
+/// The same as above, but sends data from server to client.
+///	We use the same function here as a normal program will not run a server and a client
+///	And if we wanted to use the same functions we would have to use virtual functions
+/// </summary>
+/// <param name="p_server"> The server </param>
+/// <param name="p_client"> The client </param>
+/// <param name="p_message"> The message that needs to be send </param>
+/// <param name="p_messageLength"> The length of the message </param>
+/// <param name="p_lateData"> If the data should arrive late </param>
+/// <returns> Whether the test succeeded or failed </return>
 bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_lateData)
 {
 	p_client.ReceiveDataAsync();
@@ -45,16 +64,10 @@ bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
-void GenerateRandomString(char* dataBuffer, int stringLength)
-{
-	for(int i = 0; i < stringLength; i++)
-	{
-		dataBuffer[i] = static_cast<char>(65 + rand() % 60);
-	}
 
-	dataBuffer[stringLength] = '\0';
-}
-
+/// <summary>
+/// Tests a complete asynchronous socket system
+/// </summary>
 TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 {
 	ServerSocketAsync server;
@@ -75,6 +88,14 @@ TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 	clientSend = SendDataToClient(server, client, "SENDDATATOCLIENT", 16, true);
 	ASSERT_TRUE(clientSend);
 
+	// client disconnect test
+	server.Disconnect();
+	client.Disconnect();
+
+	server.ConnectAsync();
+	ClientSocketAsync client2;
+	server.AwaitClientConnection();
+
 	const int dataBufferSize = 512;
 	char dataBuffer[dataBufferSize] = { '\0' };
 	
@@ -83,7 +104,7 @@ TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 	{
 		GenerateRandomString(dataBuffer, 3 + rand() % (dataBufferSize - 4));
 		bool late = rand() % 2 == 0;
-		SendDataToServer(server, client, dataBuffer, strlen(dataBuffer), late);
+		SendDataToServer(server, client2, dataBuffer, strlen(dataBuffer), late);
 	}
 
 	// random send tests client -> server
@@ -91,9 +112,9 @@ TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 	{
 		GenerateRandomString(dataBuffer, 3 + rand() % (dataBufferSize - 4));
 		bool late = rand() % 2 == 0;
-		SendDataToClient(server, client, dataBuffer, strlen(dataBuffer), late);
+		SendDataToClient(server, client2, dataBuffer, strlen(dataBuffer), late);
 	}
 
 	server.CloseServer();
-	client.Disconnect();
+	client2.Disconnect();
 }

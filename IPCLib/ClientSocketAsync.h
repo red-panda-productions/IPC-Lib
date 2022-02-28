@@ -4,10 +4,11 @@
 #include <WinSock2.h>
 #include "SocketAsync.h"
 
-#ifndef CLIENT_BUFFER_BYTE_SIZE 
-#define CLIENT_BUFFER_BYTE_SIZE 512
-#endif
 
+ /// <summary>
+ /// A class that represents a client that can communicate with a server
+ /// It can receive messages and connect asynchronously and send messages synchronously
+ /// </summary>
 class IPCLIB_EXPORT ClientSocketAsync : public SocketAsync
 {
 public:
