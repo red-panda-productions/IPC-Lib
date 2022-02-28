@@ -64,29 +64,44 @@ bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
+#define CONNECT() \
+	ServerSocketAsync server; \
+	server.ConnectAsync(); \
+	ClientSocketAsync client; \
+	ASSERT_DURATION_LE(1, server.AwaitClientConnection()); \
+
+
+
+TEST(AsyncSocketTests, ConnectTest)
+{
+	CONNECT();
+}
+
+TEST(AsyncSocketTests, SendDataToServerTest)
+{
+	CONNECT();
+
+	// standard send tests
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, false)));
+}
+
+TEST(AsyncSocketTests, SendDataToClientTest)
+{
+	CONNECT();
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false)));
+}
+
 
 /// <summary>
 /// Tests a complete asynchronous socket system
 /// </summary>
-TEST(CompleteAsyncSocketTest, AsyncSocketTests)
+TEST(AsyncSocketTests, CompleteAsyncSocketTest)
 {
 	ServerSocketAsync server;
 	server.ConnectAsync();
 
 	ClientSocketAsync client;
 	server.AwaitClientConnection();
-
-	// standard send tests
-	bool serverSend = SendDataToServer(server, client, "SENDDATATOSERVER", 16, false);
-	ASSERT_TRUE(serverSend);
-	bool clientSend = SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false);
-	ASSERT_TRUE(clientSend);
-
-	// standard send tests with waiting on data
-	serverSend = SendDataToServer(server, client, "SENDDATATOSERVER", 16, true);
-	ASSERT_TRUE(serverSend);
-	clientSend = SendDataToClient(server, client, "SENDDATATOCLIENT", 16, true);
-	ASSERT_TRUE(clientSend);
 
 	// client disconnect test
 	server.Disconnect();
@@ -105,7 +120,7 @@ TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 		int length = 3 + rand() % (dataBufferSize - 4);
 		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		serverSend = SendDataToServer(server, client2, dataBuffer, length , late);
+		bool serverSend = SendDataToServer(server, client2, dataBuffer, length , late);
 		ASSERT_TRUE(serverSend);
 	}
 
@@ -115,7 +130,7 @@ TEST(CompleteAsyncSocketTest, AsyncSocketTests)
 		int length = 3 + rand() % (dataBufferSize - 4);
 		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		clientSend = SendDataToClient(server, client2, dataBuffer, length, late);
+		bool clientSend = SendDataToClient(server, client2, dataBuffer, length, late);
 		ASSERT_TRUE(clientSend);
 	}
 

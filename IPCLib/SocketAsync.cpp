@@ -13,6 +13,7 @@ void SocketAsync::ReceiveDataAsync()
 {
 	std::thread t(&SocketAsync::ReceiveData, this);
 	t.detach();
+	m_receiving = true;
 }
 
 /// <summary>
@@ -20,7 +21,6 @@ void SocketAsync::ReceiveDataAsync()
 /// </summary>
 void SocketAsync::ReceiveData()
 {
-	m_receiving = true;
 	m_size = recv(m_socket, m_dataBuffer, BUFFER_BYTE_SIZE, 0);
 	if (m_size == SOCKET_ERROR)
 	{
