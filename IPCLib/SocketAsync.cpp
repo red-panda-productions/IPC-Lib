@@ -29,7 +29,6 @@ void SocketAsync::ReceiveData()
 		// environment exit? exit(-1);
 	}
 	m_received = true;
-	m_receiving = false;
 }
 
 /// <summary>
@@ -61,5 +60,6 @@ bool SocketAsync::GetData(char* p_dataBuffer, int& p_size)
 	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
 	if (m_size >= 0 && m_size < p_size) p_dataBuffer[m_size] = '\0';
 	m_received = false;
+	m_receiving = false;
 	return true;
 }
