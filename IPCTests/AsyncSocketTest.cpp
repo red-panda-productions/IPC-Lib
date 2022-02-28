@@ -32,6 +32,21 @@ bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
+bool MultipleSendDataToServer(int p_amount, ServerSocketAsync& p_server, ClientSocketAsync& p_client)
+{
+	const int dataBufferSize = 512;
+	char dataBuffer[dataBufferSize] = { '\0' };
+	for (int i = 0; i < p_amount; i++)
+	{
+		int length = 3 + rand() % (dataBufferSize - 4);
+		GenerateRandomString(dataBuffer, length);
+		bool late = rand() % 2 == 0;
+		bool serverSend = SendDataToServer(p_server, p_client, dataBuffer, length, late);
+		if (!serverSend) return false;
+	}
+	return true;
+}
+
 /// <summary>
 /// The same as above, but sends data from server to client.
 ///	We use the same function here as a normal program will not run a server and a client
@@ -62,6 +77,21 @@ bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
 	p_client.AwaitData(dataBuffer, dataBufferSize);
 
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
+}
+
+bool MultipleSendDataToClient(int p_amount, ServerSocketAsync& p_server, ClientSocketAsync& p_client)
+{
+	const int dataBufferSize = 512;
+	char dataBuffer[dataBufferSize] = { '\0' };
+	for (int i = 0; i < p_amount; i++)
+	{
+		int length = 3 + rand() % (dataBufferSize - 4);
+		GenerateRandomString(dataBuffer, length);
+		bool late = rand() % 2 == 0;
+		bool clientSend = SendDataToClient(p_server, p_client, dataBuffer, length, late);
+		if (!clientSend) return false;
+	}
+	return true;
 }
 
 #define CONNECT() \
@@ -111,33 +141,11 @@ TEST(AsyncSocketTests, TwoClientsTest)
 TEST(AsyncSocketTests, RandomSendToServerTests)
 {
 	CONNECT();
-	const int dataBufferSize = 512;
-	char dataBuffer[dataBufferSize] = { '\0' };
-
-	// random send tests server -> client
-	for (int i = 0; i < 1000; i++)
-	{
-		int length = 3 + rand() % (dataBufferSize - 4);
-		GenerateRandomString(dataBuffer, length);
-		bool late = rand() % 2 == 0;
-		bool serverSend = SendDataToServer(server, client, dataBuffer, length, late);
-		ASSERT_TRUE(serverSend);
-	}
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToServer(1000, server, client)));
 }
 
 TEST(AsyncSocketTests, RandomSendToClientTests)
 {
 	CONNECT();
-
-	const int dataBufferSize = 512;
-	char dataBuffer[dataBufferSize] = { '\0' };
-	// random send tests client -> server
-	for (int i = 0; i < 1000; i++)
-	{
-		int length = 3 + rand() % (dataBufferSize - 4);
-		GenerateRandomString(dataBuffer, length);
-		bool late = rand() % 2 == 0;
-		bool clientSend = SendDataToClient(server, client, dataBuffer, length, late);
-		ASSERT_TRUE(clientSend);
-	}
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToClient(1000, server, client)));
 }
