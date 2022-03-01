@@ -11,3 +11,5 @@ GENERATE_EXPORT_HEADER(IPCLib)
 
 message( ${CMAKE_BINARY_DIR}/exports)
 target_include_directories(IPCLib PUBLIC ${CMAKE_BINARY_DIR}/IPCLib)
+
+INSTALL(TARGETS IPCLib)
