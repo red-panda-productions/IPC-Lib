@@ -1,5 +1,7 @@
 project(IPCTests)
 
+set(INSTALL_GTEST OFF)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest

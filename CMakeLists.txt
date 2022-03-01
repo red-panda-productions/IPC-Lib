@@ -7,6 +7,6 @@ project ("IPCLib")
 
 # Include sub-projects.
 add_subdirectory ("IPCLib")
-add_subdirectory ("IPCTests" EXCLUDE_FROM_ALL)
+add_subdirectory ("IPCTests")
 
 enable_testing()
