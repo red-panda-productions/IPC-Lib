@@ -85,6 +85,7 @@ ServerSocketAsync::ServerSocketAsync(PCWSTR p_ip, int p_port, int p_connections)
 /// </summary>
 void ServerSocketAsync::ConnectAsync()
 {
+	m_connecting = true;
 	std::thread t(&ServerSocketAsync::Connect, this);
 	t.detach();
 }
@@ -104,13 +105,15 @@ void ServerSocketAsync::Connect()
 		// environment exit? exit(-1);
 	}
 	m_disconnected = false;
+	m_connecting = false;
 }
 
 /// <summary>
 /// Awaits until a client has connected to the server
 /// </summary>
-void ServerSocketAsync::AwaitClientConnection() const
+void ServerSocketAsync::AwaitClientConnection()
 {
+	if (!m_connecting) Connect();
 	while (m_disconnected) {}
 }
 

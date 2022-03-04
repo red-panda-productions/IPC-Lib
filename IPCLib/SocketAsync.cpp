@@ -40,9 +40,7 @@ void SocketAsync::AwaitData(char* p_dataBuffer, int p_size)
 {
 	if(!m_receiving)
 	{
-		printf("ReceiveData was not called");
-		std::cin.get();
-		// environment exit? exit(-1);
+		ReceiveDataAsync();
 	}
 	while (!m_received) {}
 	GetData(p_dataBuffer, p_size);

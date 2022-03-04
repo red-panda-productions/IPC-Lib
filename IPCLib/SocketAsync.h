@@ -2,10 +2,11 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "ipclib_export.h"
 #include <WinSock2.h>
+#include <stdexcept>
+
 
 #define BUFFER_BYTE_SIZE 512
 
-#define SOCKET_THROW(message) 
 
 /// <summary>
 /// A base class for ServerSocketAsync and ClientSocketAsync
