@@ -27,6 +27,8 @@ public:
 
 	void CloseServer();
 
+	bool Connected();
+
 	~ServerSocketAsync();
 
 private:

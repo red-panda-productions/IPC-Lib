@@ -158,3 +158,10 @@ ServerSocketAsync::~ServerSocketAsync()
 	if (!m_open) return;
 	CloseServer();
 }
+
+
+/// <returns> Whether the server is connected to a client </returns>
+bool ServerSocketAsync::Connected()
+{
+	return !m_disconnected;
+}
