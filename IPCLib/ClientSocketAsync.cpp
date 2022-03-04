@@ -2,7 +2,6 @@
 #include <WS2tcpip.h>
 #include <iostream>
 #include <cstdio>
-#include <thread>
 
  /// <summary>
  /// Connects a client to a server
