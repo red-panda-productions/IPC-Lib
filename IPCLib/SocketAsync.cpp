@@ -11,9 +11,9 @@
 /// </summary>
 void SocketAsync::ReceiveDataAsync()
 {
+	m_receiving = true;
 	std::thread t(&SocketAsync::ReceiveData, this);
 	t.detach();
-	m_receiving = true;
 }
 
 /// <summary>
@@ -40,7 +40,9 @@ void SocketAsync::AwaitData(char* p_dataBuffer, int p_size)
 {
 	if(!m_receiving)
 	{
-		ReceiveDataAsync();
+		ReceiveData();
+		GetData(p_dataBuffer, p_size);
+		return;
 	}
 	while (!m_received) {}
 	GetData(p_dataBuffer, p_size);
