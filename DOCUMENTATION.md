@@ -32,6 +32,10 @@ Checks if data has been received in the child thread. If data was received it wi
 
 Waits untill data is received from the client. Note that this function should ONLY be called after a ReceiveDataAsync() call, as otherwise the server will crash.
 
+## Connected()
+
+Checks if the server is connected to a client
+
 ## Disconnect
 
 Disconnects the current client from the server
