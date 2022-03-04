@@ -97,7 +97,6 @@ void ServerSocketAsync::Connect()
 {
 	CheckOpen(m_open);
 	int c = sizeof(struct sockaddr_in);
-
 	if ((m_socket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
 	{
 		printf("Failed to bind with client");
@@ -105,7 +104,6 @@ void ServerSocketAsync::Connect()
 		// environment exit? exit(-1);
 	}
 	m_disconnected = false;
-	m_connecting = false;
 }
 
 /// <summary>
@@ -113,8 +111,13 @@ void ServerSocketAsync::Connect()
 /// </summary>
 void ServerSocketAsync::AwaitClientConnection()
 {
-	if (!m_connecting) Connect();
-	while (m_disconnected) {}
+	if(m_connecting)
+	{
+		while (m_disconnected) {}
+		m_connecting = false;
+		return;
+	}
+	Connect();
 }
 
 /// <summary>
@@ -166,5 +169,9 @@ ServerSocketAsync::~ServerSocketAsync()
 /// <returns> Whether the server is connected to a client </returns>
 bool ServerSocketAsync::Connected()
 {
+	if(!m_disconnected)
+	{
+		m_connecting = false;
+	}
 	return !m_disconnected;
 }
