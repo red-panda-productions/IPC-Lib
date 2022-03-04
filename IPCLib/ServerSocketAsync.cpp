@@ -169,9 +169,7 @@ ServerSocketAsync::~ServerSocketAsync()
 /// <returns> Whether the server is connected to a client </returns>
 bool ServerSocketAsync::Connected()
 {
-	if(!m_disconnected)
-	{
-		m_connecting = false;
-	}
-	return !m_disconnected;
+	if (m_disconnected) return false;
+	m_connecting = false;
+	return true;
 }

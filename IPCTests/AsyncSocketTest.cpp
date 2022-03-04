@@ -10,11 +10,15 @@
 /// <param name="p_client"> The client </param>
 /// <param name="p_message"> The message that needs to be send </param>
 /// <param name="p_messageLength"> The length of the message </param>
+///	<param name="p_async"> If the message should be received asynchronously </param>
 /// <param name="p_lateData"> If the data should arrive late </param>
-/// <returns> Whether the test succeeded or failed </return>
-bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_lateData)
+/// <returns> Whether the test succeeded or failed </returns>
+bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
-	p_server.ReceiveDataAsync();
+	if(p_async)
+	{
+		p_server.ReceiveDataAsync();
+	}
 
 	char dataBuffer[512];
 	int dataBufferSize = 512;
@@ -38,7 +42,7 @@ bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
  /// <param name="p_amount"> The amount of tests </param>
  /// <param name="p_server"> The server </param>
  /// <param name="p_client"> The client </param>
- /// <returns> Whether the test succeeded </return>
+ /// <returns> Whether the test succeeded </returns>
 bool MultipleSendDataToServer(int p_amount, ServerSocketAsync& p_server, ClientSocketAsync& p_client)
 {
 	const int dataBufferSize = 512;
@@ -48,7 +52,8 @@ bool MultipleSendDataToServer(int p_amount, ServerSocketAsync& p_server, ClientS
 		int length = 3 + rand() % (dataBufferSize - 4);
 		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		bool serverSend = SendDataToServer(p_server, p_client, dataBuffer, length, late);
+		bool async = rand() % 2 == 0;
+		bool serverSend = SendDataToServer(p_server, p_client, dataBuffer, length, async, late);
 		if (!serverSend) return false;
 	}
 	return true;
@@ -64,10 +69,13 @@ bool MultipleSendDataToServer(int p_amount, ServerSocketAsync& p_server, ClientS
 /// <param name="p_message"> The message that needs to be send </param>
 /// <param name="p_messageLength"> The length of the message </param>
 /// <param name="p_lateData"> If the data should arrive late </param>
-/// <returns> Whether the test succeeded or failed </return>
-bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_lateData)
+/// <returns> Whether the test succeeded or failed </returns>
+bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
-	p_client.ReceiveDataAsync();
+	if(p_async)
+	{
+		p_client.ReceiveDataAsync();
+	}
 
 	char dataBuffer[512];
 	int dataBufferSize = 512;
@@ -102,7 +110,8 @@ bool MultipleSendDataToClient(int p_amount, ServerSocketAsync& p_server, ClientS
 		int length = 3 + rand() % (dataBufferSize - 4);
 		GenerateRandomString(dataBuffer, length);
 		bool late = rand() % 2 == 0;
-		bool clientSend = SendDataToClient(p_server, p_client, dataBuffer, length, late);
+		bool async = rand() % 2 == 0;
+		bool clientSend = SendDataToClient(p_server, p_client, dataBuffer, length, async, late);
 		if (!clientSend) return false;
 	}
 	return true;
@@ -117,6 +126,19 @@ bool MultipleSendDataToClient(int p_amount, ServerSocketAsync& p_server, ClientS
 	ClientSocketAsync client; \
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection()) \
 
+/// <summary>
+/// Tests an asynchronous connection method
+/// </summary>
+TEST(AsyncSocketTests, AsyncConnectTest)
+{
+	ServerSocketAsync server;
+	ASSERT_FALSE(server.Connected());
+	server.ConnectAsync();
+	ASSERT_FALSE(server.Connected());
+	ClientSocketAsync client;
+	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
+	ASSERT_TRUE(server.Connected());
+}
 
 /// <summary>
 /// Tests whether a connection can be established
@@ -127,23 +149,38 @@ TEST(AsyncSocketTests, ConnectTest)
 }
 
 /// <summary>
-/// Tests whether data can be send to a server
+/// Tests whether data can be send to a server and be received asynchronously
 /// </summary>
-TEST(AsyncSocketTests, SendDataToServerTest)
+TEST(AsyncSocketTests, SendDataToServerTestAsync)
 {
 	CONNECT();
-
-	// standard send tests
-	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, false)));
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, true, false)));
 }
 
 /// <summary>
-/// Tests whether data can be send to a client
+/// Tests whether data can be send to a server and be received synchronously
 /// </summary>
-TEST(AsyncSocketTests, SendDataToClientTest)
+TEST(AsyncSocketTests, SendDataToServerTestSynchronously)
 {
 	CONNECT();
-	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false)));
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, false, false)));
+}
+/// <summary>
+/// Tests whether data can be send to a client and be received asynchronously
+/// </summary>
+TEST(AsyncSocketTests, SendDataToClientTestAsync)
+{
+	CONNECT();
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, true, false)));
+}
+
+/// <summary>
+/// Tests whether data can be send to a client and be received synchronously
+/// </summary>
+TEST(AsyncSocketTests, SendDataToClientTestSychronously)
+{
+	CONNECT();
+	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
 }
 
 /// <summary>
