@@ -210,15 +210,22 @@ TEST(AsyncSocketTests, DisconnectedSend)
 	ASSERT_TRUE(server.Connected());
 	server.Disconnect();
 	client.Disconnect();
+	ASSERT_FALSE(server.Connected());
 	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
 	ASSERT_THROW(client.SendData("Hello", 6), std::runtime_error);
 }
 
+/// <summary>
+/// Makes sure the program throws when the server is not open, but you try to send data
+/// </summary>
+/// <param name=""></param>
+/// <param name=""></param>
 TEST(AsyncSocketTests, ClosedSend)
 {
 	CONNECT();
 	ASSERT_TRUE(server.Connected());
 	server.CloseServer();
+	ASSERT_FALSE(server.Connected());
 	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
 }
 
