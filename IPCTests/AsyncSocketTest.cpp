@@ -184,6 +184,45 @@ TEST(AsyncSocketTests, SendDataToClientTestSychronously)
 }
 
 /// <summary>
+/// Makes sure the program throws when there is no connection to a client, but you try to send data
+/// </summary>
+TEST(AsyncSocketTests, NoConnectionSendServer)
+{
+	ServerSocketAsync server;
+	ASSERT_FALSE(server.Connected());
+	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
+}
+
+/// <summary>
+/// Makes sure the program throws when there is no connection to a server, but you try to send data
+/// </summary>
+TEST(AsyncSocketTests, NoConnectionClient)
+{
+	ASSERT_THROW(ClientSocketAsync client, std::runtime_error);
+}
+
+/// <summary>
+/// Makes sure the program throws when there is no connection to a client, but you try to send data
+/// </summary>
+TEST(AsyncSocketTests, DisconnectedSend)
+{
+	CONNECT();
+	ASSERT_TRUE(server.Connected());
+	server.Disconnect();
+	client.Disconnect();
+	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
+	ASSERT_THROW(client.SendData("Hello", 6), std::runtime_error);
+}
+
+TEST(AsyncSocketTests, ClosedSend)
+{
+	CONNECT();
+	ASSERT_TRUE(server.Connected());
+	server.CloseServer();
+	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
+}
+
+/// <summary>
 /// Tests whether a server and client can gracefully disconnect
 /// </summary>
 TEST(AsyncSocketTests, DisconnectTest)
