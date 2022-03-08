@@ -3,20 +3,14 @@
 #include <iostream>
 #include <cstdio>
 #include <thread>
+#include <stdexcept>
 
 /// <summary>
 /// Checks if the server is still open
 /// </summary>
 /// <param name="open"></param>
-void CheckOpen(bool p_open)
-{
-	if (!p_open)
-	{
-		printf("Server was closed");
-		std::cin.get();
-		// environment exit? exit(-1);
-	}
-}
+#define CHECKOPEN() if(!m_open) throw std::runtime_error("The server was closed")
+#define CHECKCONNECTED() if(m_disconnected) throw std::runtime_error("The server was not connected to a client")
 
 /// <summary>
 /// Starts the server
@@ -95,7 +89,7 @@ void ServerSocketAsync::ConnectAsync()
 /// </summary>
 void ServerSocketAsync::Connect()
 {
-	CheckOpen(m_open);
+	CHECKOPEN();
 	int c = sizeof(struct sockaddr_in);
 	if ((m_socket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
 	{
@@ -127,7 +121,8 @@ void ServerSocketAsync::AwaitClientConnection()
 /// <param name="p_size"> The size of the data </param>
 void ServerSocketAsync::SendData(const char* p_data, const int p_size) const
 {
-	CheckOpen(m_open);
+	CHECKOPEN();
+	CHECKCONNECTED();
 	send(m_socket, p_data, p_size, 0);
 }
 
@@ -136,7 +131,7 @@ void ServerSocketAsync::SendData(const char* p_data, const int p_size) const
 /// </summary>
 void ServerSocketAsync::Disconnect()
 {
-	CheckOpen(m_open);
+	CHECKOPEN();
 	closesocket(m_socket);
 	m_disconnected = true;
 }
@@ -146,7 +141,7 @@ void ServerSocketAsync::Disconnect()
 /// </summary>
 void ServerSocketAsync::CloseServer()
 {
-	CheckOpen(m_open);
+	CHECKOPEN();
 	if (!m_disconnected)
 	{
 		Disconnect();
