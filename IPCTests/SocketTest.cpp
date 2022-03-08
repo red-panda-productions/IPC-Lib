@@ -100,7 +100,7 @@ bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char
  /// <param name="p_amount"> The amount of tests </param>
  /// <param name="p_server"> The server </param>
  /// <param name="p_client"> The client </param>
- /// <returns> Whether the test succeeded </return>
+ /// <returns> Whether the test succeeded </returns>
 bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
 	const int dataBufferSize = 512;
@@ -129,7 +129,7 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
 /// <summary>
 /// Tests an asynchronous connection method
 /// </summary>
-TEST(AsyncSocketTests, AsyncConnectTest)
+TEST(SocketTests, AsyncConnectTest)
 {
 	ServerSocket server;
 	ASSERT_FALSE(server.Connected());
@@ -143,7 +143,7 @@ TEST(AsyncSocketTests, AsyncConnectTest)
 /// <summary>
 /// Tests whether a connection can be established
 /// </summary>
-TEST(AsyncSocketTests, ConnectTest)
+TEST(SocketTests, ConnectTest)
 {
 	CONNECT();
 }
@@ -151,7 +151,7 @@ TEST(AsyncSocketTests, ConnectTest)
 /// <summary>
 /// Tests whether data can be send to a server and be received asynchronously
 /// </summary>
-TEST(AsyncSocketTests, SendDataToServerTestAsync)
+TEST(SocketTests, SendDataToServerTestAsync)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, true, false)));
@@ -160,7 +160,7 @@ TEST(AsyncSocketTests, SendDataToServerTestAsync)
 /// <summary>
 /// Tests whether data can be send to a server and be received synchronously
 /// </summary>
-TEST(AsyncSocketTests, SendDataToServerTestSynchronously)
+TEST(SocketTests, SendDataToServerTestSynchronously)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, false, false)));
@@ -168,7 +168,7 @@ TEST(AsyncSocketTests, SendDataToServerTestSynchronously)
 /// <summary>
 /// Tests whether data can be send to a client and be received asynchronously
 /// </summary>
-TEST(AsyncSocketTests, SendDataToClientTestAsync)
+TEST(SocketTests, SendDataToClientTestAsync)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, true, false)));
@@ -177,7 +177,7 @@ TEST(AsyncSocketTests, SendDataToClientTestAsync)
 /// <summary>
 /// Tests whether data can be send to a client and be received synchronously
 /// </summary>
-TEST(AsyncSocketTests, SendDataToClientTestSychronously)
+TEST(SocketTests, SendDataToClientTestSychronously)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
@@ -186,7 +186,7 @@ TEST(AsyncSocketTests, SendDataToClientTestSychronously)
 /// <summary>
 /// Makes sure the program throws when there is no connection to a client, but you try to send data
 /// </summary>
-TEST(AsyncSocketTests, NoConnectionSendServer)
+TEST(SocketTests, NoConnectionSendServer)
 {
 	ServerSocket server;
 	ASSERT_FALSE(server.Connected());
@@ -196,7 +196,7 @@ TEST(AsyncSocketTests, NoConnectionSendServer)
 /// <summary>
 /// Makes sure the program throws when there is no connection to a server, but you try to send data
 /// </summary>
-TEST(AsyncSocketTests, NoConnectionClient)
+TEST(SocketTests, NoConnectionClient)
 {
 	ASSERT_THROW(ClientSocket client, std::runtime_error);
 }
@@ -204,7 +204,7 @@ TEST(AsyncSocketTests, NoConnectionClient)
 /// <summary>
 /// Makes sure the program throws when there is no connection to a client, but you try to send data
 /// </summary>
-TEST(AsyncSocketTests, DisconnectedSend)
+TEST(SocketTests, DisconnectedSend)
 {
 	CONNECT();
 	ASSERT_TRUE(server.Connected());
@@ -220,7 +220,7 @@ TEST(AsyncSocketTests, DisconnectedSend)
 /// </summary>
 /// <param name=""></param>
 /// <param name=""></param>
-TEST(AsyncSocketTests, ClosedSend)
+TEST(SocketTests, ClosedSend)
 {
 	CONNECT();
 	ASSERT_TRUE(server.Connected());
@@ -232,7 +232,7 @@ TEST(AsyncSocketTests, ClosedSend)
 /// <summary>
 /// Tests whether a server and client can gracefully disconnect
 /// </summary>
-TEST(AsyncSocketTests, DisconnectTest)
+TEST(SocketTests, DisconnectTest)
 {
 	CONNECT();
 	server.Disconnect();
@@ -242,7 +242,7 @@ TEST(AsyncSocketTests, DisconnectTest)
 /// <summary>
 /// Tests whether a server can connect to 2 clients
 /// </summary>
-TEST(AsyncSocketTests, TwoClientsTest)
+TEST(SocketTests, TwoClientsTest)
 {
 	CONNECT();
 	server.Disconnect();
@@ -255,7 +255,7 @@ TEST(AsyncSocketTests, TwoClientsTest)
 /// <summary>
 /// Tests if a bunch of random data can be send to the server
 /// </summary>
-TEST(AsyncSocketTests, RandomSendToServerTests)
+TEST(SocketTests, RandomSendToServerTests)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToServer(1000, server, client)));
@@ -264,7 +264,7 @@ TEST(AsyncSocketTests, RandomSendToServerTests)
 /// <summary>
 /// Tests if a bunch of random data can be send to the client
 /// </summary>
-TEST(AsyncSocketTests, RandomSendToClientTests)
+TEST(SocketTests, RandomSendToClientTests)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToClient(1000, server, client)));

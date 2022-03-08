@@ -1,10 +1,10 @@
 # Documentation
 This is the documentation of the IPCLib, the layout of this document is the following:
-- ServerSocketAsync.h
-- ClientSocketAsync.h
+- ServerSocket
+- ClientSocket
 - Setting up a connection and sending data
 
-# ServerSocketAsync.h
+# ServerSocket
 
 A class that represents the serverside of a socket connection. It has functions to asynchronously connect and receive data from a client, and a synchronous function to send data to a client.
 
@@ -45,7 +45,7 @@ Disconnects the current client from the server
 Closes the server, and disconnects any client that is connected
 
 
-# ClientSocketAsync
+# ClientSocket
 
 A class that represents the clientside of a socket connection. It has functions to asynchronously connect and receive data from a server, and a synchronous function to send data to a server. Note that the client will to connect to the server in the constructor, and can't connect if no server exists.
 
@@ -77,7 +77,7 @@ This section will give a simple example of setting up a connection between a ser
 ## Server side
 
 ```
-  ServerSocketAsync server;           // creates the server on localhost
+  ServerSocket server;           // creates the server on localhost
   server.ConnectAsync();              // asynchronously wait on a client connection
   server.AwaitClientConnection();     // wait untill a client is connected
   server.SendData("Hello Client",12); // sends data to the client
@@ -90,7 +90,7 @@ This section will give a simple example of setting up a connection between a ser
 ## Client side
 
 ```
-  ClientSocketAsync client;           // creates the client and connects to localhost
+  ClientSocket client;           // creates the client and connects to localhost
   client.SendData("Hello Server",12); // sends data to the server
   client.ReceiveDataAsync();          // asynchronously receives data from the server
   char buffer[50];                    // set up a buffer for the data
