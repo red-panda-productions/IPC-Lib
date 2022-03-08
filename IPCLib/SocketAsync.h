@@ -3,7 +3,9 @@
 #include "ipclib_export.h"
 #include <WinSock2.h>
 
+
 #define BUFFER_BYTE_SIZE 512
+
 
 /// <summary>
 /// A base class for ServerSocketAsync and ClientSocketAsync
@@ -13,9 +15,9 @@ class IPCLIB_EXPORT SocketAsync
 public:
 	void ReceiveDataAsync();
 
-	void AwaitData(char* p_dataBuffer, int& p_size);
+	void AwaitData(char* p_dataBuffer, int p_size);
 
-	bool GetData(char* p_dataBuffer, int& p_size);
+	bool GetData(char* p_dataBuffer, int p_size);
 
 private:
 	void ReceiveData();

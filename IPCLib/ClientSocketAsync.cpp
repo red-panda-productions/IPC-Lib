@@ -2,7 +2,11 @@
 #include <WS2tcpip.h>
 #include <iostream>
 #include <cstdio>
-#include <thread>
+#include <stdexcept>
+#include <string>
+#include <sstream>
+
+#define CHECKCONNECTED() if(m_disconnected) throw std::runtime_error("The client was not connected to a server")
 
  /// <summary>
  /// Connects a client to a server
@@ -17,16 +21,16 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
 	{
-		printf("Failed. Error Code : %d", WSAGetLastError());
-		std::cin.get();
-		// environment exit? exit(-1);
+		std::ostringstream oss;
+		oss << "Failed to initialize WSA. Error code: " << WSAGetLastError();
+		throw std::runtime_error(oss.str());
 	}
 
 	if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-		printf("Could not create socket : %d", WSAGetLastError());
-		std::cin.get();
-		// environment exit? exit(-1);
+		std::ostringstream oss;
+		oss << "Could not create socket. Error code: " << WSAGetLastError();
+		throw std::runtime_error(oss.str());
 	}
 
 	InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
@@ -36,10 +40,9 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 	auto c = connect(p_socket, (struct sockaddr*)&p_server, sizeof(p_server));
 	if (c < 0)
 	{
-		puts("connect error");
-		printf("%d", c);
-		std::cin.get();
-		// environment exit? exit(-1);
+		std::ostringstream oss;
+		oss << "Connection error. Error code: " << WSAGetLastError();
+		throw std::runtime_error(oss.str());
 	}
 
 	p_disconnected = false;
@@ -64,6 +67,7 @@ ClientSocketAsync::ClientSocketAsync(PCWSTR p_ip, int p_port)
 /// <param name="p_size"> The size of the data </param>
 void ClientSocketAsync::SendData(const char* p_data, const int p_size) const
 {
+	CHECKCONNECTED();
 	send(m_socket, p_data, p_size, 0);
 }
 

@@ -19,13 +19,15 @@ public:
 
 	void ConnectAsync();
 
-	void AwaitClientConnection() const;
+	void AwaitClientConnection();
 
 	void SendData(const char* p_data, const int p_size) const;
 
 	void Disconnect();
 
 	void CloseServer();
+
+	bool Connected();
 
 	~ServerSocketAsync();
 
@@ -38,4 +40,5 @@ private:
 	struct sockaddr_in m_server;
 
 	bool m_open;
+	bool m_connecting;
 };

@@ -11,9 +11,9 @@
 /// </summary>
 void SocketAsync::ReceiveDataAsync()
 {
+	m_receiving = true;
 	std::thread t(&SocketAsync::ReceiveData, this);
 	t.detach();
-	m_receiving = true;
 }
 
 /// <summary>
@@ -36,13 +36,13 @@ void SocketAsync::ReceiveData()
 /// </summary>
 /// <param name="p_dataBuffer"> The data buffer for storing the data </param>
 /// <param name="p_size"> The size of the buffer </param>
-void SocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
+void SocketAsync::AwaitData(char* p_dataBuffer, int p_size)
 {
 	if(!m_receiving)
 	{
-		printf("ReceiveData was not called");
-		std::cin.get();
-		// environment exit? exit(-1);
+		ReceiveData();
+		GetData(p_dataBuffer, p_size);
+		return;
 	}
 	while (!m_received) {}
 	GetData(p_dataBuffer, p_size);
@@ -54,7 +54,7 @@ void SocketAsync::AwaitData(char* p_dataBuffer, int& p_size)
  /// <param name="p_dataBuffer"> The data buffer for storing the data </param>
  /// <param name="p_size"> The size of the buffer </param>
  /// <returns> If it received data or not </return>
-bool SocketAsync::GetData(char* p_dataBuffer, int& p_size)
+bool SocketAsync::GetData(char* p_dataBuffer, int p_size)
 {
 	if (!m_received) return false;
 	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
