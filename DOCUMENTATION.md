@@ -47,7 +47,7 @@ Closes the server, and disconnects any client that is connected
 
 # ClientSocketAsync
 
-A class that represents the clientside of a socket connection. It has functions to asynchronously connect and receive data from a server, and a synchronous function to send data to a server. Note that the client will to connect to the server in the constructor, and can't connect if no server exists.
+A class that represents the clientside of a socket connection. It has functions to asynchronously connect and receive data from a server, and a synchronous function to send data to a server. Note that the client will connect to the server in the constructor, and can't connect if no server exists.
 
 ## SendData
 
