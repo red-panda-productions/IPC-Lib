@@ -6,9 +6,7 @@
 #include <cstdio>
 #include <thread>
 
-/// <summary>
-/// Receive data asynchronously by spawning a thread
-/// </summary>
+/// @brief Receive data asynchronously by spawning a thread
 void Socket::ReceiveDataAsync()
 {
 	m_receiving = true;
@@ -16,12 +14,10 @@ void Socket::ReceiveDataAsync()
 	t.detach();
 }
 
-/// <summary>
-/// Receive data by waiting until data has been written on the socket
-/// </summary>
+/// @brief Receive data by waiting until data has been written on the socket
 void Socket::ReceiveData()
 {
-	m_size = recv(m_socket, m_dataBuffer, BUFFER_BYTE_SIZE, 0);
+	m_size = recv(m_socket, m_dataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
 	if (m_size == SOCKET_ERROR)
 	{
 		printf("Failed to receive message");
@@ -31,11 +27,9 @@ void Socket::ReceiveData()
 	m_received = true;
 }
 
-/// <summary>
-/// Awaits until data has been written to the socket
-/// </summary>
-/// <param name="p_dataBuffer"> The data buffer for storing the data </param>
-/// <param name="p_size"> The size of the buffer </param>
+/// @brief				Awaits until data has been written to the socket
+/// @param p_dataBuffer The data buffer for storing the data
+/// @param p_size		The size of the buffer
 void Socket::AwaitData(char* p_dataBuffer, int p_size)
 {
 	if(!m_receiving)
@@ -48,12 +42,10 @@ void Socket::AwaitData(char* p_dataBuffer, int p_size)
 	GetData(p_dataBuffer, p_size);
 }
 
-/// <summary>
- /// Gets the data from the socket, but can receive no data if no data has been written
- /// </summary>
- /// <param name="p_dataBuffer"> The data buffer for storing the data </param>
- /// <param name="p_size"> The size of the buffer </param>
- /// <returns> If it received data or not </return>
+/// @brief				Gets the data from the socket, but can receive no data if no data has been written
+/// @param p_dataBuffer The data buffer for storing the data
+/// @param p_size		The size of the buffer
+/// @return				If it received data or not
 bool Socket::GetData(char* p_dataBuffer, int p_size)
 {
 	if (!m_received) return false;
