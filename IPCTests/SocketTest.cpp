@@ -3,16 +3,14 @@
 #include "ServerSocket.h"
 #include "Utils.h"
 
-/// <summary>
-/// Sends data from the client to the server
-/// </summary>
-/// <param name="p_server"> The server </param>
-/// <param name="p_client"> The client </param>
-/// <param name="p_message"> The message that needs to be send </param>
-/// <param name="p_messageLength"> The length of the message </param>
-///	<param name="p_async"> If the message should be received asynchronously </param>
-/// <param name="p_lateData"> If the data should arrive late </param>
-/// <returns> Whether the test succeeded or failed </returns>
+/// @brief					Sends data from the client to the server
+/// @param p_server			The server
+/// @param p_client			The client
+/// @param p_message		The message that needs to be send
+/// @param p_messageLength  The length of the message
+/// @param p_async			If the message should be received asynchronously
+/// @param p_lateData		If the data should arrive late
+/// @return					Whether the test succeeded or failed
 bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
 	if(p_async)
@@ -36,13 +34,11 @@ bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
-/// <summary>
- /// Tests a lot of random strings that are send to the server
- /// </summary>
- /// <param name="p_amount"> The amount of tests </param>
- /// <param name="p_server"> The server </param>
- /// <param name="p_client"> The client </param>
- /// <returns> Whether the test succeeded </returns>
+/// @brief			Tests a lot of random strings that are send to the server
+/// @param p_amount The amount of tests
+/// @param p_server The server
+/// @param p_client The client 
+/// @return			Whether the test succeeded
 bool MultipleSendDataToServer(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
 	const int dataBufferSize = 512;
@@ -59,17 +55,16 @@ bool MultipleSendDataToServer(int p_amount, ServerSocket& p_server, ClientSocket
 	return true;
 }
 
-/// <summary>
-/// The same as above, but sends data from server to client.
-///	We use the same function here as a normal program will not run a server and a client
-///	And if we wanted to use the same functions we would have to use virtual functions
-/// </summary>
-/// <param name="p_server"> The server </param>
-/// <param name="p_client"> The client </param>
-/// <param name="p_message"> The message that needs to be send </param>
-/// <param name="p_messageLength"> The length of the message </param>
-/// <param name="p_lateData"> If the data should arrive late </param>
-/// <returns> Whether the test succeeded or failed </returns>
+/// @brief					The same as above, but sends data from server to client.
+///							We use the same function here as a normal program will not run a server and a client
+///							And if we wanted to use the same functions we would have to use virtual functions
+/// @param p_server			The server
+/// @param p_client			The client
+/// @param p_message		The message that needs to be send
+/// @param p_messageLength  The length of the message
+/// @param p_async			If the data should be received asynchronously
+/// @param p_lateData		If the data should arrive late
+/// @return					Whether the test failed or succeeded
 bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
 	if(p_async)
@@ -94,13 +89,11 @@ bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char
 	return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
- /// <summary>
- /// Tests a lot of random strings that are send to the client
- /// </summary>
- /// <param name="p_amount"> The amount of tests </param>
- /// <param name="p_server"> The server </param>
- /// <param name="p_client"> The client </param>
- /// <returns> Whether the test succeeded </returns>
+/// @brief			Tests a lot of random strings that are send to the client
+/// @param p_amount The amount of tests
+/// @param p_server The server
+/// @param p_client The client
+/// @return			Whether the test succeeded
 bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
 	const int dataBufferSize = 512;
@@ -117,18 +110,14 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
 	return true;
 }
 
-/// <summary>
-/// Connects a client and a server
-/// </summary>
+/// @brief Connects a client and a server
 #define CONNECT() \
 	ServerSocket server; \
 	server.ConnectAsync(); \
 	ClientSocket client; \
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection()) \
 
-/// <summary>
-/// Tests an asynchronous connection method
-/// </summary>
+/// @brief Tests an asynchronous connection method
 TEST(SocketTests, AsyncConnectTest)
 {
 	ServerSocket server;
@@ -140,52 +129,41 @@ TEST(SocketTests, AsyncConnectTest)
 	ASSERT_TRUE(server.Connected());
 }
 
-/// <summary>
-/// Tests whether a connection can be established
-/// </summary>
+/// @brief Tests whether a connection can be established
 TEST(SocketTests, ConnectTest)
 {
 	CONNECT();
 }
 
-/// <summary>
-/// Tests whether data can be send to a server and be received asynchronously
-/// </summary>
+/// @brief Tests whether data can be send to a server and be received asynchronously
 TEST(SocketTests, SendDataToServerTestAsync)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, true, false)));
 }
 
-/// <summary>
-/// Tests whether data can be send to a server and be received synchronously
-/// </summary>
+/// @brief Tests whether data can be send to a server and be received synchronously
 TEST(SocketTests, SendDataToServerTestSynchronously)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToServer(server, client, "SENDDATATOSERVER", 16, false, false)));
 }
-/// <summary>
-/// Tests whether data can be send to a client and be received asynchronously
-/// </summary>
+
+/// @brief Tests whether data can be send to a client and be received asynchronously
 TEST(SocketTests, SendDataToClientTestAsync)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, true, false)));
 }
 
-/// <summary>
-/// Tests whether data can be send to a client and be received synchronously
-/// </summary>
+/// @brief Tests whether data can be send to a client and be received synchronously
 TEST(SocketTests, SendDataToClientTestSychronously)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
 }
 
-/// <summary>
-/// Makes sure the program throws when there is no connection to a client, but you try to send data
-/// </summary>
+/// @brief Makes sure the program throws when there is no connection to a client, but you try to send data
 TEST(SocketTests, NoConnectionSendServer)
 {
 	ServerSocket server;
@@ -193,17 +171,13 @@ TEST(SocketTests, NoConnectionSendServer)
 	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
 }
 
-/// <summary>
-/// Makes sure the program throws when there is no connection to a server, but you try to send data
-/// </summary>
+/// @brief Makes sure the program throws when there is no connection to a server, but you try to send data
 TEST(SocketTests, NoConnectionClient)
 {
 	ASSERT_THROW(ClientSocket client, std::runtime_error);
 }
 
-/// <summary>
-/// Makes sure the program throws when there is no connection to a client, but you try to send data
-/// </summary>
+/// @brief Makes sure the program throws when there is no connection to a client, but you try to send data
 TEST(SocketTests, DisconnectedSend)
 {
 	CONNECT();
@@ -215,11 +189,7 @@ TEST(SocketTests, DisconnectedSend)
 	ASSERT_THROW(client.SendData("Hello", 6), std::runtime_error);
 }
 
-/// <summary>
-/// Makes sure the program throws when the server is not open, but you try to send data
-/// </summary>
-/// <param name=""></param>
-/// <param name=""></param>
+/// @brief Makes sure the program throws when the server is not open, but you try to send data
 TEST(SocketTests, ClosedSend)
 {
 	CONNECT();
@@ -229,9 +199,7 @@ TEST(SocketTests, ClosedSend)
 	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
 }
 
-/// <summary>
-/// Tests whether a server and client can gracefully disconnect
-/// </summary>
+/// @brief Tests whether a server and client can gracefully disconnect
 TEST(SocketTests, DisconnectTest)
 {
 	CONNECT();
@@ -239,9 +207,7 @@ TEST(SocketTests, DisconnectTest)
 	client.Disconnect();
 }
 
-/// <summary>
-/// Tests whether a server can connect to 2 clients
-/// </summary>
+/// @brief Tests whether a server can connect to 2 clients
 TEST(SocketTests, TwoClientsTest)
 {
 	CONNECT();
@@ -252,18 +218,14 @@ TEST(SocketTests, TwoClientsTest)
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
 }
 
-/// <summary>
-/// Tests if a bunch of random data can be send to the server
-/// </summary>
+/// @brief Tests if a bunch of random data can be send to the server
 TEST(SocketTests, RandomSendToServerTests)
 {
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToServer(1000, server, client)));
 }
 
-/// <summary>
-/// Tests if a bunch of random data can be send to the client
-/// </summary>
+/// @brief Tests if a bunch of random data can be send to the client
 TEST(SocketTests, RandomSendToClientTests)
 {
 	CONNECT();

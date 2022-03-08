@@ -5,25 +5,22 @@
 #include <thread>
 #include <stdexcept>
 
-/// <summary>
-/// Checks if the server is still open
-/// </summary>
-/// <param name="open"></param>
+/// @brief Checks if the server is still open
 #define CHECKOPEN() if(!m_open) throw std::runtime_error("The server was closed")
-#define CHECKCONNECTED() if(m_disconnected) throw std::runtime_error("The server was not connected to a client")
 
-/// <summary>
-/// Starts the server
-/// </summary>
-/// <param name="p_ip"> The IP adress to start the server on </param>
-/// <param name="p_port"> The port of the server </param>
-/// <param name="p_connections"> The maximum amount of allowed (queued) connections </param>
-/// <param name="p_wsa"> The WSAData of th server </param>
-/// <param name="p_socket"> The socket of the server </param>
-/// <param name="p_server"> The info of the server </param>
-/// <param name="p_client"> The info of the client (only for initialization) </param>
-/// <param name="p_disconnected"> The disconnected bool of the server </param>
-/// <param name="p_open"> The open bool of the server </param>
+/// @brief Checks if the server is still connected
+ #define CHECKCONNECTED() if(m_disconnected) throw std::runtime_error("The server was not connected to a client")
+
+/// @brief					Starts the server
+/// @param  p_ip			The IP adress to start the server on
+/// @param  p_port			The port of the server
+/// @param  p_connections	The maximum amount of allowed (queued) connections
+/// @param  p_wsa			The WSAData of th server
+/// @param  p_socket		The socket of the server
+/// @param  p_server		The info of the server 
+/// @param  p_client		The info of the client (only for initialization)
+/// @param  p_disconnected  The disconnected bool of the server
+/// @param  p_open			The open bool of the server
 void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, sockaddr_in& p_client, bool& p_disconnected, bool& p_open)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
@@ -61,22 +58,19 @@ void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOC
 	p_open = true;
 }
 
+
 // ----------------------------------------------- ServerSocketAsync -----------------------------------------------
 
- /// <summary>
- /// The constructor of ServerSocketAsync
- /// </summary>
- /// <param name="p_ip"> The IP adress of the server </param>
- /// <param name="p_port"> The port of the server </param>
- /// <param name="p_connections"> The maximum amount of (queued) connections </param>
+/// @brief			      The constructor of ServerSocketAsync
+/// @param  p_ip		  The IP adress of the server
+/// @param  p_port		  The port of the server
+/// @param  p_connections The maximum amount of (queued) connections
 ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 {
 	StartServer(p_ip, p_port, p_connections, m_wsa, m_serverSocket, m_server, m_client, m_disconnected, m_open);
 }
 
-/// <summary>
-/// Connects the server to a client asynchronously
-/// </summary>
+/// @brief Connects the server to a client asynchronously
 void ServerSocket::ConnectAsync()
 {
 	m_connecting = true;
@@ -84,9 +78,7 @@ void ServerSocket::ConnectAsync()
 	t.detach();
 }
 
-/// <summary>
-/// Connects the server to a client by waiting on a connection
-/// </summary>
+/// @brief Connects the server to a client by waiting on a connection
 void ServerSocket::Connect()
 {
 	CHECKOPEN();
@@ -100,9 +92,7 @@ void ServerSocket::Connect()
 	m_disconnected = false;
 }
 
-/// <summary>
-/// Awaits until a client has connected to the server
-/// </summary>
+/// @brief Awaits until a client has connected to the server
 void ServerSocket::AwaitClientConnection()
 {
 	if(m_connecting)
@@ -114,11 +104,9 @@ void ServerSocket::AwaitClientConnection()
 	Connect();
 }
 
-/// <summary>
-/// Sends data to a client
-/// </summary>
-/// <param name="p_data"> The data that needs to be send </param>
-/// <param name="p_size"> The size of the data </param>
+/// @brief			Sends data to a client
+/// @param  p_data	The data that needs to be send
+/// @param  p_size  The size of the data
 void ServerSocket::SendData(const char* p_data, const int p_size) const
 {
 	CHECKOPEN();
@@ -126,9 +114,7 @@ void ServerSocket::SendData(const char* p_data, const int p_size) const
 	send(m_socket, p_data, p_size, 0);
 }
 
-/// <summary>
-/// Disconnects the server from the client
-/// </summary>
+/// @brief Disconnects the server from the client
 void ServerSocket::Disconnect()
 {
 	CHECKOPEN();
@@ -136,9 +122,7 @@ void ServerSocket::Disconnect()
 	m_disconnected = true;
 }
 
-/// <summary>
-/// Closes the server and disconnects a client if connected
-/// </summary>
+/// @brief Closes the server and disconnects a client if connected
 void ServerSocket::CloseServer()
 {
 	CHECKOPEN();
@@ -151,17 +135,15 @@ void ServerSocket::CloseServer()
 	m_open = false;
 }
 
-/// <summary>
-/// Deconstructs the server
-/// </summary>
+/// @brief Deconstructs the server
 ServerSocket::~ServerSocket()
 {
 	if (!m_open) return;
 	CloseServer();
 }
 
-
-/// <returns> Whether the server is connected to a client </returns>
+/// @brief  Whether the server is connected to a client 
+/// @return Deconstructs the server
 bool ServerSocket::Connected()
 {
 	if (m_disconnected) return false;

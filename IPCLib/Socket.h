@@ -2,14 +2,9 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "ipclib_export.h"
 #include <WinSock2.h>
+#define IPC_BUFFER_BYTE_SIZE 512
 
-
-#define BUFFER_BYTE_SIZE 512
-
-
-/// <summary>
-/// A base class for ServerSocket and ClientSocketAsync
-/// </summary>
+/// @brief A base class for ServerSocket and ClientSocketAsync
 class IPCLIB_EXPORT Socket
 {
 public:
@@ -23,8 +18,8 @@ private:
 	void ReceiveData();
 
 protected:
-	int m_size = BUFFER_BYTE_SIZE;
-	char m_dataBuffer[BUFFER_BYTE_SIZE] = {'\0'};
+	int m_size = IPC_BUFFER_BYTE_SIZE;
+	char m_dataBuffer[IPC_BUFFER_BYTE_SIZE] = {'\0'};
 
 	bool m_receiving = false;
 	bool m_received = false;

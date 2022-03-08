@@ -4,11 +4,8 @@
 #include <WinSock2.h>
 #include "Socket.h"
 
-
-/// <summary>
- /// A class that represents a client that can communicate with a server
- /// It can receive messages and connect asynchronously and send messages synchronously
- /// </summary>
+/// @brief A class that represents a client that can communicate with a server
+///	       It can receive messages and connect asynchronously and send messages synchronously
 class IPCLIB_EXPORT ClientSocket : public Socket
 {
 public:

@@ -6,17 +6,16 @@
 #include <string>
 #include <sstream>
 
+/// @brief Checks if the client is still connected to the server
 #define CHECKCONNECTED() if(m_disconnected) throw std::runtime_error("The client was not connected to a server")
 
- /// <summary>
- /// Connects a client to a server
- /// </summary>
- /// <param name="p_ip"> The IP adress of the server </param>
- /// <param name="p_port"> The port of the server </param>
- /// <param name="p_wsa"> WSAData from the client </param>
- /// <param name="p_socket"> The socket of the client </param>
- /// <param name="p_server"> The server information </param>
- /// <param name="p_disconnected"> Disconnected bool of the client </param>
+/// @brief                  Connects a client to a server
+/// @param  p_ip			The IP adress of the server 
+/// @param  p_port			The port of the server
+/// @param  p_wsa			WSAData from the client
+/// @param  p_socket		The socket of the client
+/// @param  p_server		The server information
+/// @param  p_disconnected	Disconnected bool of the client
 void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, bool& p_disconnected)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
@@ -50,30 +49,24 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 
 //--------------------------------------------------------------------- ClientSocketAsync.h -------------------------------------------------------
 
-/// <summary>
-/// Constructor of ClientSocketAsync
-/// </summary>
-/// <param name="p_ip"> IP address of the server </param>
-/// <param name="p_port"> The port of the server </param>
+/// @brief			Constructor of ClientSocketAsync
+/// @param  p_ip	IP address of the server
+/// @param  p_port	The port of the server
 ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 {
 	ConnectToServer(p_ip, p_port, m_wsa, m_socket, m_server, m_disconnected);
 }
 
-/// <summary>
-/// Sends data over a socket to the server
-/// </summary>
-/// <param name="p_data"> Data that needs to be send </param>
-/// <param name="p_size"> The size of the data </param>
+/// @brief			Sends data over a socket to the server
+/// @param p_data	Data that needs to be send
+/// @param p_size	The size of the data 
 void ClientSocket::SendData(const char* p_data, const int p_size) const
 {
 	CHECKCONNECTED();
 	send(m_socket, p_data, p_size, 0);
 }
 
-/// <summary>
-/// Disconnects the client from the server
-/// </summary>
+/// @brief Disconnects the client from the server
 void ClientSocket::Disconnect()
 {
 	closesocket(m_socket);
@@ -81,9 +74,7 @@ void ClientSocket::Disconnect()
 	m_disconnected = true;
 }
 
-/// <summary>
-/// Deconstructs the ClientSocketAsync class
-/// </summary>
+/// @brief Deconstructs the ClientSocketAsync class
 ClientSocket::~ClientSocket()
 {
 	if (m_disconnected) return;
