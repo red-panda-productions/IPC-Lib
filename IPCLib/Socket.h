@@ -8,9 +8,9 @@
 
 
 /// <summary>
-/// A base class for ServerSocketAsync and ClientSocketAsync
+/// A base class for ServerSocket and ClientSocketAsync
 /// </summary>
-class IPCLIB_EXPORT SocketAsync
+class IPCLIB_EXPORT Socket
 {
 public:
 	void ReceiveDataAsync();

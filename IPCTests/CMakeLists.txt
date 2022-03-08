@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 set_tests_properties(${Tests} PROPERTIES TIMEOUT 2)
 add_executable(
-  IPCTests "AsyncSocketTest.cpp" "Utils.h")
+  IPCTests "SocketTest.cpp" "Utils.h")
 target_link_libraries(
   IPCTests #moet het zelfde zijn
   IPCLib

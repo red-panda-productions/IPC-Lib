@@ -1,4 +1,4 @@
-#include "ClientSocketAsync.h"
+#include "ClientSocket.h"
 #include <WS2tcpip.h>
 #include <iostream>
 #include <cstdio>
@@ -55,7 +55,7 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 /// </summary>
 /// <param name="p_ip"> IP address of the server </param>
 /// <param name="p_port"> The port of the server </param>
-ClientSocketAsync::ClientSocketAsync(PCWSTR p_ip, int p_port)
+ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 {
 	ConnectToServer(p_ip, p_port, m_wsa, m_socket, m_server, m_disconnected);
 }
@@ -65,7 +65,7 @@ ClientSocketAsync::ClientSocketAsync(PCWSTR p_ip, int p_port)
 /// </summary>
 /// <param name="p_data"> Data that needs to be send </param>
 /// <param name="p_size"> The size of the data </param>
-void ClientSocketAsync::SendData(const char* p_data, const int p_size) const
+void ClientSocket::SendData(const char* p_data, const int p_size) const
 {
 	CHECKCONNECTED();
 	send(m_socket, p_data, p_size, 0);
@@ -74,7 +74,7 @@ void ClientSocketAsync::SendData(const char* p_data, const int p_size) const
 /// <summary>
 /// Disconnects the client from the server
 /// </summary>
-void ClientSocketAsync::Disconnect()
+void ClientSocket::Disconnect()
 {
 	closesocket(m_socket);
 	WSACleanup();
@@ -84,7 +84,7 @@ void ClientSocketAsync::Disconnect()
 /// <summary>
 /// Deconstructs the ClientSocketAsync class
 /// </summary>
-ClientSocketAsync::~ClientSocketAsync()
+ClientSocket::~ClientSocket()
 {
 	if (m_disconnected) return;
 	Disconnect();

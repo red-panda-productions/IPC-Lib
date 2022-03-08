@@ -1,4 +1,4 @@
-#include "ServerSocketAsync.h"
+#include "ServerSocket.h"
 #include <WS2tcpip.h>
 #include <iostream>
 #include <cstdio>
@@ -69,7 +69,7 @@ void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOC
  /// <param name="p_ip"> The IP adress of the server </param>
  /// <param name="p_port"> The port of the server </param>
  /// <param name="p_connections"> The maximum amount of (queued) connections </param>
-ServerSocketAsync::ServerSocketAsync(PCWSTR p_ip, int p_port, int p_connections)
+ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 {
 	StartServer(p_ip, p_port, p_connections, m_wsa, m_serverSocket, m_server, m_client, m_disconnected, m_open);
 }
@@ -77,17 +77,17 @@ ServerSocketAsync::ServerSocketAsync(PCWSTR p_ip, int p_port, int p_connections)
 /// <summary>
 /// Connects the server to a client asynchronously
 /// </summary>
-void ServerSocketAsync::ConnectAsync()
+void ServerSocket::ConnectAsync()
 {
 	m_connecting = true;
-	std::thread t(&ServerSocketAsync::Connect, this);
+	std::thread t(&ServerSocket::Connect, this);
 	t.detach();
 }
 
 /// <summary>
 /// Connects the server to a client by waiting on a connection
 /// </summary>
-void ServerSocketAsync::Connect()
+void ServerSocket::Connect()
 {
 	CHECKOPEN();
 	int c = sizeof(struct sockaddr_in);
@@ -103,7 +103,7 @@ void ServerSocketAsync::Connect()
 /// <summary>
 /// Awaits until a client has connected to the server
 /// </summary>
-void ServerSocketAsync::AwaitClientConnection()
+void ServerSocket::AwaitClientConnection()
 {
 	if(m_connecting)
 	{
@@ -119,7 +119,7 @@ void ServerSocketAsync::AwaitClientConnection()
 /// </summary>
 /// <param name="p_data"> The data that needs to be send </param>
 /// <param name="p_size"> The size of the data </param>
-void ServerSocketAsync::SendData(const char* p_data, const int p_size) const
+void ServerSocket::SendData(const char* p_data, const int p_size) const
 {
 	CHECKOPEN();
 	CHECKCONNECTED();
@@ -129,7 +129,7 @@ void ServerSocketAsync::SendData(const char* p_data, const int p_size) const
 /// <summary>
 /// Disconnects the server from the client
 /// </summary>
-void ServerSocketAsync::Disconnect()
+void ServerSocket::Disconnect()
 {
 	CHECKOPEN();
 	closesocket(m_socket);
@@ -139,7 +139,7 @@ void ServerSocketAsync::Disconnect()
 /// <summary>
 /// Closes the server and disconnects a client if connected
 /// </summary>
-void ServerSocketAsync::CloseServer()
+void ServerSocket::CloseServer()
 {
 	CHECKOPEN();
 	if (!m_disconnected)
@@ -154,7 +154,7 @@ void ServerSocketAsync::CloseServer()
 /// <summary>
 /// Deconstructs the server
 /// </summary>
-ServerSocketAsync::~ServerSocketAsync()
+ServerSocket::~ServerSocket()
 {
 	if (!m_open) return;
 	CloseServer();
@@ -162,7 +162,7 @@ ServerSocketAsync::~ServerSocketAsync()
 
 
 /// <returns> Whether the server is connected to a client </returns>
-bool ServerSocketAsync::Connected()
+bool ServerSocket::Connected()
 {
 	if (m_disconnected) return false;
 	m_connecting = false;

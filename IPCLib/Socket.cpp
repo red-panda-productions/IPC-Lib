@@ -1,4 +1,4 @@
-#include "SocketAsync.h"
+#include "Socket.h"
 #include <thread>
 #include <iostream>
 #include <WS2tcpip.h>
@@ -9,17 +9,17 @@
 /// <summary>
 /// Receive data asynchronously by spawning a thread
 /// </summary>
-void SocketAsync::ReceiveDataAsync()
+void Socket::ReceiveDataAsync()
 {
 	m_receiving = true;
-	std::thread t(&SocketAsync::ReceiveData, this);
+	std::thread t(&Socket::ReceiveData, this);
 	t.detach();
 }
 
 /// <summary>
 /// Receive data by waiting until data has been written on the socket
 /// </summary>
-void SocketAsync::ReceiveData()
+void Socket::ReceiveData()
 {
 	m_size = recv(m_socket, m_dataBuffer, BUFFER_BYTE_SIZE, 0);
 	if (m_size == SOCKET_ERROR)
@@ -36,7 +36,7 @@ void SocketAsync::ReceiveData()
 /// </summary>
 /// <param name="p_dataBuffer"> The data buffer for storing the data </param>
 /// <param name="p_size"> The size of the buffer </param>
-void SocketAsync::AwaitData(char* p_dataBuffer, int p_size)
+void Socket::AwaitData(char* p_dataBuffer, int p_size)
 {
 	if(!m_receiving)
 	{
@@ -54,7 +54,7 @@ void SocketAsync::AwaitData(char* p_dataBuffer, int p_size)
  /// <param name="p_dataBuffer"> The data buffer for storing the data </param>
  /// <param name="p_size"> The size of the buffer </param>
  /// <returns> If it received data or not </return>
-bool SocketAsync::GetData(char* p_dataBuffer, int p_size)
+bool Socket::GetData(char* p_dataBuffer, int p_size)
 {
 	if (!m_received) return false;
 	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
