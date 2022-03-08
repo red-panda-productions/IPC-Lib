@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "ClientSocketAsync.h"
-#include "ServerSocketAsync.h"
+#include "ClientSocket.h"
+#include "ServerSocket.h"
 #include "Utils.h"
 
 /// <summary>
@@ -13,7 +13,7 @@
 ///	<param name="p_async"> If the message should be received asynchronously </param>
 /// <param name="p_lateData"> If the data should arrive late </param>
 /// <returns> Whether the test succeeded or failed </returns>
-bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
+bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
 	if(p_async)
 	{
@@ -43,7 +43,7 @@ bool SendDataToServer(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
  /// <param name="p_server"> The server </param>
  /// <param name="p_client"> The client </param>
  /// <returns> Whether the test succeeded </returns>
-bool MultipleSendDataToServer(int p_amount, ServerSocketAsync& p_server, ClientSocketAsync& p_client)
+bool MultipleSendDataToServer(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
 	const int dataBufferSize = 512;
 	char dataBuffer[dataBufferSize] = { '\0' };
@@ -70,7 +70,7 @@ bool MultipleSendDataToServer(int p_amount, ServerSocketAsync& p_server, ClientS
 /// <param name="p_messageLength"> The length of the message </param>
 /// <param name="p_lateData"> If the data should arrive late </param>
 /// <returns> Whether the test succeeded or failed </returns>
-bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
+bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
 	if(p_async)
 	{
@@ -101,7 +101,7 @@ bool SendDataToClient(ServerSocketAsync& p_server, ClientSocketAsync& p_client, 
  /// <param name="p_server"> The server </param>
  /// <param name="p_client"> The client </param>
  /// <returns> Whether the test succeeded </return>
-bool MultipleSendDataToClient(int p_amount, ServerSocketAsync& p_server, ClientSocketAsync& p_client)
+bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
 	const int dataBufferSize = 512;
 	char dataBuffer[dataBufferSize] = { '\0' };
@@ -121,9 +121,9 @@ bool MultipleSendDataToClient(int p_amount, ServerSocketAsync& p_server, ClientS
 /// Connects a client and a server
 /// </summary>
 #define CONNECT() \
-	ServerSocketAsync server; \
+	ServerSocket server; \
 	server.ConnectAsync(); \
-	ClientSocketAsync client; \
+	ClientSocket client; \
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection()) \
 
 /// <summary>
@@ -131,11 +131,11 @@ bool MultipleSendDataToClient(int p_amount, ServerSocketAsync& p_server, ClientS
 /// </summary>
 TEST(AsyncSocketTests, AsyncConnectTest)
 {
-	ServerSocketAsync server;
+	ServerSocket server;
 	ASSERT_FALSE(server.Connected());
 	server.ConnectAsync();
 	ASSERT_FALSE(server.Connected());
-	ClientSocketAsync client;
+	ClientSocket client;
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
 	ASSERT_TRUE(server.Connected());
 }
@@ -188,7 +188,7 @@ TEST(AsyncSocketTests, SendDataToClientTestSychronously)
 /// </summary>
 TEST(AsyncSocketTests, NoConnectionSendServer)
 {
-	ServerSocketAsync server;
+	ServerSocket server;
 	ASSERT_FALSE(server.Connected());
 	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
 }
@@ -198,7 +198,7 @@ TEST(AsyncSocketTests, NoConnectionSendServer)
 /// </summary>
 TEST(AsyncSocketTests, NoConnectionClient)
 {
-	ASSERT_THROW(ClientSocketAsync client, std::runtime_error);
+	ASSERT_THROW(ClientSocket client, std::runtime_error);
 }
 
 /// <summary>
@@ -248,7 +248,7 @@ TEST(AsyncSocketTests, TwoClientsTest)
 	server.Disconnect();
 	client.Disconnect();
 	server.ConnectAsync();
-	ClientSocketAsync client2;
+	ClientSocket client2;
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
 }
 

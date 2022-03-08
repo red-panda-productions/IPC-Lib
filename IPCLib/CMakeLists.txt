@@ -1,10 +1,10 @@
 ﻿# CMakeList.txt : CMake project for IPCLib, include source and define
 # project specific logic here.
 
-set(IPCLIB_HEADERS "ClientSocketAsync.h" "ServerSocketAsync.h" "SocketAsync.h")
+set(IPCLIB_HEADERS "ClientSocket.h" "ServerSocket.h" "Socket.h")
 
 # Add source to this project's executable.
-add_library (IPCLib SHARED "ClientSocketAsync.cpp" "ServerSocketAsync.cpp" "SocketAsync.cpp" ${IPCLIB_HEADERS})
+add_library (IPCLib SHARED "ClientSocket.cpp" "ServerSocket.cpp" "Socket.cpp" ${IPCLIB_HEADERS})
 
 include(GenerateExportHeader)
 GENERATE_EXPORT_HEADER(IPCLib)

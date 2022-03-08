@@ -2,7 +2,7 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "ipclib_export.h"
 #include <WinSock2.h>
-#include "SocketAsync.h"
+#include "Socket.h"
 
 #ifndef SERVER_BUFFER_BYTE_SIZE
 #define SERVER_BUFFER_BYTE_SIZE 512
@@ -12,10 +12,10 @@
 /// A class that represents a server that can communicate with a client
 /// It can receive messages and connect asynchronously and send messages synchronously
 /// </summary>
-class IPCLIB_EXPORT ServerSocketAsync : public SocketAsync
+class IPCLIB_EXPORT ServerSocket : public Socket
 {
 public:
-	ServerSocketAsync(PCWSTR p_ip = L"127.0.0.1", int p_port = 8888, int p_connections = 1);
+	ServerSocket(PCWSTR p_ip = L"127.0.0.1", int p_port = 8888, int p_connections = 1);
 
 	void ConnectAsync();
 
@@ -29,7 +29,7 @@ public:
 
 	bool Connected();
 
-	~ServerSocketAsync();
+	~ServerSocket();
 
 private:
 
