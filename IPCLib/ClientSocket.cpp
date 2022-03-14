@@ -64,14 +64,7 @@ void ClientSocket::SendData(const char* p_data, const int p_size) const
 {
 	CHECKCONNECTED();
 
-	//for testing
-	char buf[20];
-	for(int i = 0; i < p_size; i++)
-	{
-		buf[i] = p_data[i];
-	}
-
-	if (send(m_socket, buf, p_size, 0) == SOCKET_ERROR) 
+	if (send(m_socket, p_data, p_size, 0) == SOCKET_ERROR) 
 	{
 		std::ostringstream oss;
 		oss << "Connection error. Error code: " << WSAGetLastError();
