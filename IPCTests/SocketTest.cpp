@@ -232,6 +232,7 @@ TEST(SocketTests, RandomSendToClientTests)
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToClient(1000, server, client)));
 }
 
+/// @brief Tests if data will not be received twice
 TEST(SocketTests, DontReceiveTwice)
 {
 	CONNECT();
@@ -250,6 +251,7 @@ TEST(SocketTests, DontReceiveTwice)
 	ASSERT_FALSE(server.GetData(buffer, 20));
 }
 
+/// @brief Tests if you can send a null operator
 TEST(SocketTests, SendNullOp)
 {
 	CONNECT();
