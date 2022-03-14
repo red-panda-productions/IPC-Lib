@@ -1,4 +1,6 @@
 #include "Socket.h"
+
+#include <cassert>
 #include <thread>
 #include <iostream>
 #include <WS2tcpip.h>
@@ -49,8 +51,12 @@ void Socket::AwaitData(char* p_dataBuffer, int p_size)
 bool Socket::GetData(char* p_dataBuffer, int p_size)
 {
 	if (!m_received) return false;
-	strcpy_s(p_dataBuffer, p_size, m_dataBuffer);
-	if (m_size >= 0 && m_size < p_size) p_dataBuffer[m_size] = '\0';
+	assert(m_size >= 0 && m_size < p_size);
+	for(int i = 0; i < m_size; i++)
+	{
+		p_dataBuffer[i] = m_dataBuffer[i];
+	}
+	p_dataBuffer[m_size] = '\0';
 	m_received = false;
 	m_receiving = false;
 	return true;
