@@ -20,6 +20,16 @@
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x86" ],
       "cmakeCommandArgs": "-DCMAKE_INSTALL_PREFIX=E:\\source\\repos\\SimulatedDrivingAssistanceSystem\\speed-dreams\\3rdParty"
+    },
+    {
+      "name": "x86-install-SDALib-CPP",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DCMAKE_INSTALL_PREFIX=E:\\source\\repos\\SDALib-CPP\\libraries",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x86" ]
     }
   ]
 }

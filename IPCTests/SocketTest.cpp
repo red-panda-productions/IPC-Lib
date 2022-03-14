@@ -249,3 +249,14 @@ TEST(SocketTests, DontReceiveTwice)
 	server.ReceiveDataAsync();
 	ASSERT_FALSE(server.GetData(buffer, 20));
 }
+
+TEST(SocketTests, SendNullOp)
+{
+	CONNECT();
+	server.ReceiveDataAsync();
+	char data[4]{ "x\0x" };
+	client.SendData(data,3);
+	char buffer[20];
+	server.AwaitData(buffer, 20);
+	ASSERT_TRUE(buffer[0] == 'x' && buffer[1] == '\0' && buffer[2] == 'x');
+}
