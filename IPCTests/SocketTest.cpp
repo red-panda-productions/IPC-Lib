@@ -231,3 +231,34 @@ TEST(SocketTests, RandomSendToClientTests)
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToClient(1000, server, client)));
 }
+
+/// @brief Tests if data will not be received twice
+TEST(SocketTests, DontReceiveTwice)
+{
+	CONNECT();
+	server.ReceiveDataAsync();
+	client.SendData("hi", 2);
+	char buffer[20];
+	server.AwaitData(buffer, 20);
+	ASSERT_FALSE(server.GetData(buffer, 20));
+	server.ReceiveDataAsync();
+	ASSERT_FALSE(server.GetData(buffer, 20));
+	client.SendData("hi", 2);
+	std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	ASSERT_TRUE(server.GetData(buffer, 20));
+	ASSERT_FALSE(server.GetData(buffer, 20));
+	server.ReceiveDataAsync();
+	ASSERT_FALSE(server.GetData(buffer, 20));
+}
+
+/// @brief Tests if you can send a null operator
+TEST(SocketTests, SendNullOp)
+{
+	CONNECT();
+	server.ReceiveDataAsync();
+	char data[4]{ "x\0x" };
+	client.SendData(data,3);
+	char buffer[20];
+	server.AwaitData(buffer, 20);
+	ASSERT_TRUE(buffer[0] == 'x' && buffer[1] == '\0' && buffer[2] == 'x');
+}

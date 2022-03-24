@@ -63,7 +63,13 @@ ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 void ClientSocket::SendData(const char* p_data, const int p_size) const
 {
 	CHECKCONNECTED();
-	send(m_socket, p_data, p_size, 0);
+
+	if (send(m_socket, p_data, p_size, 0) == SOCKET_ERROR) 
+	{
+		std::ostringstream oss;
+		oss << "Connection error. Error code: " << WSAGetLastError();
+		throw std::runtime_error(oss.str());
+	};
 }
 
 /// @brief Disconnects the client from the server
