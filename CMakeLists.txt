@@ -3,6 +3,8 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+option(CODE_COVERAGE "generates command for code coverage" OFF)
+
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 project ("IPCLib" VERSION 1.0.0)
@@ -28,5 +30,6 @@ install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/ipclib-config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/ipclib-config-version.cmake
         DESTINATION ${LIB_INSTALL_DIR}/cmake/IPCLib )
+
 
 enable_testing()

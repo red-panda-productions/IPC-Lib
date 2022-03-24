@@ -26,5 +26,14 @@ add_custom_command(TARGET IPCTests POST_BUILD
         COMMAND_EXPAND_LISTS
 )
 
+if(CODE_COVERAGE AND WIN32)
+    STRING(REGEX REPLACE "/" "\\\\" SOURCEPATH ${CMAKE_SOURCE_DIR}\\IPCLib\\)
+    add_custom_command(TARGET IPCTests POST_BUILD
+        COMMAND OpenCppCoverage.exe --sources=${SOURCEPATH} --export_type=html:coverage -- "${CMAKE_CURRENT_BINARY_DIR}\\IPCTests.exe"
+        COMMAND echo "-- Source diretory: ${CMAKE_SOURCE_DIR}/IPCLib/"
+        COMMAND echo "-- Coverage files have been output to ${CMAKE_BINARY_DIR}/coverage"
+    )
+endif(CODE_COVERAGE AND WIN32)
+
 include(GoogleTest)
 gtest_discover_tests(IPCTests)
