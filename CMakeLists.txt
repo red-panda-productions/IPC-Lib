@@ -31,5 +31,4 @@ install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/ipclib-config-version.cmake
         DESTINATION ${LIB_INSTALL_DIR}/cmake/IPCLib )
 
-
 enable_testing()

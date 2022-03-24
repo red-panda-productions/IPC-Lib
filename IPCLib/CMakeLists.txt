@@ -4,7 +4,6 @@
 set(IPCLIB_HEADERS "ClientSocket.h" "ServerSocket.h" "Socket.h")
 set(IPCLIB_SOURCES "ClientSocket.cpp" "ServerSocket.cpp" "Socket.cpp")
 
-SET(ENV{IPC_FILES} ${IPC_FILE_STRING})
 # Add source to this project's executable.
 add_library (IPCLib SHARED ${IPCLIB_SOURCES} ${IPCLIB_HEADERS})
 
