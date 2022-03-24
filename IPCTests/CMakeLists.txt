@@ -27,11 +27,13 @@ add_custom_command(TARGET IPCTests POST_BUILD
 )
 
 if(CODE_COVERAGE AND WIN32)
-    STRING(REGEX REPLACE "/" "\\\\" SOURCEPATH ${CMAKE_SOURCE_DIR}\\IPCLib\\)
+    STRING(REGEX REPLACE "/" "\\\\" SOURCEDIR ${CMAKE_SOURCE_DIR})
+    STRING(REGEX REPLACE "/" "\\\\" BINARYDIR ${CMAKE_CURRENT_BINARY_DIR})
     add_custom_command(TARGET IPCTests POST_BUILD
-        COMMAND OpenCppCoverage.exe --sources=${SOURCEPATH} --export_type=html:coverage -- "${CMAKE_CURRENT_BINARY_DIR}\\IPCTests.exe"
+        COMMAND OpenCppCoverage.exe --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:coverage -- "${BINARYDIR}\\IPCTests.exe"
         COMMAND echo "-- Source diretory: ${CMAKE_SOURCE_DIR}/IPCLib/"
         COMMAND echo "-- Coverage files have been output to ${CMAKE_BINARY_DIR}/coverage"
+        COMMAND start ${BINARYDIR}\\coverage\\index.html
     )
 endif(CODE_COVERAGE AND WIN32)
 
