@@ -27,16 +27,18 @@ add_custom_command(TARGET IPCTests POST_BUILD
 )
 
 
-if(CODE_COVERAGE AND WIN32)
+find_program(OPEN_CPP_COVERAGE "OpenCppCoverage")
+if(OPEN_CPP_COVERAGE)
     STRING(REGEX REPLACE "/" "\\\\" SOURCEDIR ${CMAKE_SOURCE_DIR})
     STRING(REGEX REPLACE "/" "\\\\" BINARYDIR ${CMAKE_CURRENT_BINARY_DIR})
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.bat
         CONTENT 
             "@echo off
-            OpenCppCoverage.exe --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage -- ${BINARYDIR}\\IPCTests.exe
+            ${OPEN_CPP_COVERAGE} --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage -- ${BINARYDIR}\\IPCTests.exe
             @start ${BINARYDIR}\\coverage\\index.html")
-  
-endif(CODE_COVERAGE AND WIN32)
+
+    MESSAGE(STATUS "Created coverage.bat")
+endif(OPEN_CPP_COVERAGE)
 
 include(GoogleTest)
 gtest_discover_tests(IPCTests)
