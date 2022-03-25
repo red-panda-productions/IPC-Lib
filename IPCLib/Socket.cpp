@@ -1,11 +1,9 @@
 #include "Socket.h"
-
+#include <sstream>
 #include <cassert>
 #include <thread>
 #include <iostream>
 #include <WS2tcpip.h>
-#include <iostream>
-#include <cstdio>
 #include <thread>
 
 /// @brief Receive data asynchronously by spawning a thread
@@ -22,9 +20,7 @@ void Socket::ReceiveData()
 	m_size = recv(m_socket, m_dataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
 	if (m_size == SOCKET_ERROR)
 	{
-		printf("Failed to receive message");
-		std::cin.get();
-		// environment exit? exit(-1);
+		IPCLIB_ERROR("[WSA] Failed to receive message");
 	}
 	m_received = true;
 }

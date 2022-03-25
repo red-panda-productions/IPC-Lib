@@ -1,9 +1,6 @@
 #include "ClientSocket.h"
 #include <WS2tcpip.h>
-#include <iostream>
-#include <cstdio>
 #include <stdexcept>
-#include <string>
 #include <sstream>
 
 /// @brief Checks if the client is still connected to the server
@@ -20,16 +17,12 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
 	{
-		std::ostringstream oss;
-		oss << "Failed to initialize WSA. Error code: " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Failed to initialize WSA. Error code: " << WSAGetLastError());
 	}
 
 	if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-		std::ostringstream oss;
-		oss << "Could not create socket. Error code: " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Could not create socket. Error code: " << WSAGetLastError());
 	}
 
 	InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
@@ -39,9 +32,7 @@ void ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_s
 	auto c = connect(p_socket, (struct sockaddr*)&p_server, sizeof(p_server));
 	if (c < 0)
 	{
-		std::ostringstream oss;
-		oss << "Connection error. Error code: " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError());
 	}
 
 	p_disconnected = false;
@@ -66,9 +57,7 @@ void ClientSocket::SendData(const char* p_data, const int p_size) const
 
 	if (send(m_socket, p_data, p_size, 0) == SOCKET_ERROR) 
 	{
-		std::ostringstream oss;
-		oss << "Connection error. Error code: " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError());
 	}
 }
 

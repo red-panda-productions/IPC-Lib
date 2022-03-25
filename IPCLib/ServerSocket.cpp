@@ -1,10 +1,9 @@
 #include "ServerSocket.h"
 #include <WS2tcpip.h>
-#include <iostream>
-#include <cstdio>
+#include <sstream>
 #include <thread>
 #include <stdexcept>
-#include <sstream>
+
 
 /// @brief Checks if the server is still open
 #define CHECKOPEN() if(!m_open) throw std::runtime_error("The server was closed")
@@ -26,16 +25,12 @@ void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOC
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
 	{
-		std::ostringstream oss;
-		oss << "Failed to initialize WSA. Error code: " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Failed to initialize WSA. Error code: " << WSAGetLastError());
 	}
 
 	if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-		std::ostringstream oss;
-		oss << "Could not create socket : " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Could not create socket : " << WSAGetLastError());
 	}
 	InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
 	p_server.sin_family = AF_INET;
@@ -48,9 +43,7 @@ void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOC
 
 	if (bind(p_socket, (struct sockaddr*)&p_server, sizeof(p_server)) == SOCKET_ERROR)
 	{
-		std::ostringstream oss;
-		oss << "Bind failed with error code : " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[IPCLib] Bind failed with error code : " << WSAGetLastError());
 	}
 
 	listen(p_socket, p_connections);
@@ -69,6 +62,7 @@ void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOC
 ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 {
 	StartServer(p_ip, p_port, p_connections, m_wsa, m_serverSocket, m_server, m_client, m_disconnected, m_open);
+	m_connecting = false;
 }
 
 /// @brief Connects the server to a client asynchronously
@@ -86,9 +80,7 @@ void ServerSocket::Connect()
 	int c = sizeof(struct sockaddr_in);
 	if ((m_socket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
 	{
-		std::ostringstream oss;
-		oss << "Bind failed with error code : " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
+		IPCLIB_ERROR("[WSA] Bind failed with error code : " << WSAGetLastError());
 	}
 	m_disconnected = false;
 }
@@ -114,10 +106,8 @@ void ServerSocket::SendData(const char* p_data, const int p_size) const
 	CHECKCONNECTED();
 	if (send(m_socket, p_data, p_size, 0) == SOCKET_ERROR)
 	{
-		std::ostringstream oss;
-		oss << "Connection error. Error code: " << WSAGetLastError();
-		throw std::runtime_error(oss.str());
-	};
+		IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError());
+	}
 }
 
 /// @brief Disconnects the server from the client

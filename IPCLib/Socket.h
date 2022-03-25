@@ -2,7 +2,13 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "ipclib_export.h"
 #include <WinSock2.h>
+
 #define IPC_BUFFER_BYTE_SIZE 512
+
+#define IPCLIB_ERROR(p_message)\
+	std::ostringstream oss; \
+	oss << p_message;  \
+	throw std::runtime_error(oss.str())
 
 /// @brief A base class for ServerSocket and ClientSocketAsync
 class IPCLIB_EXPORT Socket

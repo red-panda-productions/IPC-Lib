@@ -135,6 +135,23 @@ TEST(SocketTests, ConnectTest)
 	CONNECT();
 }
 
+void AwaitingServer()
+{
+	ServerSocket server;
+	server.AwaitClientConnection();
+	server.SendData("OK", 2);
+}
+
+TEST(SocketTests, AwaitConnectionTest)
+{
+	std::thread t(AwaitingServer);
+	t.detach();
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	ClientSocket client;
+	char buffer[32];
+	ASSERT_DURATION_LE(1,client.AwaitData(buffer, 32));
+}
+
 /// @brief Tests whether data can be send to a server and be received asynchronously
 TEST(SocketTests, SendDataToServerTestAsync)
 {
