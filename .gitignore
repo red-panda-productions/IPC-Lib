@@ -563,3 +563,5 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudio,clion,cmake
 
 CMakeSettings.json
+
+coverage.bat
