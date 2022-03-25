@@ -26,15 +26,13 @@ add_custom_command(TARGET IPCTests POST_BUILD
         COMMAND_EXPAND_LISTS
 )
 
-
-find_program(OPEN_CPP_COVERAGE "OpenCppCoverage")
 if(OPEN_CPP_COVERAGE)
     STRING(REGEX REPLACE "/" "\\\\" SOURCEDIR ${CMAKE_SOURCE_DIR})
     STRING(REGEX REPLACE "/" "\\\\" BINARYDIR ${CMAKE_CURRENT_BINARY_DIR})
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.bat
         CONTENT 
             "@echo off
-            ${OPEN_CPP_COVERAGE} --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage -- ${BINARYDIR}\\IPCTests.exe
+            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage -- ${BINARYDIR}\\IPCTests.exe
             @start ${BINARYDIR}\\coverage\\index.html")
 
     MESSAGE(STATUS "Created coverage.bat")

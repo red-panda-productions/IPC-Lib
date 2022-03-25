@@ -69,7 +69,7 @@ void ClientSocket::SendData(const char* p_data, const int p_size) const
 		std::ostringstream oss;
 		oss << "Connection error. Error code: " << WSAGetLastError();
 		throw std::runtime_error(oss.str());
-	};
+	}
 }
 
 /// @brief Disconnects the client from the server
