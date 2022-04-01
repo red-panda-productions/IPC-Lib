@@ -135,6 +135,23 @@ TEST(SocketTests, ConnectTest)
 	CONNECT();
 }
 
+void AwaitingServer()
+{
+	ServerSocket server;
+	server.AwaitClientConnection();
+	server.SendData("OK", 2);
+}
+
+TEST(SocketTests, AwaitConnectionTest)
+{
+	std::thread t(AwaitingServer);
+	t.detach();
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	ClientSocket client;
+	char buffer[32];
+	ASSERT_DURATION_LE(1,client.AwaitData(buffer, 32));
+}
+
 /// @brief Tests whether data can be send to a server and be received asynchronously
 TEST(SocketTests, SendDataToServerTestAsync)
 {
@@ -237,18 +254,23 @@ TEST(SocketTests, DontReceiveTwice)
 {
 	CONNECT();
 	server.ReceiveDataAsync();
-	client.SendData("hi", 2);
+	client.SendData("hi1", 3);
 	char buffer[20];
 	server.AwaitData(buffer, 20);
+	ASSERT_TRUE(TestMessageEqual(buffer, "hi1", 3));
 	ASSERT_FALSE(server.GetData(buffer, 20));
 	server.ReceiveDataAsync();
 	ASSERT_FALSE(server.GetData(buffer, 20));
-	client.SendData("hi", 2);
-	std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	client.SendData("hi2", 3);
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	ASSERT_TRUE(server.GetData(buffer, 20));
+	ASSERT_TRUE(TestMessageEqual(buffer, "hi2", 3));
 	ASSERT_FALSE(server.GetData(buffer, 20));
 	server.ReceiveDataAsync();
 	ASSERT_FALSE(server.GetData(buffer, 20));
+	client.SendData("hi3", 3);
+	ASSERT_DURATION_LE(1, server.AwaitData(buffer, 20));
+	ASSERT_TRUE(TestMessageEqual(buffer, "hi3", 3));
 }
 
 /// @brief Tests if you can send a null operator
@@ -261,4 +283,17 @@ TEST(SocketTests, SendNullOp)
 	char buffer[20];
 	server.AwaitData(buffer, 20);
 	ASSERT_TRUE(buffer[0] == 'x' && buffer[1] == '\0' && buffer[2] == 'x');
+}
+
+/// @brief Tests if the server crashes when 2 servers are on the same ip and port
+TEST(SocketTests, DoubleServer)
+{
+	ServerSocket server1;
+	ASSERT_THROW(ServerSocket server2, std::runtime_error);
+}
+
+/// @brief Tests if the client crashes when there is no server
+TEST(SocketTests, NoServer)
+{
+	ASSERT_THROW(ClientSocket client1, std::runtime_error);
 }

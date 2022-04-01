@@ -3,6 +3,14 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+find_program(OPEN_CPP_COVERAGE "OpenCppCoverage")
+
+if(OPEN_CPP_COVERAGE)
+    MESSAGE(STATUS "OpenCppCoverage -- found")
+else(OPEN_CPP_COVERAGE)
+    MESSAGE(STATUS "OpenCppCoverage -- not found")
+endif(OPEN_CPP_COVERAGE)
+
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 project ("IPCLib" VERSION 1.0.0)
