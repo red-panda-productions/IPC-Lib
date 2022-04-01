@@ -27,7 +27,10 @@ bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char
 		if (received) return false;
 	}
 
-	p_client.SendData(p_message, p_messageLength);
+	if(p_client.SendData(p_message, p_messageLength) != IPCLIB_SUCCEED)
+	{
+		return false;
+	}
 
 	p_server.AwaitData(dataBuffer, dataBufferSize);
 
@@ -81,7 +84,10 @@ bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char
 		if (received) return false;
 	}
 
-	p_server.SendData(p_message, p_messageLength);
+	if(p_server.SendData(p_message, p_messageLength) != IPCLIB_SUCCEED)
+	{
+		return false;
+	}
 
 
 	p_client.AwaitData(dataBuffer, dataBufferSize);
@@ -144,7 +150,7 @@ void AwaitingServer()
 	ServerSocket server;
 	ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
 	server.AwaitClientConnection();
-	server.SendData("OK", 2);
+	ASSERT_EQ(server.SendData("OK", 2), IPCLIB_SUCCEED);
 }
 
 TEST(SocketTests, AwaitConnectionTest)
@@ -263,7 +269,7 @@ TEST(SocketTests, DontReceiveTwice)
 {
 	CONNECT();
 	server.ReceiveDataAsync();
-	client.SendData("hi1", 3);
+	ASSERT_EQ(client.SendData("hi1", 3),IPCLIB_SUCCEED);
 	char buffer[20];
 	server.AwaitData(buffer, 20);
 	ASSERT_TRUE(TestMessageEqual(buffer, "hi1", 3));
@@ -277,7 +283,7 @@ TEST(SocketTests, DontReceiveTwice)
 	ASSERT_FALSE(server.GetData(buffer, 20));
 	server.ReceiveDataAsync();
 	ASSERT_FALSE(server.GetData(buffer, 20));
-	client.SendData("hi3", 3);
+	ASSERT_EQ(client.SendData("hi3", 3),IPCLIB_SUCCEED);
 	ASSERT_DURATION_LE(1, server.AwaitData(buffer, 20));
 	ASSERT_TRUE(TestMessageEqual(buffer, "hi3", 3));
 }
@@ -288,7 +294,7 @@ TEST(SocketTests, SendNullOp)
 	CONNECT();
 	server.ReceiveDataAsync();
 	char data[4]{ "x\0x" };
-	client.SendData(data,3);
+	ASSERT_EQ(client.SendData(data,3),IPCLIB_SUCCEED);
 	char buffer[20];
 	server.AwaitData(buffer, 20);
 	ASSERT_TRUE(buffer[0] == 'x' && buffer[1] == '\0' && buffer[2] == 'x');
