@@ -84,7 +84,7 @@ void ServerSocket::Connect()
 	int c = sizeof(struct sockaddr_in);
 	if ((m_socket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
 	{
-		IPCLIB_ERROR("[WSA] Bind failed with error code : " << WSAGetLastError());
+		THROW_IPCLIB_ERROR("[WSA] Bind failed with error code : " << WSAGetLastError());
 	}
 	m_disconnected = false;
 }
