@@ -67,7 +67,7 @@ int ClientSocket::SendData(const char* p_data, const int p_size) const
 	{
 		IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError(), WSA_ERROR);
 	}
-	return 0;
+	return IPCLIB_SUCCEED;
 }
 
 /// @brief Disconnects the client from the server
