@@ -32,7 +32,7 @@ if(OPEN_CPP_COVERAGE)
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.bat
         CONTENT 
             "@echo off
-            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage --excluded_line_regex \"[ \\t]*(\"(IPCLIB_ERROR\\(\\\"\\[WSA\\].*)|(\\}.*)\")\" -- ${BINARYDIR}\\IPCTests.exe
+            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage --excluded_line_regex \"[ \\t]*(\"((\"THROW_IPCLIB|IPCLIB\")_ERROR\\(\\\"\\[WSA\\].*)|(\\}.*)\")\" -- ${BINARYDIR}\\IPCTests.exe
             @start ${BINARYDIR}\\coverage\\index.html")
 
     MESSAGE(STATUS "Created coverage.bat")
