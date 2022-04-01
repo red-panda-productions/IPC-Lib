@@ -113,17 +113,17 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
 /// @brief Connects a client and a server
 #define CONNECT() \
 	ServerSocket server; \
-	server.Initialize(); \
+	ASSERT_EQ(server.Initialize(),IPCLIB_SUCCEED); \
 	server.ConnectAsync(); \
 	ClientSocket client; \
-	client.Initialize(); \
+	ASSERT_EQ(client.Initialize(),IPCLIB_SUCCEED); \
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection()) \
 
 /// @brief Tests an asynchronous connection method
 TEST(SocketTests, AsyncConnectTest)
 {
 	ServerSocket server;
-	server.Initialize();
+	ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
 	ASSERT_FALSE(server.Connected());
 	server.ConnectAsync();
 	ASSERT_FALSE(server.Connected());
@@ -142,7 +142,7 @@ TEST(SocketTests, ConnectTest)
 void AwaitingServer()
 {
 	ServerSocket server;
-	server.Initialize();
+	ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
 	server.AwaitClientConnection();
 	server.SendData("OK", 2);
 }
@@ -153,7 +153,7 @@ TEST(SocketTests, AwaitConnectionTest)
 	t.detach();
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	ClientSocket client;
-	client.Initialize();
+	ASSERT_EQ(client.Initialize(), IPCLIB_SUCCEED);
 	char buffer[32];
 	ASSERT_DURATION_LE(1,client.AwaitData(buffer, 32));
 }
@@ -190,7 +190,7 @@ TEST(SocketTests, SendDataToClientTestSychronously)
 TEST(SocketTests, NoConnectionSendServer)
 {
 	ServerSocket server;
-	server.Initialize();
+	ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
 	ASSERT_FALSE(server.Connected());
 	ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SERVER_ERROR);
 }
@@ -240,7 +240,7 @@ TEST(SocketTests, TwoClientsTest)
 	client.Disconnect();
 	server.ConnectAsync();
 	ClientSocket client2;
-	client2.Initialize();
+	ASSERT_EQ(client2.Initialize(), IPCLIB_SUCCEED);
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
 }
 
@@ -298,7 +298,7 @@ TEST(SocketTests, SendNullOp)
 TEST(SocketTests, DoubleServer)
 {
 	ServerSocket server1;
-	server1.Initialize();
+	ASSERT_EQ(server1.Initialize(), IPCLIB_SUCCEED);
 	ServerSocket server2;
 	ASSERT_EQ(server2.Initialize(), IPCLIB_SERVER_ERROR);
 }
