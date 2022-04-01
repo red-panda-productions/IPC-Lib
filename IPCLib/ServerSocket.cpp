@@ -6,10 +6,8 @@
 
 
 /// @brief Checks if the server is still open
-#define CHECKOPEN() if(!m_open) throw std::runtime_error("The server was closed")
+#define CHECK_OPEN() if(!m_open) throw std::runtime_error("[IPCLIB] The server was closed")
 
-/// @brief Checks if the server is still connected
- #define CHECKCONNECTED() if(m_disconnected) throw std::runtime_error("The server was not connected to a client")
 
 /// @brief					Starts the server
 /// @param  p_ip			The IP adress to start the server on
@@ -21,35 +19,27 @@
 /// @param  p_client		The info of the client (only for initialization)
 /// @param  p_disconnected  The disconnected bool of the server
 /// @param  p_open			The open bool of the server
-void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, sockaddr_in& p_client, bool& p_disconnected, bool& p_open)
+int StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, sockaddr_in& p_client, bool& p_open)
 {
 	if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
 	{
-		IPCLIB_ERROR("[WSA] Failed to initialize WSA. Error code: " << WSAGetLastError());
+		IPCLIB_ERROR("[WSA] Failed to initialize WSA. Error code: " << WSAGetLastError(),WSA_ERROR);
 	}
 
 	if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-		IPCLIB_ERROR("[WSA] Could not create socket : " << WSAGetLastError());
+		IPCLIB_ERROR("[WSA] Could not create socket : " << WSAGetLastError(),WSA_ERROR);
 	}
-	InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
-	p_server.sin_family = AF_INET;
-	p_server.sin_port = htons(p_port);
-
-	// init client for c++ object purposes
-	InetPtonW(AF_INET, p_ip, &p_client.sin_addr.s_addr);
-	p_client.sin_family = AF_INET;
-	p_client.sin_port = htons(p_port);
+	
 
 	if (bind(p_socket, (struct sockaddr*)&p_server, sizeof(p_server)) == SOCKET_ERROR)
 	{
-		IPCLIB_ERROR("[IPCLib] Bind failed with error code : " << WSAGetLastError());
+		IPCLIB_ERROR("[IPCLib] Bind failed with error code : " << WSAGetLastError(),IPCLIB_SERVER_ERROR);
 	}
 
 	listen(p_socket, p_connections);
-
-	p_disconnected = true;
 	p_open = true;
+	return IPCLIB_SUCCEED;
 }
 
 
@@ -59,10 +49,24 @@ void StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOC
 /// @param  p_ip		  The IP adress of the server
 /// @param  p_port		  The port of the server
 /// @param  p_connections The maximum amount of (queued) connections
-ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
+ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections) : m_ip(p_ip), m_port(p_port),
+    m_connections(p_connections), m_open(false), m_connecting(false), m_server(), m_client()
 {
-	StartServer(p_ip, p_port, p_connections, m_wsa, m_serverSocket, m_server, m_client, m_disconnected, m_open);
-	m_connecting = false;
+	InetPtonW(AF_INET, p_ip, &m_server.sin_addr.s_addr);
+    m_server.sin_family = AF_INET;
+    m_server.sin_port = htons(p_port);
+
+	// init client for c++ object purposes
+	InetPtonW(AF_INET, p_ip, &m_client.sin_addr.s_addr);
+	m_client.sin_family = AF_INET;
+	m_client.sin_port = htons(p_port);
+}
+
+/// @brief  Initializes the server 
+/// @return The error code
+int ServerSocket::Initialize()
+{
+	return StartServer(m_ip, m_port, m_connections, m_wsa, m_serverSocket, m_server, m_client, m_open);
 }
 
 /// @brief Connects the server to a client asynchronously
@@ -76,7 +80,7 @@ void ServerSocket::ConnectAsync()
 /// @brief Connects the server to a client by waiting on a connection
 void ServerSocket::Connect()
 {
-	CHECKOPEN();
+	CHECK_OPEN();
 	int c = sizeof(struct sockaddr_in);
 	if ((m_socket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
 	{
@@ -100,20 +104,25 @@ void ServerSocket::AwaitClientConnection()
 /// @brief			Sends data to a client
 /// @param  p_data	The data that needs to be send
 /// @param  p_size  The size of the data
-void ServerSocket::SendData(const char* p_data, const int p_size) const
+///	@return			The error code
+int ServerSocket::SendData(const char* p_data, const int p_size) const
 {
-	CHECKOPEN();
-	CHECKCONNECTED();
+	CHECK_OPEN();
+	if (m_disconnected) 
+	{
+		IPCLIB_ERROR("[IPCLIB] The server was not connected to a client", IPCLIB_SERVER_ERROR)
+	}
 	if (send(m_socket, p_data, p_size, 0) == SOCKET_ERROR)
 	{
-		IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError());
+		IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError(), WSA_ERROR);
 	}
+	return 0;
 }
 
 /// @brief Disconnects the server from the client
 void ServerSocket::Disconnect()
 {
-	CHECKOPEN();
+	CHECK_OPEN();
 	closesocket(m_socket);
 	m_disconnected = true;
 }
@@ -121,7 +130,7 @@ void ServerSocket::Disconnect()
 /// @brief Closes the server and disconnects a client if connected
 void ServerSocket::CloseServer()
 {
-	CHECKOPEN();
+	CHECK_OPEN();
 	if (!m_disconnected)
 	{
 		Disconnect();

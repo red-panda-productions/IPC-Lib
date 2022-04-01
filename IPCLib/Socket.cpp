@@ -2,7 +2,6 @@
 #include <sstream>
 #include <cassert>
 #include <thread>
-#include <iostream>
 #include <WS2tcpip.h>
 #include <thread>
 
@@ -20,7 +19,7 @@ void Socket::ReceiveData()
 	m_size = recv(m_socket, m_dataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
 	if (m_size == SOCKET_ERROR)
 	{
-		IPCLIB_ERROR("[WSA] Failed to receive message");
+		THROW_IPCLIB_ERROR("[WSA] Failed to receive message. Error code: " << WSAGetLastError());
 	}
 	m_received = true;
 }

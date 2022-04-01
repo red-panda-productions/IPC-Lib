@@ -113,18 +113,22 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
 /// @brief Connects a client and a server
 #define CONNECT() \
 	ServerSocket server; \
+	server.Initialize(); \
 	server.ConnectAsync(); \
 	ClientSocket client; \
+	client.Initialize(); \
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection()) \
 
 /// @brief Tests an asynchronous connection method
 TEST(SocketTests, AsyncConnectTest)
 {
 	ServerSocket server;
+	server.Initialize();
 	ASSERT_FALSE(server.Connected());
 	server.ConnectAsync();
 	ASSERT_FALSE(server.Connected());
 	ClientSocket client;
+	client.Initialize();
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
 	ASSERT_TRUE(server.Connected());
 }
@@ -138,6 +142,7 @@ TEST(SocketTests, ConnectTest)
 void AwaitingServer()
 {
 	ServerSocket server;
+	server.Initialize();
 	server.AwaitClientConnection();
 	server.SendData("OK", 2);
 }
@@ -148,6 +153,7 @@ TEST(SocketTests, AwaitConnectionTest)
 	t.detach();
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	ClientSocket client;
+	client.Initialize();
 	char buffer[32];
 	ASSERT_DURATION_LE(1,client.AwaitData(buffer, 32));
 }
@@ -184,14 +190,16 @@ TEST(SocketTests, SendDataToClientTestSychronously)
 TEST(SocketTests, NoConnectionSendServer)
 {
 	ServerSocket server;
+	server.Initialize();
 	ASSERT_FALSE(server.Connected());
-	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
+	ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SERVER_ERROR);
 }
 
 /// @brief Makes sure the program throws when there is no connection to a server, but you try to send data
 TEST(SocketTests, NoConnectionClient)
 {
-	ASSERT_THROW(ClientSocket client, std::runtime_error);
+	ClientSocket client;
+	ASSERT_EQ(client.Initialize(), WSA_ERROR);
 }
 
 /// @brief Makes sure the program throws when there is no connection to a client, but you try to send data
@@ -202,8 +210,8 @@ TEST(SocketTests, DisconnectedSend)
 	server.Disconnect();
 	client.Disconnect();
 	ASSERT_FALSE(server.Connected());
-	ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
-	ASSERT_THROW(client.SendData("Hello", 6), std::runtime_error);
+	ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SERVER_ERROR);
+	ASSERT_EQ(client.SendData("Hello", 6), IPCLIB_CLIENT_ERROR);
 }
 
 /// @brief Makes sure the program throws when the server is not open, but you try to send data
@@ -232,6 +240,7 @@ TEST(SocketTests, TwoClientsTest)
 	client.Disconnect();
 	server.ConnectAsync();
 	ClientSocket client2;
+	client2.Initialize();
 	ASSERT_DURATION_LE(1, server.AwaitClientConnection());
 }
 
@@ -289,11 +298,14 @@ TEST(SocketTests, SendNullOp)
 TEST(SocketTests, DoubleServer)
 {
 	ServerSocket server1;
-	ASSERT_THROW(ServerSocket server2, std::runtime_error);
+	server1.Initialize();
+	ServerSocket server2;
+	ASSERT_EQ(server2.Initialize(), IPCLIB_SERVER_ERROR);
 }
 
 /// @brief Tests if the client crashes when there is no server
 TEST(SocketTests, NoServer)
 {
-	ASSERT_THROW(ClientSocket client1, std::runtime_error);
+	ClientSocket client1;
+	ASSERT_EQ(client1.Initialize(), WSA_ERROR);
 }
