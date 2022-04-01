@@ -276,7 +276,7 @@ TEST(SocketTests, DontReceiveTwice)
 	ASSERT_FALSE(server.GetData(buffer, 20));
 	server.ReceiveDataAsync();
 	ASSERT_FALSE(server.GetData(buffer, 20));
-	client.SendData("hi2", 3);
+	ASSERT_EQ(client.SendData("hi2", 3),IPCLIB_SUCCEED);
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	ASSERT_TRUE(server.GetData(buffer, 20));
 	ASSERT_TRUE(TestMessageEqual(buffer, "hi2", 3));
