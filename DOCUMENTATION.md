@@ -19,7 +19,7 @@ Spawns a child thread that waits for a connection, such that the main thread is 
 
 ## AwaitClientConnection
 
-The main thread awaits untill a client has connected to the server, this makes sure that the server cannot send data to a client that is not connected. If this function is called without ConnectAsync() the main thread will connect with a client. Otherwise the main thread will wait on the sub thread until it has connected.
+The main thread awaits untill a client has connected to the server, this makes sure that the server cannot send data to a client that is not connected. If this function is called before calling ConnectAsync() the main thread will connect with a client. Otherwise the main thread will wait on the sub thread until it has connected.
 
 ## SendData
 
@@ -35,7 +35,7 @@ Checks if data has been received in the child thread. If data was received it wi
 
 ## AwaitData
 
-Waits untill data is received from the client. If this function is called without ReceiveDataAsync() the main thread will wait until data is received on the socket. Otherwise it will wait until the sub thread returned data.
+Waits untill data is received from the client. If this function is called before calling ReceiveDataAsync() the main thread will wait until data is received on the socket. Otherwise it will wait until the sub thread returned data.
 
 ## Connected()
 
@@ -72,7 +72,7 @@ Checks if data has been received in the child thread. If data was received it wi
 
 ## AwaitData
 
-Waits untill data is received from the server. If this function is called without ReceiveDataAsync() the main thread will wait until data is received on the socket. Otherwise it will wait until the sub thread returned data.
+Waits untill data is received from the server. If this function is called before calling ReceiveDataAsync() the main thread will wait until data is received on the socket. Otherwise it will wait until the sub thread returned data.
 
 ## Disconnect
 
