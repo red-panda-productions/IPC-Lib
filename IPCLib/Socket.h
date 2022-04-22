@@ -23,7 +23,7 @@
 #define IPCLIB_SUCCEED 0
 
 
-
+/// @brief A worker thread that can be commanded to receive data
 class IPCLIB_EXPORT ReceivingThread
 {
 public:
