@@ -139,6 +139,7 @@ void ServerSocket::CloseServer()
 	closesocket(m_serverSocket);
 	WSACleanup();
 	m_open = false;
+	Stop();
 }
 
 /// @brief Deconstructs the server

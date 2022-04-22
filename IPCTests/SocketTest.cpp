@@ -316,3 +316,10 @@ TEST(SocketTests, NoServer)
 	ClientSocket client1;
 	ASSERT_EQ(client1.Initialize(), WSA_ERROR);
 }
+
+TEST(SocketTests, DeleteAfterReceiveAsync)
+{
+	CONNECT();
+	server.ReceiveDataAsync();
+	ASSERT_DURATION_LE(1,server.~ServerSocket());
+}

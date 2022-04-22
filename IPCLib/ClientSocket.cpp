@@ -76,6 +76,7 @@ void ClientSocket::Disconnect()
 {
 	closesocket(m_socket);
 	WSACleanup();
+	Stop();
 	m_disconnected = true;
 }
 

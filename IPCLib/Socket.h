@@ -17,6 +17,9 @@
 	std::cerr << p_message << std::endl;  \
 	return p_errorCode;
 
+#define IPCLIB_WARNING(p_message, p_errorCode)\
+	std::cerr << p_message << std::endl; 
+
 #define WSA_ERROR -1
 #define IPCLIB_SERVER_ERROR 1
 #define IPCLIB_CLIENT_ERROR 2
@@ -33,18 +36,18 @@ public:
 
     void Receive();
 
-	bool Receiving() const;
-
-    void Stop();
+	void Stop();
 
 	void Reset();
+
+	~ReceivingThread();
 
 private:
 	void ReceivingLoop();
 
-    bool m_stop = false;
 	bool m_receiving = false;
 	bool m_received = false;
+	bool m_stop = false;
 
 	std::function<void()>* m_receiveDataFunc = nullptr;
 
