@@ -1,4 +1,5 @@
 # Documentation
+
 This is the documentation of the IPCLib, the layout of this document is the following:
 - ServerSocket
 - ClientSocket
@@ -6,7 +7,11 @@ This is the documentation of the IPCLib, the layout of this document is the foll
 
 # ServerSocket
 
-A class that represents the serverside of a socket connection. It has functions to asynchronously connect and receive data from a client, and a synchronous function to send data to a client.
+A class that represents the serverside of a socket connection. It has functions to asynchronously connect and receive data from a client and a synchronous function to send data to a client.
+
+## Initialize
+
+Initializes and starts the server.
 
 ## ConnectAsync
 
@@ -14,11 +19,11 @@ Spawns a child thread that waits for a connection, such that the main thread is 
 
 ## AwaitClientConnection
 
-The main thread awaits untill a client has connected to the server, this makes sure that the server cannot send data to a client that does not exist. It is best practise to call this function after ConnectAsync().
+The main thread awaits untill a client has connected to the server, this makes sure that the server cannot send data to a client that is not connected. If this function is called before calling ConnectAsync() the main thread will connect with a client. Otherwise the main thread will wait on the sub thread until it has connected.
 
 ## SendData
 
-Sends data to a connected client.
+Sends data to a connected client on the main thread. This data cannot be longer than IPC_BUFFER_BYTE_SIZE.
 
 ## ReceiveDataAsync
 
@@ -26,11 +31,11 @@ Spawns a child thread that waits for data from a client, such that the main thre
 
 ## GetData
 
-Checks if data has been received in the child thread. If data was received it will return true, with the data in the buffers. If it did not it will return false.
+Checks if data has been received in the child thread. If data was received it will return true, with the data in the buffers. If it did not it will return false. 
 
 ## AwaitData
 
-Waits untill data is received from the client. Note that this function should ONLY be called after a ReceiveDataAsync() call, as otherwise the server will crash.
+Waits untill data is received from the client. If this function is called before calling ReceiveDataAsync() the main thread will wait until data is received on the socket. Otherwise it will wait until the sub thread returned data.
 
 ## Connected()
 
@@ -49,6 +54,10 @@ Closes the server, and disconnects any client that is connected
 
 A class that represents the clientside of a socket connection. It has functions to asynchronously connect and receive data from a server, and a synchronous function to send data to a server. Note that the client will connect to the server in the constructor, and can't connect if no server exists.
 
+## Initialize
+
+Initializes and connects the client to a server.
+
 ## SendData
 
 Sends data to the server
@@ -63,7 +72,7 @@ Checks if data has been received in the child thread. If data was received it wi
 
 ## AwaitData
 
-Waits untill data is received from the server. It is best practise to call this function after ReceiveDataAsync().
+Waits untill data is received from the server. If this function is called before calling ReceiveDataAsync() the main thread will wait until data is received on the socket. Otherwise it will wait until the sub thread returned data.
 
 ## Disconnect
 
@@ -77,20 +86,21 @@ This section will give a simple example of setting up a connection between a ser
 ## Server side
 
 ```
-  ServerSocket server;           // creates the server on localhost
+  ServerSocket server;                // creates the server on localhost
+  server.Initialize();                // initializes the server
   server.ConnectAsync();              // asynchronously wait on a client connection
   server.AwaitClientConnection();     // wait untill a client is connected
   server.SendData("Hello Client",12); // sends data to the client
   server.ReceiveDataAsync();          // asynchronously receive data from the client
   char buffer[50];                    // set up a buffer for the data
   server.AwaitData(buffer,50);        // wait untill data is received
- 
 ```
 
 ## Client side
 
 ```
-  ClientSocket client;           // creates the client and connects to localhost
+  ClientSocket client;            	  // creates the client and connects to localhost
+  client.Initialize();                // initializes the client
   client.SendData("Hello Server",12); // sends data to the server
   client.ReceiveDataAsync();          // asynchronously receives data from the server
   char buffer[50];                    // set up a buffer for the data

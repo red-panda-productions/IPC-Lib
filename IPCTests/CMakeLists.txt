@@ -39,4 +39,4 @@ if(OPEN_CPP_COVERAGE)
 endif(OPEN_CPP_COVERAGE)
 
 include(GoogleTest)
-gtest_discover_tests(IPCTests)
+gtest_discover_tests(IPCTests DISCOVERY_TIMEOUT 600)
