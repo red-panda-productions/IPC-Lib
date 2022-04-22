@@ -4,7 +4,8 @@
 #include <thread>
 #include <WS2tcpip.h>
 
-
+/// @brief					  The constructor of the receiving thread
+/// @param  p_receiveDataFunc The function that will receive data
 ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
   : m_receiveDataFunc(new std::function<void()>(p_receiveDataFunc))
 {
@@ -46,7 +47,7 @@ void ReceivingThread::Reset()
 }
 
 /// @brief Loops the thread constantly until its commanded to stop
-/void ReceivingThread::ReceivingLoop()
+void ReceivingThread::ReceivingLoop()
 {
     while (!m_stop)
     {
