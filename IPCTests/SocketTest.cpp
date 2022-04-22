@@ -189,7 +189,6 @@ TEST(SocketTests, SendDataToClientTestAsync)
 TEST(SocketTests, SendDataToClientTestSychronously)
 {
 	CONNECT();
-	std::cout << "hi" << std::endl;
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
 }
 
