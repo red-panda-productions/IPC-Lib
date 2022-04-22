@@ -66,6 +66,7 @@ ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections) : m_ip(p_
 /// @return The error code
 int ServerSocket::Initialize()
 {
+	Socket::Initialize();
 	return StartServer(m_ip, m_port, m_connections, m_wsa, m_serverSocket, m_server, m_client, m_open);
 }
 

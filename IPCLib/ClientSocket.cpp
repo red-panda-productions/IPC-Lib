@@ -51,6 +51,7 @@ ClientSocket::ClientSocket(PCWSTR p_ip, int p_port) : m_ip(p_ip), m_port(p_port)
 /// @return The error code
 int ClientSocket::Initialize()
 {
+	Socket::Initialize();
 	return ConnectToServer(m_ip, m_port, m_wsa, m_socket, m_server, m_disconnected);
 }
 

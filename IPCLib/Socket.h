@@ -3,6 +3,8 @@
 #include "ipclib_export.h"
 #include <WinSock2.h>
 #include <iostream>
+#include <thread>
+#include <functional>
 
 #define IPC_BUFFER_BYTE_SIZE 512
 
@@ -20,6 +22,35 @@
 #define IPCLIB_CLIENT_ERROR 2
 #define IPCLIB_SUCCEED 0
 
+
+
+class IPCLIB_EXPORT ReceivingThread
+{
+public:
+    explicit ReceivingThread(const std::function<void()>& p_receiveDataFunc);
+
+	bool ReceivedMessage() const;
+
+    void Receive();
+
+	bool Receiving() const;
+
+    void Stop();
+
+	void Reset();
+
+private:
+	void ReceivingLoop();
+
+    bool m_stop = false;
+	bool m_receiving = false;
+	bool m_received = false;
+
+	std::function<void()>* m_receiveDataFunc = nullptr;
+
+	std::thread* m_thread = nullptr;
+};
+
 /// @brief A base class for ServerSocket and ClientSocketAsync
 class IPCLIB_EXPORT Socket
 {
@@ -34,13 +65,19 @@ private:
 	void ReceiveData();
 
 protected:
+	void Initialize();
+
+	void Stop();
+
 	int m_size = IPC_BUFFER_BYTE_SIZE;
 	char m_dataBuffer[IPC_BUFFER_BYTE_SIZE] = {'\0'};
-
-	bool m_receiving = false;
-	bool m_received = false;
 	bool m_disconnected = true;
+	bool m_internalReceive = false;
+	bool m_externalReceive = false;
 
 	SOCKET m_socket = -1;
-	WSAData m_wsa;
+	WSAData m_wsa = {};
+
+	ReceivingThread* m_receivingThread = nullptr;
 };
+

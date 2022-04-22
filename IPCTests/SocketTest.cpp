@@ -189,6 +189,7 @@ TEST(SocketTests, SendDataToClientTestAsync)
 TEST(SocketTests, SendDataToClientTestSychronously)
 {
 	CONNECT();
+	std::cout << "hi" << std::endl;
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
 }
 
@@ -271,7 +272,7 @@ TEST(SocketTests, DontReceiveTwice)
 	server.ReceiveDataAsync();
 	ASSERT_EQ(client.SendData("hi1", 3),IPCLIB_SUCCEED);
 	char buffer[20];
-	server.AwaitData(buffer, 20);
+	ASSERT_DURATION_LE(1,server.AwaitData(buffer, 20));
 	ASSERT_TRUE(TestMessageEqual(buffer, "hi1", 3));
 	ASSERT_FALSE(server.GetData(buffer, 20));
 	server.ReceiveDataAsync();
@@ -296,7 +297,7 @@ TEST(SocketTests, SendNullOp)
 	char data[4]{ "x\0x" };
 	ASSERT_EQ(client.SendData(data,3),IPCLIB_SUCCEED);
 	char buffer[20];
-	server.AwaitData(buffer, 20);
+	ASSERT_DURATION_LE(1, server.AwaitData(buffer, 20));
 	ASSERT_TRUE(buffer[0] == 'x' && buffer[1] == '\0' && buffer[2] == 'x');
 }
 
