@@ -48,4 +48,9 @@ jobs:
       with:
         name: test_results_xml
         path: ${{runner.workspace}}/build/IPCTests/test-results/**/*.xml
+    
+    - name: Run code coverage
+      working-directory: ${{github.workspace}}
+      run: .\coverage.bat
+
       
