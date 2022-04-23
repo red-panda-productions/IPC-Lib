@@ -32,7 +32,7 @@ jobs:
       uses: KungFuDonkey/Install-OpenCppCoverage@v1.0.1
 
     - name: Configure CMake
-      run: cmake -S ${{github.workspace}} -B ${{runner.workspace}}/build
+      run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
