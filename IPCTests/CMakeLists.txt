@@ -32,7 +32,7 @@ if(OPEN_CPP_COVERAGE)
 
     IF(OPTION_GITHUB_ACTIONS)
         MESSAGE(STATUS "Creating Github actions coverage file")
-        LIST(APPEND BINARYDIR "\\\\Debug" )
+        STRING(CONCAT BINARYDIR "${BINARYDIR}" "\\Debug" )
         SET(COV_EXPORT_TYPE "cobertura:${SOURCEDIR}\\coverage")
         SET(COV_EXTRA_COMMANDS "")
     ELSE(OPTION_GITHUB_ACTIONS)
