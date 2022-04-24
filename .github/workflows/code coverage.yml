@@ -35,13 +35,6 @@ jobs:
     - name: Build
       working-directory: ${{runner.workspace}}/build
       run: cmake --build .
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v2
-      if: failure()
-      with:
-        name: test_results_xml
-        path: ${{runner.workspace}}/build/IPCTests/test-results/**/*.xml
     
     - name: Run code coverage
       working-directory: ${{github.workspace}}
