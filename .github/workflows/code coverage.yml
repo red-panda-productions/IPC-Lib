@@ -43,7 +43,7 @@ jobs:
     - name: Check code coverage
       shell: bash
       run: |
-        cd ${{github.workspace}}
+        cd "${{github.workspace}}"
         type coverage.xml
 
     - name: Create code coverage report
