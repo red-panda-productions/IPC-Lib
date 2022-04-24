@@ -56,9 +56,9 @@ jobs:
     - name: Check generated coverage
       shell: bash
       run: |
-        cd ${{github.workspace}}
+        cd "${{github.workspace}}"
         dir
-        cd ${{github.workspace}}\coverage
+        cd "${{github.workspace}}\\coverage"
         dir
 
     - name: Create code coverage report
