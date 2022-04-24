@@ -41,7 +41,7 @@ jobs:
       run: .\coverage.bat
 
     - name: Check code coverage
-      shell: bash
+      shell: cmd
       run: |
         type "${{github.workspace}}\coverage.xml"
 
