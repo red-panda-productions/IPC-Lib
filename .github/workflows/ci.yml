@@ -53,14 +53,6 @@ jobs:
       working-directory: ${{github.workspace}}
       run: .\coverage.bat
 
-    - name: Check generated coverage
-      shell: bash
-      run: |
-        cd "${{github.workspace}}"
-        dir
-        cd "${{github.workspace}}\\coverage"
-        dir
-
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
       with:
