@@ -64,7 +64,7 @@ jobs:
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
       with:
-        path: ${{github.workspace}}/coverage/*.xml
+        path: ${{github.workspace}}/coverage.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         minimum_coverage: 100
         fail_below_threshold: true
