@@ -51,12 +51,15 @@ jobs:
     
     - name: Run code coverage
       working-directory: ${{github.workspace}}
-      run: .\coverage.bat
+      run: |
+        .\coverage.bat
+        cd coverage
+        dir
 
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
       with:
-        path: coverage/*.xml
+        path: $${{runner.workspace}}/coverage/*.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         minimum_coverage: 100
         fail_below_threshold: true
