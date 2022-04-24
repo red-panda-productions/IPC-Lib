@@ -51,8 +51,11 @@ jobs:
     
     - name: Run code coverage
       working-directory: ${{github.workspace}}
+      run: .\coverage.bat
+
+    - name: Check generated coverage
+      shell: bash
       run: |
-        .\coverage.bat
         cd ${{github.workspace}}
         dir
         cd ${{github.workspace}}\coverage
