@@ -43,8 +43,7 @@ jobs:
     - name: Check code coverage
       shell: bash
       run: |
-        cd "${{github.workspace}}"
-        type coverage.xml
+        type "${{github.workspace}}\\coverage.xml"
 
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
