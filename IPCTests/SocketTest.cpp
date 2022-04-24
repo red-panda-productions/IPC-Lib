@@ -211,7 +211,6 @@ TEST(SocketTests, NoConnectionClient)
 /// @brief Makes sure the program throws when there is no connection to a client, but you try to send data
 TEST(SocketTests, DisconnectedSend)
 {
-	return;
 	CONNECT();
 	ASSERT_TRUE(server.Connected());
 	server.Disconnect();
@@ -224,7 +223,6 @@ TEST(SocketTests, DisconnectedSend)
 /// @brief Makes sure the program throws when the server is not open, but you try to send data
 TEST(SocketTests, ClosedSend)
 {
-	return;
 	CONNECT();
 	ASSERT_TRUE(server.Connected());
 	server.CloseServer();
@@ -235,7 +233,6 @@ TEST(SocketTests, ClosedSend)
 /// @brief Tests whether a server and client can gracefully disconnect
 TEST(SocketTests, DisconnectTest)
 {
-	return;
 	CONNECT();
 	server.Disconnect();
 	client.Disconnect();
@@ -244,7 +241,6 @@ TEST(SocketTests, DisconnectTest)
 /// @brief Tests whether a server can connect to 2 clients
 TEST(SocketTests, TwoClientsTest)
 {
-	return;
 	CONNECT();
 	server.Disconnect();
 	client.Disconnect();
@@ -257,7 +253,6 @@ TEST(SocketTests, TwoClientsTest)
 /// @brief Tests if a bunch of random data can be send to the server
 TEST(SocketTests, RandomSendToServerTests)
 {
-	return;
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToServer(1000, server, client)));
 }
@@ -265,7 +260,6 @@ TEST(SocketTests, RandomSendToServerTests)
 /// @brief Tests if a bunch of random data can be send to the client
 TEST(SocketTests, RandomSendToClientTests)
 {
-	return;
 	CONNECT();
 	ASSERT_DURATION_LE(1, ASSERT_TRUE(MultipleSendDataToClient(1000, server, client)));
 }
@@ -273,7 +267,6 @@ TEST(SocketTests, RandomSendToClientTests)
 /// @brief Tests if data will not be received twice
 TEST(SocketTests, DontReceiveTwice)
 {
-	return;
 	CONNECT();
 	server.ReceiveDataAsync();
 	ASSERT_EQ(client.SendData("hi1", 3),IPCLIB_SUCCEED);
@@ -298,7 +291,6 @@ TEST(SocketTests, DontReceiveTwice)
 /// @brief Tests if you can send a null operator
 TEST(SocketTests, SendNullOp)
 {
-	return;
 	CONNECT();
 	server.ReceiveDataAsync();
 	char data[4]{ "x\0x" };
@@ -311,7 +303,6 @@ TEST(SocketTests, SendNullOp)
 /// @brief Tests if the server crashes when 2 servers are on the same ip and port
 TEST(SocketTests, DoubleServer)
 {
-	return;
 	ServerSocket server1;
 	ASSERT_EQ(server1.Initialize(), IPCLIB_SUCCEED);
 	ServerSocket server2;
@@ -321,7 +312,6 @@ TEST(SocketTests, DoubleServer)
 /// @brief Tests if the client crashes when there is no server
 TEST(SocketTests, NoServer)
 {
-	return;
 	ClientSocket client1;
 	ASSERT_EQ(client1.Initialize(), WSA_ERROR);
 }
