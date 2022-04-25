@@ -3,7 +3,7 @@
 #include "ServerSocket.h"
 #include "Utils.h"
 
-#define AWAIT_MESSAGE_TIMEOUT 3
+#define AWAIT_MESSAGE_TIMEOUT    3
 #define AWAIT_CONNECTION_TIMEOUT 3
 
 /// @brief					Sends data from the client to the server
@@ -151,7 +151,6 @@ void AwaitingServer()
 {
     ServerSocket server;
     ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
-    server.ReceiveDataAsync();
     server.AwaitClientConnection();
     char buffer[32];
     server.AwaitData(buffer, 32);
@@ -330,7 +329,7 @@ TEST(SocketTests, DeleteAfterReceiveAsync)
 {
     CONNECT();
     server.ReceiveDataAsync();
-    ASSERT_DURATION_LE(1, server.~ServerSocket());
+    ASSERT_DURATION_LE(AWAIT_CONNECTION_TIMEOUT, server.~ServerSocket());
 }
 
 /// @brief Tests if an exception is thrown when initialize is called twice
