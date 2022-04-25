@@ -122,7 +122,7 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
     server.ConnectAsync();                          \
     ClientSocket client;                            \
     ASSERT_EQ(client.Initialize(), IPCLIB_SUCCEED); \
-    ASSERT_DURATION_LE(1, server.AwaitClientConnection())
+    ASSERT_DURATION_LE(3, server.AwaitClientConnection())
 
 /// @brief Tests an asynchronous connection method
 TEST(SocketTests, AsyncConnectTest)
