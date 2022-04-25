@@ -12,10 +12,6 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Debug
 
-  # Enable colour output for GTEST and XML file generation
-  GTEST_COLOR: yes
-  GTEST_OUTPUT: xml:test-results/
-
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic anda should work equally well on Windows or Mac.
@@ -39,10 +35,6 @@ jobs:
     - name: Run code coverage
       working-directory: ${{github.workspace}}
       run: .\coverage.bat
-
-    - name: Check code coverage
-      shell: cmd
-      run: type "${{github.workspace}}\coverage.xml"
 
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
