@@ -75,6 +75,7 @@ void ClientSocket::Disconnect()
 {
     closesocket(MSocket);
     WSACleanup();
+    Stop();
     Disconnected = true;
 }
 

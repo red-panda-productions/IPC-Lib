@@ -188,7 +188,6 @@ TEST(SocketTests, SendDataToClientTestAsync)
 TEST(SocketTests, SendDataToClientTestSychronously)
 {
     CONNECT();
-    std::cout << "hi" << std::endl;
     ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
 }
 
@@ -314,4 +313,27 @@ TEST(SocketTests, NoServer)
 {
     ClientSocket client1;
     ASSERT_EQ(client1.Initialize(), WSA_ERROR);
+}
+
+/// @brief Tests if the destructor is called correctly when the worker thread is still reading
+TEST(SocketTests, DeleteAfterReceiveAsync)
+{
+    CONNECT();
+    server.ReceiveDataAsync();
+    ASSERT_DURATION_LE(1, server.~ServerSocket());
+}
+
+/// @brief Tests if an exception is thrown when initialize is called twice
+TEST(SocketTests, DoubleServerInitializeTest)
+{
+    ServerSocket server;
+    server.Initialize();
+    ASSERT_THROW(server.Initialize(), std::runtime_error);
+}
+
+/// @brief Tests if an exception is thrown when initialize is called twice
+TEST(SocketTests, DoubleClientInitializeTest)
+{
+    CONNECT();
+    ASSERT_THROW(client.Initialize(), std::runtime_error);
 }
