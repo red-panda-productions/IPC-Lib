@@ -149,7 +149,10 @@ void AwaitingServer()
     ServerSocket server;
     ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
     server.AwaitClientConnection();
+    char buffer[32];
+    server.AwaitData(buffer, 32);
     ASSERT_EQ(server.SendData("OK", 2), IPCLIB_SUCCEED);
+    TestMessageEqual("OK", buffer, 2);
 }
 
 TEST(SocketTests, AwaitConnectionTest)
@@ -158,8 +161,10 @@ TEST(SocketTests, AwaitConnectionTest)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     ClientSocket client;
     ASSERT_EQ(client.Initialize(), IPCLIB_SUCCEED);
+    ASSERT_EQ(client.SendData("OK", 2), IPCLIB_SUCCEED);
     char buffer[32];
     ASSERT_DURATION_LE(1, client.AwaitData(buffer, 32));
+    TestMessageEqual("OK", buffer, 2);
     t.join();
 }
 
