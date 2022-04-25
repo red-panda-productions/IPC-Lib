@@ -7,20 +7,20 @@
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data
 ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
-  : m_receiveDataFunc(new std::function<void()>(p_receiveDataFunc))
+    : m_receiveDataFunc(new std::function<void()>(p_receiveDataFunc))
 {
     m_thread = new std::thread(&ReceivingThread::ReceivingLoop, this);
 }
 
 /// @brief  Checks whether the thread received a message
 /// @return Whether the thread received a message
-bool ReceivingThread::ReceivedMessage() const
+bool ReceivingThread::HasReceivedMessage() const
 {
     return m_received;
 }
 
 /// @brief Sets the thread in a state to receive a message
-void ReceivingThread::Receive()
+void ReceivingThread::StartReceive()
 {
     m_received = false;
     m_receiving = true;
@@ -28,7 +28,7 @@ void ReceivingThread::Receive()
 
 void ReceivingThread::Stop()
 {
-	m_stop = true;
+    m_stop = true;
 }
 
 /// @brief Resets the internal booleans
@@ -39,34 +39,34 @@ void ReceivingThread::Reset()
 
 ReceivingThread::~ReceivingThread()
 {
-	Stop();
-	m_thread->join();
-	delete m_thread;
+    Stop();
+    m_thread->join();
+    delete m_thread;
 }
 
-/// @brief Loops the thread constantly until its commanded to stop
+/// @brief Loops the thread constantly until it is commanded to stop
 void ReceivingThread::ReceivingLoop()
 {
     while (!m_stop)
     {
         if (!m_receiving) continue;
-		try
-		{
-			(*m_receiveDataFunc)();
-			m_received = true;
-		}
-        catch (std::exception&)
+        try
         {
-			IPCLIB_WARNING("[IPCLIB] Unexpected exception while receiving data")
+            (*m_receiveDataFunc)();
+            m_received = true;
         }
-		m_receiving = false;
+        catch (std::exception& e)
+        {
+            IPCLIB_WARNING("[IPCLIB] Unexpected exception while receiving data: " << e.what())
+        }
+        m_receiving = false;
     }
 }
 
 /// @brief Receive data asynchronously by activating the receive thread
 void Socket::ReceiveDataAsync()
 {
-    m_receivingThread->Receive();
+    m_receivingThread->StartReceive();
     m_externalReceive = true;
 }
 
@@ -95,7 +95,7 @@ void Socket::Initialize()
 /// @brief Stops the receive thread
 void Socket::Stop()
 {
-	delete m_receivingThread;
+    delete m_receivingThread;
 }
 
 /// @brief				Awaits until data has been written to the socket
@@ -111,7 +111,7 @@ void Socket::AwaitData(char* p_dataBuffer, int p_size)
         m_internalReceive = false;
         return;
     }
-    while (!m_receivingThread->ReceivedMessage()) {}
+    while (!m_receivingThread->HasReceivedMessage()) {}
     GetData(p_dataBuffer, p_size);
     m_externalReceive = false;
 }
@@ -122,7 +122,7 @@ void Socket::AwaitData(char* p_dataBuffer, int p_size)
 /// @return				If it received data or not
 bool Socket::GetData(char* p_dataBuffer, int p_size)
 {
-    if (!m_receivingThread->ReceivedMessage() && !m_internalReceive) return false;
+    if (!m_receivingThread->HasReceivedMessage() && !m_internalReceive) return false;
     assert(Size >= 0 && Size < p_size);
     for (int i = 0; i < Size; i++)
     {

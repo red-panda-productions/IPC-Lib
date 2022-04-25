@@ -187,8 +187,8 @@ TEST(SocketTests, SendDataToClientTestAsync)
 /// @brief Tests whether data can be send to a client and be received synchronously
 TEST(SocketTests, SendDataToClientTestSychronously)
 {
-	CONNECT();
-	ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
+    CONNECT();
+    ASSERT_DURATION_LE(1, ASSERT_TRUE(SendDataToClient(server, client, "SENDDATATOCLIENT", 16, false, false)));
 }
 
 /// @brief Makes sure the program throws when there is no connection to a client, but you try to send data
@@ -311,29 +311,29 @@ TEST(SocketTests, DoubleServer)
 /// @brief Tests if the client crashes when there is no server
 TEST(SocketTests, NoServer)
 {
-	ClientSocket client1;
-	ASSERT_EQ(client1.Initialize(), WSA_ERROR);
+    ClientSocket client1;
+    ASSERT_EQ(client1.Initialize(), WSA_ERROR);
 }
 
 /// @brief Tests if the destructor is called correctly when the worker thread is still reading
 TEST(SocketTests, DeleteAfterReceiveAsync)
 {
-	CONNECT();
-	server.ReceiveDataAsync();
-	ASSERT_DURATION_LE(1,server.~ServerSocket());
+    CONNECT();
+    server.ReceiveDataAsync();
+    ASSERT_DURATION_LE(1, server.~ServerSocket());
 }
 
 /// @brief Tests if an exception is thrown when initialize is called twice
 TEST(SocketTests, DoubleServerInitializeTest)
 {
-	ServerSocket server;
-	server.Initialize();
-	ASSERT_THROW(server.Initialize(),std::runtime_error);
+    ServerSocket server;
+    server.Initialize();
+    ASSERT_THROW(server.Initialize(), std::runtime_error);
 }
 
 /// @brief Tests if an exception is thrown when initialize is called twice
 TEST(SocketTests, DoubleClientInitializeTest)
 {
-	CONNECT();
-	ASSERT_THROW(client.Initialize(), std::runtime_error);
+    CONNECT();
+    ASSERT_THROW(client.Initialize(), std::runtime_error);
 }

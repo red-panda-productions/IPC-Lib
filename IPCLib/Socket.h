@@ -17,14 +17,13 @@
     std::cerr << p_message << std::endl;     \
     return p_errorCode;
 
-#define IPCLIB_WARNING(p_message, p_errorCode)\
-	std::cerr << p_message << std::endl; 
+#define IPCLIB_WARNING(p_message) \
+    std::cerr << p_message << std::endl;
 
-#define WSA_ERROR -1
+#define WSA_ERROR           -1
 #define IPCLIB_SERVER_ERROR 1
 #define IPCLIB_CLIENT_ERROR 2
-#define IPCLIB_SUCCEED 0
-
+#define IPCLIB_SUCCEED      0
 
 /// @brief A worker thread that can be commanded to receive data
 class IPCLIB_EXPORT ReceivingThread
@@ -32,15 +31,15 @@ class IPCLIB_EXPORT ReceivingThread
 public:
     explicit ReceivingThread(const std::function<void()>& p_receiveDataFunc);
 
-    bool ReceivedMessage() const;
+    bool HasReceivedMessage() const;
 
-    void Receive();
+    void StartReceive();
 
     void Stop();
 
     void Reset();
 
-	~ReceivingThread();
+    ~ReceivingThread();
 
 private:
     void ReceivingLoop();
