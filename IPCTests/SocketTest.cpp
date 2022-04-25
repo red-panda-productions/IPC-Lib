@@ -156,12 +156,12 @@ void AwaitingServer()
 TEST(SocketTests, AwaitConnectionTest)
 {
 	std::thread t(AwaitingServer);
-	t.detach();
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	ClientSocket client;
 	ASSERT_EQ(client.Initialize(), IPCLIB_SUCCEED);
 	char buffer[32];
 	ASSERT_DURATION_LE(1,client.AwaitData(buffer, 32));
+	t.join();
 }
 
 /// @brief Tests whether data can be send to a server and be received asynchronously
