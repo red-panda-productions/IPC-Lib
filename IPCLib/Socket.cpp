@@ -49,7 +49,11 @@ void ReceivingThread::ReceivingLoop()
 {
     while (!m_stop)
     {
-        if (!m_receiving) continue;
+        if (!m_receiving)
+        {
+            std::this_thread::yield();
+            continue;
+        }
         try
         {
             (*m_receiveDataFunc)();
@@ -111,7 +115,7 @@ void Socket::AwaitData(char* p_dataBuffer, int p_size)
         m_internalReceive = false;
         return;
     }
-    while (!m_receivingThread->HasReceivedMessage()) {}
+    while (!m_receivingThread->HasReceivedMessage()) { std::this_thread::yield(); }
     GetData(p_dataBuffer, p_size);
     m_externalReceive = false;
 }
