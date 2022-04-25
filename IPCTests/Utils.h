@@ -15,7 +15,7 @@
     completed.set_value(true); }, std::ref(completed)).detach();   \
         if (stmt_future.wait_for(std::chrono::seconds(secs)) == std::future_status::timeout) \
             GTEST_FATAL_FAILURE_("       timed out (> " #secs                                \
-                                 " seconds). Check code for infinite loops");                \
+                                 " seconds) on " #stmt ". Check code for infinite loops");   \
     }
 
 /// @brief		Tests if 2 messages are equal to each other
