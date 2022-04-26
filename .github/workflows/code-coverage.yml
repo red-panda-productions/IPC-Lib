@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Install OpenCppCoverage
-      uses: KungFuDonkey/Install-OpenCppCoverage@v1.0.1
+      uses: KungFuDonkey/Install-OpenCppCoverage@v1
 
     - name: Configure CMake
       run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
