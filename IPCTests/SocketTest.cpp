@@ -337,7 +337,7 @@ TEST(SocketTests, DoubleServerInitializeTest)
 {
     ServerSocket server;
     server.Initialize();
-    server.Initialize(); // should not throw
+    server.Initialize();  // should not throw
 }
 
 /// @brief Tests if an exception is thrown when initialize is called twice
@@ -351,5 +351,5 @@ TEST(SocketTests, ClientFailedInitializeTwiceTest)
 {
     ClientSocket client;
     client.Initialize();
-    client.Initialize(); // should not throw
+    client.Initialize();  // should not throw
 }
