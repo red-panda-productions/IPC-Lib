@@ -1,0 +1,51 @@
+name: CI Pipeline Code Coverage
+
+on:
+  pull_request:
+    branches: [ main ]
+
+  # Allow manually triggering from the actions tab
+  workflow_dispatch:
+
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic anda should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install OpenCppCoverage
+      uses: KungFuDonkey/Install-OpenCppCoverage@v1
+
+    - name: Configure CMake
+      run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --build .
+    
+    - name: Run code coverage
+      working-directory: ${{github.workspace}}
+      run: .\coverage.bat
+
+    - name: Create code coverage report
+      uses: 5monkeys/cobertura-action@master
+      with:
+        path: ${{github.workspace}}/coverage.xml
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        minimum_coverage: 100
+        fail_below_threshold: true
+        show_missing: true
+        link_missing_lines: true
+        skip_covered: false
+        report_name: 'code coverage report'
+
+      

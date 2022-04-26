@@ -92,7 +92,7 @@ void ServerSocket::AwaitClientConnection()
 {
     if (m_connecting)
     {
-        while (Disconnected) {}
+        while (Disconnected) { std::this_thread::yield(); }
         m_connecting = false;
         return;
     }

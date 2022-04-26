@@ -29,11 +29,22 @@ add_custom_command(TARGET IPCTests POST_BUILD
 if(OPEN_CPP_COVERAGE)
     STRING(REGEX REPLACE "/" "\\\\" SOURCEDIR ${CMAKE_SOURCE_DIR})
     STRING(REGEX REPLACE "/" "\\\\" BINARYDIR ${CMAKE_CURRENT_BINARY_DIR})
+
+    IF(OPTION_GITHUB_ACTIONS)
+        MESSAGE(STATUS "Creating Github actions coverage file")
+        STRING(CONCAT BINARYDIR "${BINARYDIR}" "\\Debug" )
+        SET(COV_EXPORT_TYPE "cobertura:${SOURCEDIR}\\coverage.xml")
+        SET(COV_EXTRA_COMMANDS "")
+    ELSE(OPTION_GITHUB_ACTIONS)
+        SET(COV_EXPORT_TYPE "html:${BINARYDIR}\\coverage")
+        SET(COV_EXTRA_COMMANDS "@start ${BINARYDIR}\\coverage\\index.html")
+    ENDIF(OPTION_GITHUB_ACTIONS)
+
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.bat
         CONTENT 
             "@echo off
-            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=html:${BINARYDIR}\\coverage --excluded_line_regex \"[ \\t]*(\"((\"THROW_IPCLIB|IPCLIB\")_ERROR\\(\\\"\\[WSA\\].*)|(\\}.*)\")\" -- ${BINARYDIR}\\IPCTests.exe
-            @start ${BINARYDIR}\\coverage\\index.html")
+            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=${COV_EXPORT_TYPE} --excluded_line_regex \"[ \\t]*(\"((\"THROW_IPCLIB|IPCLIB\")_ERROR\\(\\\"\\[WSA\\].*)|(\\}.*)\")\" -- ${BINARYDIR}\\IPCTests.exe
+            ${COV_EXTRA_COMMANDS}")
 
     MESSAGE(STATUS "Created coverage.bat")
 endif(OPEN_CPP_COVERAGE)
