@@ -63,8 +63,15 @@ ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 /// @return The error code
 int ServerSocket::Initialize()
 {
+    int errorCode = StartServer(m_ip, m_port, m_connections, Wsa, m_serverSocket, m_server, m_client, m_open);
+    if(errorCode != IPCLIB_SUCCEED)
+    {
+        closesocket(m_serverSocket);
+        WSACleanup();
+        return errorCode;
+    }
     Socket::Initialize();
-    return StartServer(m_ip, m_port, m_connections, Wsa, m_serverSocket, m_server, m_client, m_open);
+    return errorCode;
 }
 
 /// @brief Connects the server to a client asynchronously
