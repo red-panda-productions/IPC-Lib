@@ -18,11 +18,11 @@
                                  " seconds) on " #stmt ". Check code for infinite loops");   \
     }
 
-/// @brief		  Tests if 2 messages are equal to each other
+/// @brief        Tests if 2 messages are equal to each other
 /// @param p_msg1 The first message
 /// @param p_msg2 The second message
 /// @param p_size The size of the 2 messages
-/// @return		  Whether the test failed or succeeded
+/// @return       Whether the test failed or succeeded
 inline bool TestMessageEqual(const char* p_msg1, const char* p_msg2, int p_size)
 {
     bool len1 = p_size == static_cast<int>(strlen(p_msg1));
@@ -38,7 +38,7 @@ inline bool TestMessageEqual(const char* p_msg1, const char* p_msg2, int p_size)
     return true;
 }
 
-/// @brief				  Generates a random string for testing
+/// @brief                Generates a random string for testing
 /// @param p_dataBuffer	  The buffer in which the string will be written
 /// @param p_stringLength The length of the string (must be strictly smaller than the length of the buffer)
 inline void GenerateRandomString(char* p_dataBuffer, int p_stringLength)
