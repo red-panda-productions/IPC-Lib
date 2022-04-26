@@ -50,8 +50,15 @@ ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 /// @return The error code
 int ClientSocket::Initialize()
 {
+    int errorCode = ConnectToServer(m_ip, m_port, Wsa, MSocket, m_server, Disconnected);
+    if (errorCode != IPCLIB_SUCCEED)
+    {
+        closesocket(MSocket);
+        WSACleanup();
+        return errorCode;
+    }
     Socket::Initialize();
-    return ConnectToServer(m_ip, m_port, Wsa, MSocket, m_server, Disconnected);
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief			Sends data over a socket to the server

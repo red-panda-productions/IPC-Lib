@@ -337,7 +337,7 @@ TEST(SocketTests, DoubleServerInitializeTest)
 {
     ServerSocket server;
     server.Initialize();
-    ASSERT_THROW(server.Initialize(), std::runtime_error);
+    server.Initialize();  // should not throw
 }
 
 /// @brief Tests if an exception is thrown when initialize is called twice
@@ -345,4 +345,11 @@ TEST(SocketTests, DoubleClientInitializeTest)
 {
     CONNECT();
     ASSERT_THROW(client.Initialize(), std::runtime_error);
+}
+
+TEST(SocketTests, ClientFailedInitializeTwiceTest)
+{
+    ClientSocket client;
+    client.Initialize();
+    client.Initialize();  // should not throw
 }
