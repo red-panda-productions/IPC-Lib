@@ -19,6 +19,11 @@ bool ReceivingThread::HasReceivedMessage() const
     return m_received;
 }
 
+int ReceivingThread::GetErrorCode() const
+{
+    return m_error;
+}
+
 /// @brief Sets the thread in a state to receive a message
 void ReceivingThread::StartReceive()
 {
@@ -62,6 +67,7 @@ void ReceivingThread::ReceivingLoop()
         catch (std::exception& e)
         {
             IPCLIB_WARNING("[IPCLIB] Unexpected exception while receiving data: " << e.what())
+            m_error = IPCLIB_RECEIVE_ERROR;
         }
         m_receiving = false;
     }
@@ -81,6 +87,10 @@ void Socket::ReceiveData()
     if (Size == SOCKET_ERROR)
     {
         THROW_IPCLIB_ERROR("[WSA] Failed to receive message. Error code: " << WSAGetLastError());
+    }
+    if (Size == 0)
+    {
+        THROW_IPCLIB_ERROR("[IPCLIB] Received empty message, so the server was closed");
     }
 }
 
@@ -105,7 +115,7 @@ void Socket::Stop()
 /// @brief				Awaits until data has been written to the socket
 /// @param p_dataBuffer The data buffer for storing the data
 /// @param p_size		The size of the buffer
-void Socket::AwaitData(char* p_dataBuffer, int p_size)
+int Socket::AwaitData(char* p_dataBuffer, int p_size)
 {
     if (!m_externalReceive)
     {
@@ -113,11 +123,19 @@ void Socket::AwaitData(char* p_dataBuffer, int p_size)
         m_internalReceive = true;
         GetData(p_dataBuffer, p_size);
         m_internalReceive = false;
-        return;
+        return IPCLIB_SUCCEED;
     }
-    while (!m_receivingThread->HasReceivedMessage()) { std::this_thread::yield(); }
+    while (!m_receivingThread->HasReceivedMessage())
+    {
+        if (m_receivingThread->GetErrorCode() != IPCLIB_SUCCEED)
+        {
+            return m_receivingThread->GetErrorCode();
+        }
+        std::this_thread::yield();
+    }
     GetData(p_dataBuffer, p_size);
     m_externalReceive = false;
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief				Gets the data from the socket, but can receive no data if no data has been written
