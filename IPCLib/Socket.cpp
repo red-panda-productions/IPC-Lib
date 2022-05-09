@@ -19,6 +19,8 @@ bool ReceivingThread::HasReceivedMessage() const
     return m_received;
 }
 
+/// @brief  Returns an error code if there was an error in this thread
+/// @return The error code
 int ReceivingThread::GetErrorCode() const
 {
     return m_error;
@@ -31,6 +33,7 @@ void ReceivingThread::StartReceive()
     m_receiving = true;
 }
 
+/// @brief Stops the receiving thread
 void ReceivingThread::Stop()
 {
     m_stop = true;
@@ -115,6 +118,7 @@ void Socket::Stop()
 /// @brief				Awaits until data has been written to the socket
 /// @param p_dataBuffer The data buffer for storing the data
 /// @param p_size		The size of the buffer
+/// @return             An error code
 int Socket::AwaitData(char* p_dataBuffer, int p_size)
 {
     if (!m_externalReceive)
