@@ -3,6 +3,10 @@
 #include <stdexcept>
 #include <sstream>
 
+/// @brief Checks if the server is still open
+#define CHECK_OPEN() \
+    if (Disconnected) return IPCLIB_CLOSED_CONNECTION_ERROR;
+
 /// @brief                  Connects a client to a server
 /// @param  p_ip			The IP adress of the server
 /// @param  p_port			The port of the server
@@ -50,6 +54,7 @@ ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 /// @return The error code
 int ClientSocket::Initialize()
 {
+    if (!Disconnected) return IPCLIB_SUCCEED;
     int errorCode = ConnectToServer(m_ip, m_port, Wsa, MSocket, m_server, Disconnected);
     if (errorCode != IPCLIB_SUCCEED)
     {
@@ -68,7 +73,7 @@ int ClientSocket::SendData(const char* p_data, const int p_size) const
 {
     if (Disconnected)
     {
-        IPCLIB_ERROR("[IPCLIB] The client was not connected to a server", IPCLIB_CLIENT_ERROR);
+        IPCLIB_ERROR("[IPCLIB] The client was not connected to a server", IPCLIB_CLOSED_CONNECTION_ERROR);
     }
     if (send(MSocket, p_data, p_size, 0) == SOCKET_ERROR)
     {
@@ -78,12 +83,14 @@ int ClientSocket::SendData(const char* p_data, const int p_size) const
 }
 
 /// @brief Disconnects the client from the server
-void ClientSocket::Disconnect()
+int ClientSocket::Disconnect()
 {
+    CHECK_OPEN();
     closesocket(MSocket);
     WSACleanup();
     Stop();
     Disconnected = true;
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief Deconstructs the ClientSocketAsync class

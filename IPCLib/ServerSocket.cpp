@@ -6,7 +6,7 @@
 
 /// @brief Checks if the server is still open
 #define CHECK_OPEN() \
-    if (!m_open) throw std::runtime_error("[IPCLIB] The server was closed")
+    if (!m_open) return IPCLIB_CLOSED_CONNECTION_ERROR;
 
 /// @brief					Starts the server
 /// @param  p_ip			The IP adress to start the server on
@@ -47,7 +47,7 @@ int StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOCK
 /// @param  p_port		  The port of the server
 /// @param  p_connections The maximum amount of (queued) connections
 ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
-    : m_ip(p_ip), m_port(p_port), m_connections(p_connections), m_open(false), m_connecting(false), m_server(), m_client()
+    : m_ip(p_ip), m_port(p_port), m_connections(p_connections), m_connecting(false), m_server(), m_client()
 {
     InetPtonW(AF_INET, p_ip, &m_server.sin_addr.s_addr);
     m_server.sin_family = AF_INET;
@@ -63,6 +63,7 @@ ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 /// @return The error code
 int ServerSocket::Initialize()
 {
+    if (m_open) return IPCLIB_SUCCEED;
     int errorCode = StartServer(m_ip, m_port, m_connections, Wsa, m_serverSocket, m_server, m_client, m_open);
     if (errorCode != IPCLIB_SUCCEED)
     {
@@ -78,32 +79,38 @@ int ServerSocket::Initialize()
 void ServerSocket::ConnectAsync()
 {
     m_connecting = true;
-    std::thread t(&ServerSocket::Connect, this);
+    std::thread t(&ServerSocket::ConnectThreadFunction, this);
     t.detach();
 }
 
+void ServerSocket::ConnectThreadFunction()
+{
+    m_connectErrorCode = Connect();
+}
+
 /// @brief Connects the server to a client by waiting on a connection
-void ServerSocket::Connect()
+int ServerSocket::Connect()
 {
     CHECK_OPEN();
     int c = sizeof(struct sockaddr_in);
     if ((MSocket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
     {
-        THROW_IPCLIB_ERROR("[WSA] Bind failed with error code : " << WSAGetLastError());
+        IPCLIB_ERROR("[WSA] Bind failed with error code : " << WSAGetLastError(), WSAGetLastError());
     }
     Disconnected = false;
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief Awaits until a client has connected to the server
-void ServerSocket::AwaitClientConnection()
+int ServerSocket::AwaitClientConnection()
 {
     if (m_connecting)
     {
         while (Disconnected) { std::this_thread::yield(); }
         m_connecting = false;
-        return;
+        return m_connectErrorCode;
     }
-    Connect();
+    return Connect();
 }
 
 /// @brief			Sends data to a client
@@ -125,15 +132,16 @@ int ServerSocket::SendData(const char* p_data, const int p_size) const
 }
 
 /// @brief Disconnects the server from the client
-void ServerSocket::Disconnect()
+int ServerSocket::Disconnect()
 {
     CHECK_OPEN();
     closesocket(MSocket);
     Disconnected = true;
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief Closes the server and disconnects a client if connected
-void ServerSocket::CloseServer()
+int ServerSocket::CloseServer()
 {
     CHECK_OPEN();
     if (!Disconnected)
@@ -143,6 +151,7 @@ void ServerSocket::CloseServer()
     closesocket(m_serverSocket);
     WSACleanup();
     m_open = false;
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief Deconstructs the server
@@ -151,6 +160,8 @@ ServerSocket::~ServerSocket()
     if (!m_open) return;
     CloseServer();
 }
+
+
 
 /// @brief  Whether the server is connected to a client
 /// @return Deconstructs the server

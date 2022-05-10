@@ -142,7 +142,7 @@ TEST(SocketTests, AsyncConnectTest)
     server.ConnectAsync();
     ASSERT_FALSE(server.Connected());
     ClientSocket client;
-    client.Initialize();
+    ASSERT_EQ(client.Initialize(), IPCLIB_SUCCEED);
     ASSERT_DURATION_LE(AWAIT_MESSAGE_TIMEOUT, server.AwaitClientConnection());
     ASSERT_TRUE(server.Connected());
 }
@@ -157,7 +157,7 @@ void AwaitingServer()
 {
     ServerSocket server;
     ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
-    server.AwaitClientConnection();
+    ASSERT_EQ(server.AwaitClientConnection(), IPCLIB_SUCCEED);
     char buffer[32];
     ASSERT_EQ(server.AwaitData(buffer, 32), IPCLIB_SUCCEED);
     ASSERT_EQ(server.SendData("OK", 2), IPCLIB_SUCCEED);
@@ -227,11 +227,11 @@ TEST(SocketTests, DisconnectedSend)
 {
     CONNECT();
     ASSERT_TRUE(server.Connected());
-    server.Disconnect();
-    client.Disconnect();
+    ASSERT_EQ(server.Disconnect(), IPCLIB_SUCCEED);
+    ASSERT_EQ(client.Disconnect(), IPCLIB_SUCCEED);
     ASSERT_FALSE(server.Connected());
     ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SERVER_ERROR);
-    ASSERT_EQ(client.SendData("Hello", 6), IPCLIB_CLIENT_ERROR);
+    ASSERT_EQ(client.SendData("Hello", 6), IPCLIB_CLOSED_CONNECTION_ERROR);
 }
 
 /// @brief Makes sure the program throws when the server is not open, but you try to send data
@@ -239,25 +239,28 @@ TEST(SocketTests, ClosedSend)
 {
     CONNECT();
     ASSERT_TRUE(server.Connected());
-    server.CloseServer();
+    ASSERT_EQ(server.Disconnect(), IPCLIB_SUCCEED);
     ASSERT_FALSE(server.Connected());
-    ASSERT_THROW(server.SendData("Hello", 6), std::runtime_error);
+    ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SERVER_ERROR);
+    ASSERT_EQ(server.CloseServer(),IPCLIB_SUCCEED);
+    ASSERT_FALSE(server.Connected());
+    ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_CLOSED_CONNECTION_ERROR);
 }
 
 /// @brief Tests whether a server and client can gracefully disconnect
 TEST(SocketTests, DisconnectTest)
 {
     CONNECT();
-    server.Disconnect();
-    client.Disconnect();
+    ASSERT_EQ(server.Disconnect(), IPCLIB_SUCCEED);
+    ASSERT_EQ(client.Disconnect(), IPCLIB_SUCCEED);
 }
 
 /// @brief Tests whether a server can connect to 2 clients
 TEST(SocketTests, TwoClientsTest)
 {
     CONNECT();
-    server.Disconnect();
-    client.Disconnect();
+    ASSERT_EQ(server.Disconnect(), IPCLIB_SUCCEED);
+    ASSERT_EQ(client.Disconnect(), IPCLIB_SUCCEED);
     server.ConnectAsync();
     ClientSocket client2;
     ASSERT_EQ(client2.Initialize(), IPCLIB_SUCCEED);
@@ -342,23 +345,23 @@ TEST(SocketTests, DeleteAfterReceiveAsync)
 TEST(SocketTests, DoubleServerInitializeTest)
 {
     ServerSocket server;
-    server.Initialize();
-    server.Initialize();  // should not throw
+    ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);
+    ASSERT_EQ(server.Initialize(), IPCLIB_SUCCEED);  // should not throw
 }
 
-/// @brief Tests if an exception is thrown when initialize is called twice
+/// @brief Tests if the correct error code is returned when initialize is called twice
 TEST(SocketTests, DoubleClientInitializeTest)
 {
     CONNECT();
-    ASSERT_THROW(client.Initialize(), std::runtime_error);
+    ASSERT_EQ(client.Initialize(), IPCLIB_SUCCEED);
 }
 
 /// @brief should not throw when initializing twice
 TEST(SocketTests, ClientFailedInitializeTwiceTest)
 {
     ClientSocket client;
-    client.Initialize();
-    client.Initialize();  // should not throw
+    ASSERT_EQ(client.Initialize(), WSA_ERROR);
+    ASSERT_EQ(client.Initialize(), WSA_ERROR);  // should not throw
 }
 
 /// @brief Checks if an error code can be received from the receiving thread
