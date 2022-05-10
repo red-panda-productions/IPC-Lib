@@ -101,13 +101,9 @@ void Socket::ReceiveData()
     }
 }
 
-/// @brief Initializes the receive thread
+/// @brief Initializes the receive thread, can only be called once
 void Socket::Initialize()
 {
-    if (m_receivingThread)
-    {
-        THROW_IPCLIB_ERROR("[IPCLib] Socket was already initialized");
-    }
     auto function = [this]
     { ReceiveData(); };
     m_receivingThread = new ReceivingThread(function);
