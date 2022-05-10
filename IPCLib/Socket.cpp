@@ -4,6 +4,10 @@
 #include <thread>
 #include <WS2tcpip.h>
 
+/// @brief Checks if the server is still open
+#define CHECK_OPEN() \
+    if (!Open) return IPCLIB_CLOSED_CONNECTION_ERROR;
+
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data
 ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
@@ -97,13 +101,9 @@ void Socket::ReceiveData()
     }
 }
 
-/// @brief Initializes the receive thread
+/// @brief Initializes the receive thread, can only be called once
 void Socket::Initialize()
 {
-    if (m_receivingThread)
-    {
-        THROW_IPCLIB_ERROR("[IPCLib] Socket was already initialized");
-    }
     auto function = [this]
     { ReceiveData(); };
     m_receivingThread = new ReceivingThread(function);
