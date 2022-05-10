@@ -42,7 +42,7 @@ private:
 
     bool m_connecting;
 
-    bool m_open = false;;
+    bool m_open = false;
 
     int m_connectErrorCode = IPCLIB_SUCCEED;
 };

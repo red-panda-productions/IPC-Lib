@@ -242,7 +242,7 @@ TEST(SocketTests, ClosedSend)
     ASSERT_EQ(server.Disconnect(), IPCLIB_SUCCEED);
     ASSERT_FALSE(server.Connected());
     ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SERVER_ERROR);
-    ASSERT_EQ(server.CloseServer(),IPCLIB_SUCCEED);
+    ASSERT_EQ(server.CloseServer(), IPCLIB_SUCCEED);
     ASSERT_FALSE(server.Connected());
     ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_CLOSED_CONNECTION_ERROR);
 }

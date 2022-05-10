@@ -161,8 +161,6 @@ ServerSocket::~ServerSocket()
     CloseServer();
 }
 
-
-
 /// @brief  Whether the server is connected to a client
 /// @return Deconstructs the server
 bool ServerSocket::Connected()
