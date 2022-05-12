@@ -23,6 +23,11 @@ bool ReceivingThread::HasReceivedMessage() const
     return m_received;
 }
 
+bool ReceivingThread::StartedReceiving() const
+{
+    return m_startedReceiving;
+}
+
 /// @brief  Returns an error code if there was an error in this thread
 /// @return The error code
 int ReceivingThread::GetErrorCode() const
@@ -68,6 +73,7 @@ void ReceivingThread::ReceivingLoop()
         }
         try
         {
+            m_startedReceiving = true;
             (*m_receiveDataFunc)();
             m_received = true;
         }
@@ -76,6 +82,7 @@ void ReceivingThread::ReceivingLoop()
             IPCLIB_WARNING("[IPCLIB] Unexpected exception while receiving data: " << e.what())
             m_error = IPCLIB_RECEIVE_ERROR;
         }
+        m_startedReceiving = false;
         m_receiving = false;
     }
 }
@@ -85,6 +92,10 @@ void Socket::ReceiveDataAsync()
 {
     m_receivingThread->StartReceive();
     m_externalReceive = true;
+    while (!m_receivingThread->StartedReceiving() && !m_receivingThread->HasReceivedMessage())
+    {
+        std::this_thread::yield();
+    }
 }
 
 /// @brief Receive data by waiting until data has been written on the socket

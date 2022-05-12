@@ -374,3 +374,40 @@ TEST(SocketTests, ReceivingThreadThrow)
     server.~ServerSocket();
     ASSERT_EQ(client.AwaitData(buffer, 20), IPCLIB_RECEIVE_ERROR);
 }
+
+
+#define AMOUNT_OF_TESTS 50000
+void ExhaustionClientThreadSide()
+{
+    ClientSocket client;
+    client.Initialize();
+    
+    char buffer[20];
+    for (int i = 0; i < AMOUNT_OF_TESTS; i++)
+    {
+        ASSERT_DURATION_LE(2, client.AwaitData(buffer, 20));
+        ASSERT_DURATION_LE(2, client.ReceiveDataAsync());
+        ASSERT_EQ(client.SendData("Hi", 3), IPCLIB_SUCCEED);
+    }
+}
+
+TEST(SocketTests, ExhaustionTest)
+{
+    ServerSocket server;
+    server.Initialize();
+    server.ConnectAsync();
+    std::thread t(ExhaustionClientThreadSide);
+
+    server.AwaitClientConnection();
+    ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
+
+    char buffer[20];
+    for (int i = 0; i < AMOUNT_OF_TESTS; i++)
+    {
+        ASSERT_EQ(server.SendData("Hello", 6),IPCLIB_SUCCEED);
+        ASSERT_DURATION_LE(2,server.AwaitData(buffer,20));
+        ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
+    }
+
+    t.join();
+}
