@@ -3,7 +3,7 @@
 #include "ServerSocket.h"
 #include "Utils.h"
 
-#define AWAIT_MESSAGE_TIMEOUT    3
+#define AWAIT_MESSAGE_TIMEOUT    2000
 #define AWAIT_CONNECTION_TIMEOUT 3
 
 /// @brief					Sends data from the client to the server
@@ -119,7 +119,11 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
         bool late = rand() % 2 == 0;
         bool async = rand() % 2 == 0;
         bool clientSend = SendDataToClient(p_server, p_client, dataBuffer, length, async, late);
-        if (!clientSend) return false;
+        if (!clientSend)
+        {
+            std::cout << i << std::endl;
+            return false;
+        }
     }
     return true;
 }

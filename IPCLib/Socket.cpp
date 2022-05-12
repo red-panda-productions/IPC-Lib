@@ -10,8 +10,8 @@
 
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data
-ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
-    : m_receiveDataFunc(new std::function<void()>(p_receiveDataFunc))
+ReceivingThread::ReceivingThread(const std::function<void(bool*)>& p_receiveDataFunc)
+    : m_receiveDataFunc(new std::function<void(bool*)>(p_receiveDataFunc))
 {
     m_thread = new std::thread(&ReceivingThread::ReceivingLoop, this);
 }
@@ -73,8 +73,7 @@ void ReceivingThread::ReceivingLoop()
         }
         try
         {
-            m_startedReceiving = true;
-            (*m_receiveDataFunc)();
+            (*m_receiveDataFunc)(&m_startedReceiving);
             m_received = true;
         }
         catch (std::exception& e)
@@ -99,8 +98,9 @@ void Socket::ReceiveDataAsync()
 }
 
 /// @brief Receive data by waiting until data has been written on the socket
-void Socket::ReceiveData()
+void Socket::ReceiveData(bool* started)
 {
+    if (started) *started = true;
     Size = recv(MSocket, DataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
     if (Size == SOCKET_ERROR)
     {
@@ -115,8 +115,8 @@ void Socket::ReceiveData()
 /// @brief Initializes the receive thread, can only be called once
 void Socket::Initialize()
 {
-    auto function = [this]
-    { ReceiveData(); };
+    auto function = [this](bool* p_started)
+    { ReceiveData(p_started); };
     m_receivingThread = new ReceivingThread(function);
 }
 
