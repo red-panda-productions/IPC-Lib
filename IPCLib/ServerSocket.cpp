@@ -64,7 +64,7 @@ int ServerSocket::Connect()
     SOCKET_LENGTH c = sizeof(struct sockaddr_in);
     if ((MSocket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
     {
-        IPCLIB_ERROR("[WSA] Bind failed with error code : " << GET_LAST_ERROR(), GET_LAST_ERROR());
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Bind failed with error code : " << GET_LAST_ERROR(), GET_LAST_ERROR());
     }
     Disconnected = false;
     return IPCLIB_SUCCEED;
@@ -95,7 +95,7 @@ int ServerSocket::SendData(const char* p_data, const int p_size) const
     }
     if (send(MSocket, p_data, p_size, 0) == SOCKET_ERROR)
     {
-        IPCLIB_ERROR("[WSA] Connection error. Error code: " << GET_LAST_ERROR(), WSA_ERROR);
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Connection error. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
     return IPCLIB_SUCCEED;
 }

@@ -6,6 +6,13 @@
 #define AWAIT_MESSAGE_TIMEOUT    3
 #define AWAIT_CONNECTION_TIMEOUT 3
 
+
+#ifdef Win32
+#define DOUBLE_INIT_CODE IPCLIB_SERVER_ERROR
+#endif
+#ifdef __linux__
+#define DOUBLE_INIT_CODE IPCLIB_SUCCEED
+#endif
 /// @brief					Sends data from the client to the server
 /// @param p_server			The server
 /// @param p_client			The client
@@ -219,7 +226,7 @@ TEST(SocketTests, NoConnectionSendServer)
 TEST(SocketTests, NoConnectionClient)
 {
     ClientSocket client;
-    ASSERT_EQ(client.Initialize(), WSA_ERROR);
+    ASSERT_EQ(client.Initialize(), SOCKET_LIBRARY_ERROR);
 }
 
 /// @brief Makes sure the program throws when there is no connection to a client, but you try to send data
@@ -323,14 +330,14 @@ TEST(SocketTests, DoubleServer)
     ServerSocket server1;
     ASSERT_EQ(server1.Initialize(), IPCLIB_SUCCEED);
     ServerSocket server2;
-    ASSERT_EQ(server2.Initialize(), IPCLIB_SERVER_ERROR);
+    ASSERT_EQ(server2.Initialize(), DOUBLE_INIT_CODE);
 }
 
 /// @brief Tests if the client crashes when there is no server
 TEST(SocketTests, NoServer)
 {
     ClientSocket client1;
-    ASSERT_EQ(client1.Initialize(), WSA_ERROR);
+    ASSERT_EQ(client1.Initialize(), SOCKET_LIBRARY_ERROR);
 }
 
 /// @brief Tests if the destructor is called correctly when the worker thread is still reading
@@ -360,8 +367,8 @@ TEST(SocketTests, DoubleClientInitializeTest)
 TEST(SocketTests, ClientFailedInitializeTwiceTest)
 {
     ClientSocket client;
-    ASSERT_EQ(client.Initialize(), WSA_ERROR);
-    ASSERT_EQ(client.Initialize(), WSA_ERROR);  // should not throw
+    ASSERT_EQ(client.Initialize(), SOCKET_LIBRARY_ERROR);
+    ASSERT_EQ(client.Initialize(), SOCKET_LIBRARY_ERROR);  // should not throw
 }
 
 /// @brief Checks if an error code can be received from the receiving thread

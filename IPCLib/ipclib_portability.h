@@ -1,7 +1,7 @@
 #pragma once
 
 ///@brief Windows specific defines
-#if Win32
+#ifdef Win32
 #pragma comment(lib, "ws2_32.lib")
 #include <WS2tcpip.h>
 #include <WinSock2.h>
@@ -20,16 +20,19 @@
 
 #define LOCAL_HOST L"127.0.0.1"
 
+#define SOCKET_LIBRARY_NAME "[WSA] "
+
 
 #endif // Win32
 
 ///@brief Linux specific defines
-#if __linux__
+#ifdef __linux__
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <cwchar>
 #include <string>
+#include <error.h>
 
 #define IPC_IP_TYPE char*
 #define IPC_DATA_TYPE std::string
@@ -39,13 +42,18 @@
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
-#define GET_LAST_ERROR() -1
+#define GET_LAST_ERROR() errno
 
 #define SOCKET_LENGTH socklen_t
 
 #define INET_PTON(p_inet, p_ip, p_addr) inet_pton(p_inet, p_ip, p_addr)
 
 #define LOCAL_HOST "127.0.0.1"
+
+#define SOCKET_LIBRARY_NAME "[Linux] "
+
+
+
 #endif // __linux__
 
 
@@ -63,7 +71,7 @@
 #define IPCLIB_WARNING(p_message) \
     std::cerr << p_message << std::endl;
 
-#define WSA_ERROR                      -1
+#define SOCKET_LIBRARY_ERROR           -1
 #define IPCLIB_SUCCEED                 0
 #define IPCLIB_SERVER_ERROR            1
 #define IPCLIB_RECEIVE_ERROR           2
