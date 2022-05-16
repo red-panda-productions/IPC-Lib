@@ -1,4 +1,4 @@
-#ifdef Win32
+#ifdef WIN32
 #include "ipclib_portability.h"
 
 /// @brief                  Connects a client to a server
