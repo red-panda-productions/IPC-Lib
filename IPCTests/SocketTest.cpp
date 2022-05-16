@@ -6,14 +6,14 @@
 #define AWAIT_MESSAGE_TIMEOUT    2000
 #define AWAIT_CONNECTION_TIMEOUT 3
 
-/// @brief					Sends data from the client to the server
-/// @param p_server			The server
-/// @param p_client			The client
-/// @param p_message		The message that needs to be send
-/// @param p_messageLength  The length of the message
-/// @param p_async			If the message should be received asynchronously
-/// @param p_lateData		If the data should arrive late
-/// @return					Whether the test succeeded or failed
+/// @brief                 Sends data from the client to the server
+/// @param p_server        The server
+/// @param p_client        The client
+/// @param p_message       The message that needs to be send
+/// @param p_messageLength The length of the message
+/// @param p_async         If the message should be received asynchronously
+/// @param p_lateData  	   If the data should arrive late
+/// @return                Whether the test succeeded or failed
 bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
     if (p_async)
@@ -43,11 +43,11 @@ bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char
     return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
-/// @brief			Tests a lot of random strings that are send to the server
+/// @brief          Tests a lot of random strings that are send to the server
 /// @param p_amount The amount of tests
 /// @param p_server The server
 /// @param p_client The client
-/// @return			Whether the test succeeded
+/// @return         Whether the test succeeded
 bool MultipleSendDataToServer(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
     const int dataBufferSize = 512;
@@ -64,16 +64,16 @@ bool MultipleSendDataToServer(int p_amount, ServerSocket& p_server, ClientSocket
     return true;
 }
 
-/// @brief					The same as above, but sends data from server to client.
-///							We use the same function here as a normal program will not run a server and a client
-///							And if we wanted to use the same functions we would have to use virtual functions
-/// @param p_server			The server
-/// @param p_client			The client
-/// @param p_message		The message that needs to be send
+/// @brief                  The same as above, but sends data from server to client.
+///                         We use the same function here as a normal program will not run a server and a client
+///                         And if we wanted to use the same functions we would have to use virtual functions
+/// @param p_server         The server
+/// @param p_client         The client
+/// @param p_message        The message that needs to be send
 /// @param p_messageLength  The length of the message
-/// @param p_async			If the data should be received asynchronously
-/// @param p_lateData		If the data should arrive late
-/// @return					Whether the test failed or succeeded
+/// @param p_async          If the data should be received asynchronously
+/// @param p_lateData       If the data should arrive late
+/// @return                 Whether the test failed or succeeded
 bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char* p_message, int p_messageLength, bool p_async, bool p_lateData)
 {
     if (p_async)
@@ -103,11 +103,11 @@ bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char
     return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
 
-/// @brief			Tests a lot of random strings that are send to the client
+/// @brief          Tests a lot of random strings that are send to the client
 /// @param p_amount The amount of tests
 /// @param p_server The server
 /// @param p_client The client
-/// @return			Whether the test succeeded
+/// @return         Whether the test succeeded
 bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket& p_client)
 {
     const int dataBufferSize = 512;
@@ -379,13 +379,12 @@ TEST(SocketTests, ReceivingThreadThrow)
     ASSERT_EQ(client.AwaitData(buffer, 20), IPCLIB_RECEIVE_ERROR);
 }
 
-
 #define AMOUNT_OF_TESTS 50000
 void ExhaustionClientThreadSide()
 {
     ClientSocket client;
     client.Initialize();
-    
+
     char buffer[20];
     for (int i = 0; i < AMOUNT_OF_TESTS; i++)
     {
@@ -408,8 +407,8 @@ TEST(SocketTests, ExhaustionTest)
     char buffer[20];
     for (int i = 0; i < AMOUNT_OF_TESTS; i++)
     {
-        ASSERT_EQ(server.SendData("Hello", 6),IPCLIB_SUCCEED);
-        ASSERT_DURATION_LE(2,server.AwaitData(buffer,20));
+        ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SUCCEED);
+        ASSERT_DURATION_LE(2, server.AwaitData(buffer, 20));
         ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
     }
 

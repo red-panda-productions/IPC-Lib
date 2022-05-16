@@ -98,9 +98,9 @@ void Socket::ReceiveDataAsync()
 }
 
 /// @brief Receive data by waiting until data has been written on the socket
-void Socket::ReceiveData(bool* started)
+void Socket::ReceiveData(bool* p_started)
 {
-    if (started) *started = true;
+    if (p_started) *p_started = true;
     Size = recv(MSocket, DataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
     if (Size == SOCKET_ERROR)
     {
