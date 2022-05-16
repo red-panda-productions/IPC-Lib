@@ -47,7 +47,7 @@ int StartServer(IPC_IP_TYPE p_ip, int p_port, int p_connections, IPC_DATA_TYPE& 
     }
 
     int opt = 1;
-    if(setsockopt(p_socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+    if (setsockopt(p_socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
     {
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Could not set socket actions : " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR)
     }

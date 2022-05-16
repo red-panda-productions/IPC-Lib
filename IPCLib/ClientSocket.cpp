@@ -42,7 +42,7 @@ int ClientSocket::SendData(const char* p_data, const int p_size) const
     }
     if (send(MSocket, p_data, p_size, 0) == SOCKET_ERROR)
     {
-        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Connection error. Error code: " << GET_LAST_ERROR() , SOCKET_LIBRARY_ERROR);
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Connection error. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
     return IPCLIB_SUCCEED;
 }

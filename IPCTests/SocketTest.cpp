@@ -14,7 +14,6 @@
 #endif
 #define AMOUNT_OF_TESTS 10000
 
-
 /// @brief                 Sends data from the client to the server
 /// @param p_server        The server
 /// @param p_client        The client
