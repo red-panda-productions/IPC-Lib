@@ -381,6 +381,7 @@ TEST(SocketTests, ReceivingThreadThrow)
     ASSERT_EQ(client.AwaitData(buffer, 20), IPCLIB_RECEIVE_ERROR);
 }
 
+/// @brief The thread side of the exhaustion test
 void ExhaustionClientThreadSide()
 {
     ClientSocket client;
@@ -395,6 +396,7 @@ void ExhaustionClientThreadSide()
     }
 }
 
+/// @brief Tests whether either side (client or server) can get exhausted by sending rapid messages
 TEST(SocketTests, ExhaustionTest)
 {
     ServerSocket server;
