@@ -1,4 +1,5 @@
 #include "Socket.h"
+#include "ipclib_portability.h"
 #include <sstream>
 #include <cassert>
 #include <thread>
@@ -9,8 +10,8 @@
 
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data
-ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
-    : m_receiveDataFunc(new std::function<void()>(p_receiveDataFunc))
+ReceivingThread::ReceivingThread(const std::function<void(bool*)>& p_receiveDataFunc)
+    : m_receiveDataFunc(new std::function<void(bool*)>(p_receiveDataFunc))
 {
     m_thread = new std::thread(&ReceivingThread::ReceivingLoop, this);
 }
@@ -20,6 +21,13 @@ ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
 bool ReceivingThread::HasReceivedMessage() const
 {
     return m_received;
+}
+
+/// @brief  Checks whether the thread started receiving
+/// @return Whether the thread started receiving
+bool ReceivingThread::StartedReceiving() const
+{
+    return m_startedReceiving;
 }
 
 /// @brief  Returns an error code if there was an error in this thread
@@ -67,7 +75,7 @@ void ReceivingThread::ReceivingLoop()
         }
         try
         {
-            (*m_receiveDataFunc)();
+            (*m_receiveDataFunc)(&m_startedReceiving);
             m_received = true;
         }
         catch (std::exception& e)
@@ -75,6 +83,7 @@ void ReceivingThread::ReceivingLoop()
             IPCLIB_WARNING("[IPCLIB] Unexpected exception while receiving data: " << e.what())
             m_error = IPCLIB_RECEIVE_ERROR;
         }
+        m_startedReceiving = false;
         m_receiving = false;
     }
 }
@@ -84,11 +93,17 @@ void Socket::ReceiveDataAsync()
 {
     m_receivingThread->StartReceive();
     m_externalReceive = true;
+    while (!m_receivingThread->StartedReceiving() && !m_receivingThread->HasReceivedMessage())
+    {
+        std::this_thread::yield();
+    }
 }
 
-/// @brief Receive data by waiting until data has been written on the socket
-void Socket::ReceiveData()
+/// @brief           Receive data by waiting until data has been written on the socket
+/// @param p_started The callback to tell that the function has been called
+void Socket::ReceiveData(bool* p_started)
 {
+    if (p_started) *p_started = true;
     Size = recv(MSocket, DataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
     if (Size == SOCKET_ERROR)
     {
@@ -103,8 +118,8 @@ void Socket::ReceiveData()
 /// @brief Initializes the receive thread, can only be called once
 void Socket::Initialize()
 {
-    auto function = [this]
-    { ReceiveData(); };
+    auto function = [this](bool* p_started)
+    { ReceiveData(p_started); };
     m_receivingThread = new ReceivingThread(function);
 }
 

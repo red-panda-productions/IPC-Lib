@@ -5,16 +5,16 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <WS2tcpip.h>
 #include <WinSock2.h>
-#define IPC_IP_TYPE PCWSTR
-#define IPC_DATA_TYPE WSADATA
-#define CLOSE_SOCKET(p_socket) closesocket(p_socket)
-#define CLEANUP_SOCKET() WSACleanup()
-#define GET_LAST_ERROR() WSAGetLastError()
+#define IPC_IP_TYPE                     PCWSTR
+#define IPC_DATA_TYPE                   WSADATA
+#define CLOSE_SOCKET(p_socket)          closesocket(p_socket)
+#define CLEANUP_SOCKET()                WSACleanup()
+#define GET_LAST_ERROR()                WSAGetLastError()
 #define INET_PTON(p_inet, p_ip, p_addr) InetPtonW(p_inet, p_ip, p_addr)
-#define SOCKET_LENGTH int
-#define LOCAL_HOST L"127.0.0.1"
-#define SOCKET_LIBRARY_NAME "[WSA] "
-#endif // WIN32
+#define SOCKET_LENGTH                   int
+#define LOCAL_HOST                      L"127.0.0.1"
+#define SOCKET_LIBRARY_NAME             "[WSA] "
+#endif  // WIN32
 
 ///@brief Linux specific defines
 #ifdef __linux__
@@ -24,20 +24,19 @@
 #include <cwchar>
 #include <string>
 #include <error.h>
-#define IPC_IP_TYPE char*
-#define IPC_DATA_TYPE std::string
-#define SOCKET int
-#define CLOSE_SOCKET(p_socket) shutdown(p_socket,SHUT_RDWR)
+#define IPC_IP_TYPE            char*
+#define IPC_DATA_TYPE          std::string
+#define SOCKET                 int
+#define CLOSE_SOCKET(p_socket) shutdown(p_socket, SHUT_RDWR)
 #define CLEANUP_SOCKET()
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define GET_LAST_ERROR() errno
-#define SOCKET_LENGTH socklen_t
+#define INVALID_SOCKET                  -1
+#define SOCKET_ERROR                    -1
+#define GET_LAST_ERROR()                errno
+#define SOCKET_LENGTH                   socklen_t
 #define INET_PTON(p_inet, p_ip, p_addr) inet_pton(p_inet, p_ip, p_addr)
-#define LOCAL_HOST "127.0.0.1"
-#define SOCKET_LIBRARY_NAME "[Linux] "
-#endif // __linux__
-
+#define LOCAL_HOST                      "127.0.0.1"
+#define SOCKET_LIBRARY_NAME             "[Linux] "
+#endif  // __linux__
 
 // ------------------------------- Common defines --------------------------------------------
 #include <iostream>
@@ -58,7 +57,6 @@
 #define IPCLIB_SERVER_ERROR            1
 #define IPCLIB_RECEIVE_ERROR           2
 #define IPCLIB_CLOSED_CONNECTION_ERROR 3
-
 
 // ----------------------------- platform specific functions ----------------------------------------
 
