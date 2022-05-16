@@ -118,7 +118,7 @@ int ServerSocket::CloseServer()
         Disconnect();
     }
     CLOSE_SOCKET(m_serverSocket);
-    CLEANUP_SOCKET()
+    CLEANUP_SOCKET();
     m_open = false;
     return IPCLIB_SUCCEED;
 }

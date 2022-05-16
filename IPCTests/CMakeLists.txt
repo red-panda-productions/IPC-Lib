@@ -46,7 +46,7 @@ if(OPEN_CPP_COVERAGE)
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.bat
         CONTENT 
             "@echo off
-            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=${COV_EXPORT_TYPE} --excluded_line_regex \"[ \\t]*(\"((\"THROW_IPCLIB|IPCLIB\")_ERROR\\(\\\"\\[WSA\\].*)|(\\}.*)\")\" -- ${BINARYDIR}\\IPCTests.exe
+            \"${OPEN_CPP_COVERAGE}\" --sources=${SOURCEDIR}\\IPCLib\\ --export_type=${COV_EXPORT_TYPE} --excluded_line_regex \"[ \\t]*(\"((\"THROW_IPCLIB|IPCLIB\")_ERROR\\(\\\"SOCKET_LIBRARY_NAME.*)|(\\}.*)\")\" -- ${BINARYDIR}\\IPCTests.exe
             ${COV_EXTRA_COMMANDS}")
 
     MESSAGE(STATUS "Created coverage.bat")
