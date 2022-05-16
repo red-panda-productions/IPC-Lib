@@ -92,7 +92,7 @@ void Socket::ReceiveData()
     Size = recv(MSocket, DataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
     if (Size == SOCKET_ERROR)
     {
-        THROW_IPCLIB_ERROR("[WSA] Failed to receive message. Error code: " << WSAGetLastError());
+        THROW_IPCLIB_ERROR("[WSA] Failed to receive message. Error code: " << GET_LAST_ERROR());
     }
     if (Size == 0)
     {

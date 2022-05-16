@@ -8,7 +8,7 @@
 class IPCLIB_EXPORT ServerSocket : public Socket
 {
 public:
-    explicit ServerSocket(PCWSTR p_ip = L"127.0.0.1", int p_port = 8888, int p_connections = 1);
+    explicit ServerSocket(IPC_IP_TYPE p_ip = LOCAL_HOST, int p_port = 8888, int p_connections = 1);
 
     int Initialize();
 
@@ -31,7 +31,7 @@ private:
 
     int Connect();
 
-    PCWSTR m_ip;
+    IPC_IP_TYPE m_ip;
     int m_port;
     int m_connections;
 

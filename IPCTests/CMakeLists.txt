@@ -21,10 +21,13 @@ target_link_libraries(
   gtest_main
 )
 target_include_directories(IPCTests PUBLIC "../IPCLib")
-add_custom_command(TARGET IPCTests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:IPCTests> $<TARGET_FILE_DIR:IPCTests>
-        COMMAND_EXPAND_LISTS
-)
+
+IF(WIN32)
+    add_custom_command(TARGET IPCTests POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:IPCTests> $<TARGET_FILE_DIR:IPCTests>
+            COMMAND_EXPAND_LISTS
+    )
+ENDIF(WIN32)
 
 if(OPEN_CPP_COVERAGE)
     STRING(REGEX REPLACE "/" "\\\\" SOURCEDIR ${CMAKE_SOURCE_DIR})

@@ -2,7 +2,7 @@
 # project specific logic here.
 
 set(IPCLIB_HEADERS "ClientSocket.h" "ServerSocket.h" "Socket.h" "ipclib_portability.h")
-set(IPCLIB_SOURCES "ClientSocket.cpp" "ServerSocket.cpp" "Socket.cpp")
+set(IPCLIB_SOURCES "ClientSocket.cpp" "ServerSocket.cpp" "Socket.cpp" "ipclib_windows.cpp" "ipclib_linux.cpp")
 
 # Add source to this project's executable.
 add_library (IPCLib SHARED ${IPCLIB_SOURCES} ${IPCLIB_HEADERS})
