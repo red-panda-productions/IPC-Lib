@@ -7,7 +7,7 @@
 #define AWAIT_CONNECTION_TIMEOUT 3
 
 
-#ifdef Win32
+#ifdef WIN32
 #define DOUBLE_INIT_CODE IPCLIB_SERVER_ERROR
 #endif
 #ifdef __linux__
