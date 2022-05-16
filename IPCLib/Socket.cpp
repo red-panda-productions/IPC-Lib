@@ -1,4 +1,5 @@
 #include "Socket.h"
+#include "ipclib_portability.h"
 #include <sstream>
 #include <cassert>
 #include <thread>
