@@ -2,7 +2,6 @@
 #include <sstream>
 #include <cassert>
 #include <thread>
-#include <WS2tcpip.h>
 
 /// @brief Checks if the server is still open
 #define CHECK_OPEN() \

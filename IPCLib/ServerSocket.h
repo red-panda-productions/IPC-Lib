@@ -1,7 +1,6 @@
 #pragma once
-#pragma comment(lib, "ws2_32.lib")
 #include "ipclib_export.h"
-#include <WinSock2.h>
+#include "ipclib_portability.h"
 #include "Socket.h"
 
 /// @brief A class that represents a server that can communicate with a client

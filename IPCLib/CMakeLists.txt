@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for IPCLib, include source and define
 # project specific logic here.
 
-set(IPCLIB_HEADERS "ClientSocket.h" "ServerSocket.h" "Socket.h")
+set(IPCLIB_HEADERS "ClientSocket.h" "ServerSocket.h" "Socket.h" "ipclib_portability.h")
 set(IPCLIB_SOURCES "ClientSocket.cpp" "ServerSocket.cpp" "Socket.cpp")
 
 # Add source to this project's executable.

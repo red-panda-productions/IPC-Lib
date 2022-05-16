@@ -1,5 +1,5 @@
 #include "ServerSocket.h"
-#include <WS2tcpip.h>
+#include "ipclib_portability.h"
 #include <sstream>
 #include <thread>
 #include <stdexcept>
