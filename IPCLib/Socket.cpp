@@ -23,6 +23,8 @@ bool ReceivingThread::HasReceivedMessage() const
     return m_received;
 }
 
+/// @brief  Checks whether the thread started receiving
+/// @return Whether the thread started receiving
 bool ReceivingThread::StartedReceiving() const
 {
     return m_startedReceiving;
@@ -97,7 +99,8 @@ void Socket::ReceiveDataAsync()
     }
 }
 
-/// @brief Receive data by waiting until data has been written on the socket
+/// @brief           Receive data by waiting until data has been written on the socket
+/// @param p_started The callback to tell that the function has been called
 void Socket::ReceiveData(bool* p_started)
 {
     if (p_started) *p_started = true;

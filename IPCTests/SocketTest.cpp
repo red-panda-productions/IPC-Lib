@@ -3,8 +3,10 @@
 #include "ServerSocket.h"
 #include "Utils.h"
 
-#define AWAIT_MESSAGE_TIMEOUT    2000
+#define AWAIT_MESSAGE_TIMEOUT    2
 #define AWAIT_CONNECTION_TIMEOUT 3
+
+#define AMOUNT_OF_TESTS 10000
 
 /// @brief                 Sends data from the client to the server
 /// @param p_server        The server
@@ -379,7 +381,6 @@ TEST(SocketTests, ReceivingThreadThrow)
     ASSERT_EQ(client.AwaitData(buffer, 20), IPCLIB_RECEIVE_ERROR);
 }
 
-#define AMOUNT_OF_TESTS 50000
 void ExhaustionClientThreadSide()
 {
     ClientSocket client;
