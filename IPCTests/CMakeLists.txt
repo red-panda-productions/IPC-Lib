@@ -63,7 +63,7 @@ IF(GCOVR)
 
     IF(OPTION_GITHUB_ACTIONS)
         MESSAGE(STATUS "Creating Github actions coverage file")
-        SET(COV_EXPORT_TYPE "--cobertura-pretty")
+        SET(COV_EXPORT_TYPE "--cobertura")
         SET(COV_EXTRA_COMMANDS "")
         SET(COV_OUTPUT "${CMAKE_SOURCE_DIR}/coverage.xml")
     ELSE(OPTION_GITHUB_ACTIONS)
