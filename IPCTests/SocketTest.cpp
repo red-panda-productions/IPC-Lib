@@ -401,7 +401,7 @@ void ExhaustionClientThreadSide()
         ASSERT_EQ(client.SendData("Hi", 3), IPCLIB_SUCCEED);
     }
 
-    ASSERT_DURATION_LE(2, client.AwaitData(buffer,20));
+    ASSERT_DURATION_LE(2, client.AwaitData(buffer, 20));
     client.Disconnect();
 }
 
@@ -425,6 +425,6 @@ TEST(SocketTests, ExhaustionTest)
         ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
     }
 
-    server.SendData("STOP",5);
+    server.SendData("STOP", 5);
     t.join();
 }
