@@ -36,8 +36,12 @@ jobs:
       run: cmake --build .
     
     - name: Run code coverage
-      working-directory:
+      working-directory: ${{github.workspace}}
       run: ./coverage.sh
+
+    - name: Check code coverage
+      working-directory: ${{github.workspace}}
+      run: cat coverage.xml
 
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
