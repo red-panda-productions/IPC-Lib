@@ -12,7 +12,7 @@
 #ifdef __linux__
 #define DOUBLE_INIT_CODE IPCLIB_SUCCEED
 #endif
-#define AMOUNT_OF_TESTS 200
+#define AMOUNT_OF_TESTS 1
 
 /// @brief                 Sends data from the client to the server
 /// @param p_server        The server
@@ -400,6 +400,9 @@ void ExhaustionClientThreadSide()
         ASSERT_DURATION_LE(2, client.ReceiveDataAsync());
         ASSERT_EQ(client.SendData("Hi", 3), IPCLIB_SUCCEED);
     }
+
+    ASSERT_DURATION_LE(2, client.AwaitData(buffer,20));
+    client.Disconnect();
 }
 
 /// @brief Tests whether either side (client or server) can get exhausted by sending rapid messages
@@ -410,16 +413,18 @@ TEST(SocketTests, ExhaustionTest)
     server.ConnectAsync();
     std::thread t(ExhaustionClientThreadSide);
 
-    server.AwaitClientConnection();
+    ASSERT_DURATION_LE(2, server.AwaitClientConnection());
     ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
 
     char buffer[20];
     for (int i = 0; i < AMOUNT_OF_TESTS; i++)
     {
+        std::cout << i << std::endl;
         ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SUCCEED);
         ASSERT_DURATION_LE(2, server.AwaitData(buffer, 20));
         ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
     }
 
+    server.SendData("STOP",5);
     t.join();
 }
