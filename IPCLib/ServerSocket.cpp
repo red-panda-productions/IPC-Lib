@@ -35,9 +35,9 @@ int ServerSocket::Initialize()
     int errorCode = StartServer(m_ip, m_port, m_connections, SocketData, m_serverSocket, m_server, m_client, m_open);
     if (errorCode != IPCLIB_SUCCEED)
     {
-        CLOSE_SOCKET(m_serverSocket);
+        CLOSE_SOCKET(m_serverSocket); //@NOLINUXCOVERAGE, linux uses filedescriptors that can be reused
         CLEANUP_SOCKET();
-        return errorCode;
+        return errorCode;             //@NOLINUXCOVERAGE, linux uses filedescriptors that can be reused
     }
     Socket::Initialize();
     return errorCode;
