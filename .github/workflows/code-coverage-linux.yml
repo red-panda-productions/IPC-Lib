@@ -17,13 +17,16 @@ jobs:
     # The CMake configure and build commands are platform agnostic anda should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     
-    - name: Install OpenCppCoverage
-      uses: KungFuDonkey/Install-OpenCppCoverage@v1
+    - name: Install GCovr
+      run: |
+        sudo apt update
+        sudo apt install python3-pip
+        pip install gcovr
 
     - name: Configure CMake
       run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
@@ -34,7 +37,7 @@ jobs:
     
     - name: Run code coverage
       working-directory: ${{github.workspace}}
-      run: .\coverage.bat
+      run: .\coverage.sh
 
     - name: Create code coverage report
       uses: 5monkeys/cobertura-action@master
@@ -46,6 +49,6 @@ jobs:
         show_missing: true
         link_missing_lines: true
         skip_covered: false
-        report_name: 'code coverage report'
+        report_name: 'code coverage report linux'
 
       

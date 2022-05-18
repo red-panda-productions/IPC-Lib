@@ -1,8 +1,6 @@
-name: CI Pipeline Tests Windows
+name: CI Pipeline Code Coverage
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -12,11 +10,7 @@ on:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
-
-  # Enable colour output for GTEST and XML file generation
-  GTEST_COLOR: yes
-  GTEST_OUTPUT: xml:test-results/
+  BUILD_TYPE: Debug
 
 jobs:
   build:
@@ -27,22 +21,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Install OpenCppCoverage
+      uses: KungFuDonkey/Install-OpenCppCoverage@v1
 
     - name: Configure CMake
-      run: cmake -S ${{github.workspace}} -B ${{runner.workspace}}/build
+      run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
       run: cmake --build .
+    
+    - name: Run code coverage
+      working-directory: ${{github.workspace}}
+      run: .\coverage.bat
 
-    - name: Test
-      working-directory: ${{runner.workspace}}/build
-      run: ctest -V
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v2
-      if: failure()
+    - name: Create code coverage report
+      uses: 5monkeys/cobertura-action@master
       with:
-        name: test_results_xml
-        path: ${{runner.workspace}}/build/IPCTests/test-results/**/*.xml
+        path: ${{github.workspace}}/coverage.xml
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        minimum_coverage: 100
+        fail_below_threshold: true
+        show_missing: true
+        link_missing_lines: true
+        skip_covered: false
+        report_name: 'code coverage report windows'
+
       
