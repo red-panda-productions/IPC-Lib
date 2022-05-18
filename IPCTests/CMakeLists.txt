@@ -63,7 +63,7 @@ IF(GCOVR)
 
     IF(OPTION_GITHUB_ACTIONS)
         MESSAGE(STATUS "Creating Github actions coverage file")
-        SET(COV_EXPORT_TYPE "--cobertura")
+        SET(COV_EXPORT_TYPE "--cobertura-pretty")
         SET(COV_EXTRA_COMMANDS "")
         SET(COV_OUTPUT "${CMAKE_SOURCE_DIR}/coverage.xml")
     ELSE(OPTION_GITHUB_ACTIONS)
@@ -75,7 +75,7 @@ IF(GCOVR)
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.sh
             CONTENT
             "${CMAKE_CURRENT_BINARY_DIR}/IPCTests
-            gcovr --gcov-ignore-parse-errors --root=\"${CMAKE_SOURCE_DIR}/IPCLib/.\" --object-directory=\"${CMAKE_BINARY_DIR}/IPCLib/CMakeFiles/IPCLib.dir/\" --exclude-lines-by-pattern ${COV_EXCLUDE_REGEX} ${COV_EXPORT_TYPE} -o ${COV_OUTPUT}
+            gcovr --gcov-ignore-parse-errors --root=\"${CMAKE_SOURCE_DIR}/IPCLib/.\" --object-directory=\"${CMAKE_BINARY_DIR}/IPCLib/CMakeFiles/IPCLib.dir\" --exclude-lines-by-pattern ${COV_EXCLUDE_REGEX} ${COV_EXPORT_TYPE} -o ${COV_OUTPUT}
             ${COV_EXTRA_COMMANDS}"
             FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_WRITE GROUP_READ WORLD_EXECUTE WORLD_WRITE WORLD_READ)
 
