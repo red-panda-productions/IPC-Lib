@@ -72,7 +72,11 @@ IF(GCOVR)
     IF(OPTION_GITHUB_ACTIONS)
         MESSAGE(STATUS "Creating Github actions coverage file")
         SET(COV_EXPORT_TYPE "--cobertura-pretty")
-        SET(COV_EXTRA_COMMANDS "")
+        SET(COV_EXTRA_COMMANDS "sed -i 's/branches-covered=\"[0-9]*\"/branches-covered=\"0\"/g' coverage.xml
+                                sed -i 's/branches-valid=\"[0-9]*\"/branches-valid=\"0\"/g' coverage.xml
+                                sed -i 's/branch-rate=\"[0-9|.]*\"/branch-rate=\"0\"/g' coverage.xml
+                                sed -i 's/branch=\"true\"//g' coverage.xml
+                                sed -i 's/branch=\"false\"//g' coverage.xml")
         SET(COV_OUTPUT "${CMAKE_SOURCE_DIR}/coverage.xml")
     ELSE(OPTION_GITHUB_ACTIONS)
         SET(COV_EXPORT_TYPE "--html --html-details")
