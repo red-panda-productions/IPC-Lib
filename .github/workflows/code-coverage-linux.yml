@@ -30,10 +30,7 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
 
     - name: Install GCovr
-      run: |
-        sudo apt update
-        sudo apt install python3-pip
-        pip install gcovr
+      run: pip install gcovr
 
     - name: Configure CMake
       run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
