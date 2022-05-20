@@ -12,7 +12,7 @@
 #ifdef __linux__
 #define DOUBLE_INIT_CODE IPCLIB_SUCCEED
 #endif
-#define AMOUNT_OF_TESTS 1
+#define AMOUNT_OF_TESTS 200
 
 /// @brief                 Sends data from the client to the server
 /// @param p_server        The server
