@@ -1,0 +1,1 @@
+gcovr --gcov-ignore-parse-errors  --root="./IPCLib/." --object-directory="./cmake-build-debug/IPCLib/CMakeFiles/IPCLib.dir/"

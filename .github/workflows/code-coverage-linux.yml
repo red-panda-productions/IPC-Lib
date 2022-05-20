@@ -1,0 +1,62 @@
+name: CI Pipeline Code Coverage Linux
+
+on:
+  pull_request:
+    branches: [ main ]
+
+  # Allow manually triggering from the actions tab
+  workflow_dispatch:
+
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic anda should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install GCC11
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install gcc-11 g++-11
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+
+    - name: Install GCovr
+      run: pip install gcovr
+
+    - name: Configure CMake
+      run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --build .
+    
+    - name: Run code coverage
+      working-directory: ${{github.workspace}}
+      run: ./coverage.sh
+
+    - name: Check code coverage
+      working-directory: ${{github.workspace}}
+      run: cat coverage.xml
+
+    - name: Create code coverage report
+      uses: 5monkeys/cobertura-action@master
+      with:
+        path: ${{github.workspace}}/coverage.xml
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        minimum_coverage: 100
+        fail_below_threshold: true
+        show_missing: true
+        link_missing_lines: true
+        skip_covered: false
+        report_name: 'code coverage report linux'
+
+      

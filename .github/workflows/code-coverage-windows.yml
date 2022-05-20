@@ -1,4 +1,4 @@
-name: CI Pipeline Code Coverage
+name: CI Pipeline Code Coverage Windows
 
 on:
   pull_request:
@@ -46,6 +46,6 @@ jobs:
         show_missing: true
         link_missing_lines: true
         skip_covered: false
-        report_name: 'code coverage report'
+        report_name: 'code coverage report windows'
 
       

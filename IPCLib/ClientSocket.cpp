@@ -1,5 +1,5 @@
 #include "ClientSocket.h"
-#include <WS2tcpip.h>
+#include "ipclib_portability.h"
 #include <stdexcept>
 #include <sstream>
 
@@ -7,45 +7,10 @@
 #define CHECK_OPEN() \
     if (Disconnected) return IPCLIB_CLOSED_CONNECTION_ERROR;
 
-/// @brief                  Connects a client to a server
-/// @param  p_ip			The IP adress of the server
-/// @param  p_port			The port of the server
-/// @param  p_wsa			WSAData from the client
-/// @param  p_socket		The socket of the client
-/// @param  p_server		The server information
-/// @param  p_disconnected	Disconnected bool of the client
-int ConnectToServer(const PCWSTR& p_ip, int p_port, WSADATA& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, bool& p_disconnected)
-{
-    if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
-    {
-        IPCLIB_ERROR("[WSA] Failed to initialize WSA. Error code: " << WSAGetLastError(), WSA_ERROR);
-    }
-
-    if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-    {
-        IPCLIB_ERROR("[WSA] Could not create socket. Error code: " << WSAGetLastError(), WSA_ERROR);
-    }
-
-    InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
-    p_server.sin_family = AF_INET;
-    p_server.sin_port = htons(p_port);
-
-    auto c = connect(p_socket, (struct sockaddr*)&p_server, sizeof(p_server));
-    if (c < 0)
-    {
-        IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError(), WSA_ERROR);
-    }
-
-    p_disconnected = false;
-    return IPCLIB_SUCCEED;
-}
-
-//--------------------------------------------------------------------- ClientSocketAsync.h -------------------------------------------------------
-
 /// @brief			Constructor of ClientSocketAsync
 /// @param  p_ip	IP address of the server
 /// @param  p_port	The port of the server
-ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
+ClientSocket::ClientSocket(IPC_IP_TYPE p_ip, int p_port)
     : m_ip(p_ip), m_port(p_port), m_server()
 {
 }
@@ -55,11 +20,11 @@ ClientSocket::ClientSocket(PCWSTR p_ip, int p_port)
 int ClientSocket::Initialize()
 {
     if (!Disconnected) return IPCLIB_SUCCEED;
-    int errorCode = ConnectToServer(m_ip, m_port, Wsa, MSocket, m_server, Disconnected);
+    int errorCode = ConnectToServer(m_ip, m_port, SocketData, MSocket, m_server, Disconnected);
     if (errorCode != IPCLIB_SUCCEED)
     {
-        closesocket(MSocket);
-        WSACleanup();
+        CLOSE_SOCKET(MSocket);
+        CLEANUP_SOCKET();
         return errorCode;
     }
     Socket::Initialize();
@@ -77,7 +42,7 @@ int ClientSocket::SendData(const char* p_data, const int p_size) const
     }
     if (send(MSocket, p_data, p_size, 0) == SOCKET_ERROR)
     {
-        IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError(), WSA_ERROR);
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Connection error. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
     return IPCLIB_SUCCEED;
 }
@@ -86,8 +51,8 @@ int ClientSocket::SendData(const char* p_data, const int p_size) const
 int ClientSocket::Disconnect()
 {
     CHECK_OPEN();
-    closesocket(MSocket);
-    WSACleanup();
+    CLOSE_SOCKET(MSocket);
+    CLEANUP_SOCKET();
     Stop();
     Disconnected = true;
     return IPCLIB_SUCCEED;

@@ -1,8 +1,8 @@
 #include "Socket.h"
+#include "ipclib_portability.h"
 #include <sstream>
 #include <cassert>
 #include <thread>
-#include <WS2tcpip.h>
 
 /// @brief Checks if the server is still open
 #define CHECK_OPEN() \
@@ -107,7 +107,7 @@ void Socket::ReceiveData(bool* p_started)
     Size = recv(MSocket, DataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
     if (Size == SOCKET_ERROR)
     {
-        THROW_IPCLIB_ERROR("[WSA] Failed to receive message. Error code: " << WSAGetLastError());
+        THROW_IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Failed to receive message. Error code: " << GET_LAST_ERROR());
     }
     if (Size == 0)
     {

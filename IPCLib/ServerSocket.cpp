@@ -1,5 +1,5 @@
 #include "ServerSocket.h"
-#include <WS2tcpip.h>
+#include "ipclib_portability.h"
 #include <sstream>
 #include <thread>
 #include <stdexcept>
@@ -8,53 +8,21 @@
 #define CHECK_OPEN() \
     if (!m_open) return IPCLIB_CLOSED_CONNECTION_ERROR;
 
-/// @brief					Starts the server
-/// @param  p_ip			The IP adress to start the server on
-/// @param  p_port			The port of the server
-/// @param  p_connections	The maximum amount of allowed (queued) connections
-/// @param  p_wsa			The WSAData of th server
-/// @param  p_socket		The socket of the server
-/// @param  p_server		The info of the server
-/// @param  p_client		The info of the client (only for initialization)
-/// @param  p_disconnected  The disconnected bool of the server
-/// @param  p_open			The open bool of the server
-int StartServer(PCWSTR p_ip, int p_port, int p_connections, WSAData& p_wsa, SOCKET& p_socket, sockaddr_in& p_server, sockaddr_in& p_client, bool& p_open)
-{
-    if (WSAStartup(MAKEWORD(2, 2), &p_wsa) != 0)
-    {
-        IPCLIB_ERROR("[WSA] Failed to initialize WSA. Error code: " << WSAGetLastError(), WSA_ERROR);
-    }
-
-    if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-    {
-        IPCLIB_ERROR("[WSA] Could not create socket : " << WSAGetLastError(), WSA_ERROR);
-    }
-
-    if (bind(p_socket, (struct sockaddr*)&p_server, sizeof(p_server)) == SOCKET_ERROR)
-    {
-        IPCLIB_ERROR("[IPCLib] Bind failed with error code : " << WSAGetLastError(), IPCLIB_SERVER_ERROR);
-    }
-
-    listen(p_socket, p_connections);
-    p_open = true;
-    return IPCLIB_SUCCEED;
-}
-
 // ----------------------------------------------- ServerSocketAsync -----------------------------------------------
 
 /// @brief			      The constructor of ServerSocketAsync
 /// @param  p_ip		  The IP adress of the server
 /// @param  p_port		  The port of the server
 /// @param  p_connections The maximum amount of (queued) connections
-ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
+ServerSocket::ServerSocket(IPC_IP_TYPE p_ip, int p_port, int p_connections)
     : m_ip(p_ip), m_port(p_port), m_connections(p_connections), m_connecting(false), m_server(), m_client()
 {
-    InetPtonW(AF_INET, p_ip, &m_server.sin_addr.s_addr);
+    INET_PTON(AF_INET, p_ip, &m_server.sin_addr.s_addr);
     m_server.sin_family = AF_INET;
     m_server.sin_port = htons(p_port);
 
     // init client for c++ object purposes
-    InetPtonW(AF_INET, p_ip, &m_client.sin_addr.s_addr);
+    INET_PTON(AF_INET, p_ip, &m_client.sin_addr.s_addr);
     m_client.sin_family = AF_INET;
     m_client.sin_port = htons(p_port);
 }
@@ -64,12 +32,12 @@ ServerSocket::ServerSocket(PCWSTR p_ip, int p_port, int p_connections)
 int ServerSocket::Initialize()
 {
     if (m_open) return IPCLIB_SUCCEED;
-    int errorCode = StartServer(m_ip, m_port, m_connections, Wsa, m_serverSocket, m_server, m_client, m_open);
+    int errorCode = StartServer(m_ip, m_port, m_connections, SocketData, m_serverSocket, m_server, m_client, m_open);
     if (errorCode != IPCLIB_SUCCEED)
     {
-        closesocket(m_serverSocket);
-        WSACleanup();
-        return errorCode;
+        CLOSE_SOCKET(m_serverSocket);  //@NOLINUXCOVERAGE, linux uses filedescriptors that can be reused
+        CLEANUP_SOCKET();
+        return errorCode;  //@NOLINUXCOVERAGE, linux uses filedescriptors that can be reused
     }
     Socket::Initialize();
     return errorCode;
@@ -92,10 +60,11 @@ void ServerSocket::ConnectThreadFunction()
 int ServerSocket::Connect()
 {
     CHECK_OPEN();
-    int c = sizeof(struct sockaddr_in);
+
+    SOCKET_LENGTH c = sizeof(struct sockaddr_in);
     if ((MSocket = accept(m_serverSocket, (struct sockaddr*)&m_client, &c)) == INVALID_SOCKET)
     {
-        IPCLIB_ERROR("[WSA] Bind failed with error code : " << WSAGetLastError(), WSAGetLastError());
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Bind failed with error code : " << GET_LAST_ERROR(), GET_LAST_ERROR());
     }
     Disconnected = false;
     return IPCLIB_SUCCEED;
@@ -126,7 +95,7 @@ int ServerSocket::SendData(const char* p_data, const int p_size) const
     }
     if (send(MSocket, p_data, p_size, 0) == SOCKET_ERROR)
     {
-        IPCLIB_ERROR("[WSA] Connection error. Error code: " << WSAGetLastError(), WSA_ERROR);
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Connection error. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
     return IPCLIB_SUCCEED;
 }
@@ -135,7 +104,7 @@ int ServerSocket::SendData(const char* p_data, const int p_size) const
 int ServerSocket::Disconnect()
 {
     CHECK_OPEN();
-    closesocket(MSocket);
+    CLOSE_SOCKET(MSocket);
     Disconnected = true;
     return IPCLIB_SUCCEED;
 }
@@ -148,8 +117,8 @@ int ServerSocket::CloseServer()
     {
         Disconnect();
     }
-    closesocket(m_serverSocket);
-    WSACleanup();
+    CLOSE_SOCKET(m_serverSocket);
+    CLEANUP_SOCKET();
     m_open = false;
     return IPCLIB_SUCCEED;
 }
