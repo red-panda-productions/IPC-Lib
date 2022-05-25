@@ -36,14 +36,14 @@ jobs:
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
 
     - name: Configure CMake
-      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -S ${{github.workspace}} -B ${{runner.workspace}}/build
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -S ${{github.workspace}} -B ${{github.workspace}}/build
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/build
       run: cmake --build .
 
     - name: Test
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/build
       run: ctest -V
 
     - name: Upload test results
@@ -51,5 +51,5 @@ jobs:
       if: failure()
       with:
         name: test_results_xml
-        path: ${{runner.workspace}}/build/IPCTests/test-results/**/*.xml
+        path: ${{github.workspace}}/build/IPCTests/test-results/**/*.xml
       
