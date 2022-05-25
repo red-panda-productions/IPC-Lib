@@ -87,6 +87,7 @@ IF(GCOVR)
     FILE(GENERATE OUTPUT ${CMAKE_SOURCE_DIR}/coverage.sh
             CONTENT
             "${CMAKE_CURRENT_BINARY_DIR}/IPCTests
+            cd ${CMAKE_SOURCE_DIR}
             gcovr --gcov-ignore-parse-errors --exclude=\"(.*googletest.*|.*CMakeFiles.*)\" --exclude-lines-by-pattern ${COV_EXCLUDE_REGEX} ${COV_EXPORT_TYPE} -o ${COV_OUTPUT}
             ${COV_EXTRA_COMMANDS}"
             FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_WRITE GROUP_READ WORLD_EXECUTE WORLD_WRITE WORLD_READ)
