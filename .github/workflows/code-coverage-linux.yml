@@ -41,7 +41,9 @@ jobs:
     
     - name: Run code coverage
       working-directory: ${{github.workspace}}
-      run: ./coverage.sh
+      run: |
+        ls ./build/IPCLib/CMakeFiles/IPCLib.dir/
+        ./coverage.sh
 
     - name: Check code coverage
       working-directory: ${{github.workspace}}
