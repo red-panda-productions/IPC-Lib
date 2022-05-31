@@ -33,10 +33,10 @@ jobs:
       run: pip install gcovr
 
     - name: Configure CMake
-      run: cmake -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{runner.workspace}}/build
+      run: cmake -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DOPTION_GITHUB_ACTIONS=ON -S ${{github.workspace}} -B ${{github.workspace}}/build
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
+      working-directory: ${{github.workspace}}/build
       run: cmake --build .
     
     - name: Run code coverage

@@ -36,8 +36,8 @@ int ServerSocket::Initialize()
     if (errorCode != IPCLIB_SUCCEED)
     {
         CLOSE_SOCKET(m_serverSocket);  //@NOLINUXCOVERAGE, linux uses filedescriptors that can be reused
-        CLEANUP_SOCKET();
-        return errorCode;  //@NOLINUXCOVERAGE, linux uses filedescriptors that can be reused
+        CLEANUP_SOCKET();              //@NOLINUXCOVERAGE
+        return errorCode;              //@NOLINUXCOVERAGE
     }
     Socket::Initialize();
     return errorCode;

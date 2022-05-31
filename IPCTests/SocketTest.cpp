@@ -38,15 +38,9 @@ bool SendDataToServer(ServerSocket& p_server, ClientSocket& p_client, const char
         if (received) return false;
     }
 
-    if (p_client.SendData(p_message, p_messageLength) != IPCLIB_SUCCEED)
-    {
-        return false;
-    }
+    if (p_client.SendData(p_message, p_messageLength) != IPCLIB_SUCCEED) return false;
 
-    if (p_server.AwaitData(dataBuffer, dataBufferSize) != IPCLIB_SUCCEED)
-    {
-        return false;
-    }
+    if (p_server.AwaitData(dataBuffer, dataBufferSize) != IPCLIB_SUCCEED) return false;
 
     return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
@@ -98,15 +92,9 @@ bool SendDataToClient(ServerSocket& p_server, ClientSocket& p_client, const char
         if (received) return false;
     }
 
-    if (p_server.SendData(p_message, p_messageLength) != IPCLIB_SUCCEED)
-    {
-        return false;
-    }
+    if (p_server.SendData(p_message, p_messageLength) != IPCLIB_SUCCEED) return false;
 
-    if (p_client.AwaitData(dataBuffer, dataBufferSize) != IPCLIB_SUCCEED)
-    {
-        return false;
-    }
+    if (p_client.AwaitData(dataBuffer, dataBufferSize) != IPCLIB_SUCCEED) return false;
 
     return TestMessageEqual(p_message, dataBuffer, p_messageLength);
 }
@@ -127,11 +115,7 @@ bool MultipleSendDataToClient(int p_amount, ServerSocket& p_server, ClientSocket
         bool late = rand() % 2 == 0;
         bool async = rand() % 2 == 0;
         bool clientSend = SendDataToClient(p_server, p_client, dataBuffer, length, async, late);
-        if (!clientSend)
-        {
-            std::cout << i << std::endl;
-            return false;
-        }
+        if (!clientSend) return false;
     }
     return true;
 }
@@ -419,7 +403,6 @@ TEST(SocketTests, ExhaustionTest)
     char buffer[20];
     for (int i = 0; i < AMOUNT_OF_TESTS; i++)
     {
-        std::cout << i << std::endl;
         ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SUCCEED);
         ASSERT_DURATION_LE(2, server.AwaitData(buffer, 20));
         ASSERT_DURATION_LE(2, server.ReceiveDataAsync());
