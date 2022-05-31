@@ -1,7 +1,7 @@
 ![Tests linux](https://github.com/red-panda-productions/ipc-lib/actions/workflows/testing-linux.yml/badge.svg)
-![Coverage linux](https://github.com/red-panda-productions/speed-dreams/actions/workflows/code-coverage-linux.yml/badge.svg) 
+![Coverage linux](https://github.com/red-panda-productions/ipc-lib/actions/workflows/code-coverage-linux.yml/badge.svg) 
 ![Tests windows](https://github.com/red-panda-productions/ipc-lib/actions/workflows/testing-windows.yml/badge.svg)
-![Coverage windows](https://github.com/red-panda-productions/speed-dreams/actions/workflows/code-coverage-windows.yml/badge.svg) 
+![Coverage windows](https://github.com/red-panda-productions/ipc-lib/actions/workflows/code-coverage-windows.yml/badge.svg) 
 # SimulatedDrivingAssistanceSystem
 
 # IPCLib
