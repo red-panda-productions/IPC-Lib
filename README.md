@@ -17,6 +17,12 @@ For Linux you might need to add the compiler option -pthread to the gcc compiler
 
 - [Documentation](https://github.com/red-panda-productions/ipc-lib/DOCUMENTATION.md)
 
+## Project that use this library
+
+- [SDALib](https://github.com/red-panda-productions/SDALib)
+- [DAISI](https://github.com/red-panda-productions/speed-dreams)
+
 ## Notes
 
 This project was created by students of Utrecht University.
+
