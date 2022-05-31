@@ -5,7 +5,12 @@ set(IPCLIB_HEADERS "ClientSocket.h" "ServerSocket.h" "Socket.h" "ipclib_portabil
 set(IPCLIB_SOURCES "ClientSocket.cpp" "ServerSocket.cpp" "Socket.cpp" "ipclib_windows.cpp" "ipclib_linux.cpp")
 
 # Add source to this project's executable.
-add_library (IPCLib SHARED ${IPCLIB_SOURCES} ${IPCLIB_HEADERS})
+
+IF(WIN32)
+    add_library (IPCLib SHARED ${IPCLIB_SOURCES} ${IPCLIB_HEADERS})
+ELSEIF(UNIX)
+    add_library (IPCLib STATIC ${IPCLIB_SOURCES} ${IPCLIB_HEADERS})
+ENDIF(WIN32)
 
 install(TARGETS IPCLib)
 install(FILES ${IPCLIB_HEADERS} DESTINATION include)
