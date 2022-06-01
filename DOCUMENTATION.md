@@ -93,7 +93,7 @@ This section will give a simple example of setting up a connection between a ser
   server.ReceiveDataAsync();          // asynchronously receive data from the client
   server.SendData("Hello Client",12); // sends data to the client
   char buffer[50];                    // set up a buffer for the data
-  server.AwaitData(buffer,50);        // wait untill data is received
+  server.AwaitData(buffer,50);        // wait until data is received
 ```
 
 ## Client side
@@ -104,10 +104,10 @@ This section will give a simple example of setting up a connection between a ser
   client.ReceiveDataAsync();          // asynchronously receives data from the server
   client.SendData("Hello Server",12); // sends data to the server
   char buffer[50];                    // set up a buffer for the data
-  client.AwaitData(buffer,50);        // wait untill data is received
+  client.AwaitData(buffer,50);        // wait until data is received
 ```
 
-You can also check if the the functions succeeded by adding an if statement
+You can also check if the functions succeeded by adding an if statement
 
 ## Server side
 
@@ -119,7 +119,7 @@ You can also check if the the functions succeeded by adding an if statement
   server.ReceiveDataAsync() != IPCLIB_SUCCEED);                     // asynchronously receive data from the client
   if(server.SendData("Hello Client",12) != IPCLIB_SUCCEED) return;  // sends data to the client
   char buffer[50];                                                  // set up a buffer for the data
-  if(server.AwaitData(buffer,50) != IPCLIB_SUCCEED) return;         // wait untill data is received
+  if(server.AwaitData(buffer,50) != IPCLIB_SUCCEED) return;         // wait until data is received
 ```
 
 ## Client side
@@ -130,5 +130,5 @@ You can also check if the the functions succeeded by adding an if statement
   client.ReceiveDataAsync();                                        // asynchronously receives data from the server
   if(client.SendData("Hello Server",12) != IPCLIB_SUCCEED) return;  // sends data to the server
   char buffer[50];                                                  // set up a buffer for the data
-  if(client.AwaitData(buffer,50) != IPCLIB_SUCCEED) return;         // wait untill data is received
+  if(client.AwaitData(buffer,50) != IPCLIB_SUCCEED) return;         // wait until data is received
 ```
