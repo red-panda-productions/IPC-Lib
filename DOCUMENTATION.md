@@ -27,7 +27,7 @@ Sends data to a connected client on the main thread. This data cannot be longer 
 
 ## ReceiveDataAsync
 
-Spawns a child thread that waits for data from a client, such that the main thread is not blocked.
+Calls to a worker thread that waits for data from a client, such that the main thread is not blocked.
 
 ## GetData
 
@@ -64,7 +64,7 @@ Sends data to the server
 
 ## ReceiveDataAsync
 
-Spawns a child thread that waits for data from the server, such that the main thread is not blocked.
+Calls to a worker thread that waits for data from the server, such that the main thread is not blocked.
 
 ## GetData
 
@@ -90,10 +90,10 @@ This section will give a simple example of setting up a connection between a ser
   server.Initialize();                // initializes the server
   server.ConnectAsync();              // asynchronously wait on a client connection
   server.AwaitClientConnection();     // wait untill a client is connected
-  server.SendData("Hello Client",12); // sends data to the client
   server.ReceiveDataAsync();          // asynchronously receive data from the client
+  server.SendData("Hello Client",12); // sends data to the client
   char buffer[50];                    // set up a buffer for the data
-  server.AwaitData(buffer,50);        // wait untill data is received
+  server.AwaitData(buffer,50);        // wait until data is received
 ```
 
 ## Client side
@@ -101,11 +101,34 @@ This section will give a simple example of setting up a connection between a ser
 ```
   ClientSocket client;            	  // creates the client and connects to localhost
   client.Initialize();                // initializes the client
-  client.SendData("Hello Server",12); // sends data to the server
   client.ReceiveDataAsync();          // asynchronously receives data from the server
+  client.SendData("Hello Server",12); // sends data to the server
   char buffer[50];                    // set up a buffer for the data
-  client.AwaitData(buffer,50)         // wait untill data is received
+  client.AwaitData(buffer,50);        // wait until data is received
 ```
 
+You can also check if the functions succeeded by adding an if statement
 
+## Server side
 
+```
+  ServerSocket server;                                              // creates the server on localhost
+  if(server.Initialize() != IPCLIB_SUCCEED) return;                 // initializes the server
+  if(server.ConnectAsync() != IPCLIB_SUCCEED) return;               // asynchronously wait on a client connection
+  if(server.AwaitClientConnection() != IPCLIB_SUCCEED) return;      // wait untill a client is connected
+  server.ReceiveDataAsync() != IPCLIB_SUCCEED);                     // asynchronously receive data from the client
+  if(server.SendData("Hello Client",12) != IPCLIB_SUCCEED) return;  // sends data to the client
+  char buffer[50];                                                  // set up a buffer for the data
+  if(server.AwaitData(buffer,50) != IPCLIB_SUCCEED) return;         // wait until data is received
+```
+
+## Client side
+
+```
+  ClientSocket client;            	                                // creates the client and connects to localhost
+  if(client.Initialize() != IPCLIB_SUCCEED) return;                 // initializes the client
+  client.ReceiveDataAsync();                                        // asynchronously receives data from the server
+  if(client.SendData("Hello Server",12) != IPCLIB_SUCCEED) return;  // sends data to the server
+  char buffer[50];                                                  // set up a buffer for the data
+  if(client.AwaitData(buffer,50) != IPCLIB_SUCCEED) return;         // wait until data is received
+```

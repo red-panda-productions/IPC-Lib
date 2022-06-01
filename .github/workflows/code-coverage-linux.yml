@@ -1,4 +1,4 @@
-name: CI Pipeline Code Coverage Linux
+name: Coverage Linux
 
 on:
   pull_request:
