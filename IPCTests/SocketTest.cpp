@@ -403,7 +403,6 @@ TEST(SocketTests, ExhaustionTest)
     char buffer[20];
     for (int i = 0; i < AMOUNT_OF_TESTS; i++)
     {
-        std::cout << i << std::endl;
         ASSERT_EQ(server.SendData("Hello", 6), IPCLIB_SUCCEED);
         ASSERT_DURATION_LE(2, server.AwaitData(buffer, 20));
         ASSERT_DURATION_LE(2, server.ReceiveDataAsync());

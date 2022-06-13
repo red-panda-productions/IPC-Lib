@@ -3,27 +3,33 @@
 #include <sstream>
 #include <cassert>
 #include <thread>
-#include <bitset>
 #include <mutex>
 
 /// @brief Checks if the server is still open
 #define CHECK_OPEN() \
     if (!Open) return IPCLIB_CLOSED_CONNECTION_ERROR;
 
-#define GET_ERROR()             ((m_state & 0b00010000) > 0)
-#define GET_STARTED_RECEIVING() ((m_state & 0b00001000) > 0)
-#define GET_RECEIVED()          ((m_state & 0b00000100) > 0)
-#define GET_RECEIVING()         ((m_state & 0b00000010) > 0)
-#define GET_STOP()              ((m_state & 0b00000001) > 0)
+#define ERROR_STATE_INV         0b11101111
+#define ERROR_STATE             0b00010000
+#define STARTED_RECEIVING_STATE 0b00001000
+#define RECEIVED_STATE          0b00000100
+#define RECEIVING_STATE         0b00000010
+#define STOP_STATE              0b00000001
 
-#define SET_RECEIVING_TRUE() (m_state |= 0b00000010)
-#define SET_STOP_TRUE()      (m_state |= 0b00000001)
-#define SET_ERROR_FALSE()    (m_state &= 0b11101111)
+#define GET_ERROR()             ((m_state & ERROR_STATE) > 0)
+#define GET_STARTED_RECEIVING() ((m_state & STARTED_RECEIVING_STATE) > 0)
+#define GET_RECEIVED()          ((m_state & RECEIVED_STATE) > 0)
+#define GET_RECEIVING()         ((m_state & RECEIVING_STATE) > 0)
+#define GET_STOP()              ((m_state & STOP_STATE) > 0)
 
-#define SET_RECEIVED_STATE()          (m_state = 0b00000100)
-#define SET_ERROR_STATE()             (m_state = 0b00010000)
-#define SET_EMPTY_STATE()             (m_state = 0b10000000)
-#define SET_STARTED_RECEIVING_STATE() (m_state = 0b00001010)
+#define SET_RECEIVING_TRUE() (m_state |= RECEIVING_STATE)
+#define SET_STOP_TRUE()      (m_state |= STOP_STATE)
+#define SET_ERROR_FALSE()    (m_state &= ERROR_STATE_INV)
+
+#define SET_RECEIVED_STATE()          (m_state = RECEIVED_STATE)
+#define SET_ERROR_STATE()             (m_state = ERROR_STATE)
+#define SET_EMPTY_STATE()             (m_state = EMPTY_STATE)
+#define SET_STARTED_RECEIVING_STATE() (m_state = RECEIVING_STATE | STARTED_RECEIVING_STATE)
 
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data

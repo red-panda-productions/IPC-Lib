@@ -5,6 +5,7 @@
 #include <functional>
 
 #define IPC_BUFFER_BYTE_SIZE 512
+#define EMPTY_STATE          0b10000000
 
 /// @brief A worker thread that can be commanded to receive data
 class IPCLIB_EXPORT ReceivingThread
@@ -31,7 +32,7 @@ public:
 private:
     void ReceivingLoop();
 
-    uint8_t m_state = 0b10000000;
+    uint8_t m_state = EMPTY_STATE;
 
     int m_error = IPCLIB_SUCCEED;
 
