@@ -66,7 +66,7 @@ int StartServer(IPC_IP_TYPE p_ip, int p_port, int p_connections, IPC_DATA_TYPE& 
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Bind failed with error code : " << GET_LAST_ERROR(), IPCLIB_SERVER_ERROR);
     }
 
-    if(setsockopt(p_socket, IPPROTO_TCP, TCP_MAXRT, "-1", 5) == SOCKET_ERROR)
+    if (setsockopt(p_socket, IPPROTO_TCP, TCP_MAXRT, "-1", 5) == SOCKET_ERROR)
     {
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Set socket option failed with error code : " << GET_LAST_ERROR(), IPCLIB_SERVER_ERROR);
     }
