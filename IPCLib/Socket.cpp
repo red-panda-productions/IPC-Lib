@@ -53,8 +53,7 @@ bool ReceivingThread::HasReceivedMessage() const
 /// @return Whether the thread threw an error
 bool ReceivingThread::HasError() const
 {
-    if (!GET_ERROR()) return false;
-    return true;
+    return GET_ERROR();
 }
 
 /// @brief  Check whether the thread has started receiving
