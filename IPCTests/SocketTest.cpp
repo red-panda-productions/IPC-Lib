@@ -409,5 +409,6 @@ TEST(SocketTests, ExhaustionTest)
     }
 
     server.SendData("STOP", 5);
+
     t.join();
 }

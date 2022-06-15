@@ -15,9 +15,14 @@ int ConnectToServer(PCWSTR p_ip, int p_port, IPC_DATA_TYPE& p_data, SOCKET& p_so
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Failed to initialize WSA. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
 
-    if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+    if ((p_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
     {
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Could not create socket. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
+    }
+
+    if (setsockopt(p_socket, IPPROTO_TCP, TCP_MAXRT, "-1", 5) == SOCKET_ERROR)
+    {
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Set socket option failed with error code : " << GET_LAST_ERROR(), IPCLIB_SERVER_ERROR);
     }
 
     InetPtonW(AF_INET, p_ip, &p_server.sin_addr.s_addr);
@@ -51,7 +56,7 @@ int StartServer(IPC_IP_TYPE p_ip, int p_port, int p_connections, IPC_DATA_TYPE& 
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Failed to initialize WSA. Error code: " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
 
-    if ((p_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+    if ((p_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
     {
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Could not create socket : " << GET_LAST_ERROR(), SOCKET_LIBRARY_ERROR);
     }
@@ -59,6 +64,11 @@ int StartServer(IPC_IP_TYPE p_ip, int p_port, int p_connections, IPC_DATA_TYPE& 
     if (bind(p_socket, (struct sockaddr*)&p_server, sizeof(p_server)) == SOCKET_ERROR)
     {
         IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Bind failed with error code : " << GET_LAST_ERROR(), IPCLIB_SERVER_ERROR);
+    }
+
+    if (setsockopt(p_socket, IPPROTO_TCP, TCP_MAXRT, "-1", 5) == SOCKET_ERROR)
+    {
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Set socket option failed with error code : " << GET_LAST_ERROR(), IPCLIB_SERVER_ERROR);
     }
 
     listen(p_socket, p_connections);
