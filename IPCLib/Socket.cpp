@@ -16,16 +16,19 @@
 #define RECEIVING_STATE         0b00000010
 #define STOP_STATE              0b00000001
 
+// @brief Checks if the bit is 1 for unsinged integers
 #define GET_ERROR()             ((m_state & ERROR_STATE) > 0)
 #define GET_STARTED_RECEIVING() ((m_state & STARTED_RECEIVING_STATE) > 0)
 #define GET_RECEIVED()          ((m_state & RECEIVED_STATE) > 0)
 #define GET_RECEIVING()         ((m_state & RECEIVING_STATE) > 0)
 #define GET_STOP()              ((m_state & STOP_STATE) > 0)
 
+// @brief Sets the bits on a given spot
 #define SET_RECEIVING_TRUE() (m_state |= RECEIVING_STATE)
 #define SET_STOP_TRUE()      (m_state |= STOP_STATE)
 #define SET_ERROR_FALSE()    (m_state &= ERROR_STATE_INV)
 
+// @brief Sets the state to a predefined state
 #define SET_RECEIVED_STATE()          (m_state = RECEIVED_STATE)
 #define SET_ERROR_STATE()             (m_state = ERROR_STATE)
 #define SET_EMPTY_STATE()             (m_state = EMPTY_STATE)
