@@ -36,8 +36,8 @@
 
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data
-ReceivingThread::ReceivingThread(const std::function<void()>& p_receiveDataFunc)
-    : m_receiveDataFunc(new std::function<void()>(p_receiveDataFunc))
+ReceivingThread::ReceivingThread(const std::function<int()>& p_receiveDataFunc)
+    : m_receiveDataFunc(new std::function<int()>(p_receiveDataFunc))
 {
     m_thread = new std::thread(&ReceivingThread::ReceivingLoop, this);
 }
@@ -106,18 +106,14 @@ void ReceivingThread::ReceivingLoop()
             std::this_thread::yield();
             continue;
         }
-        try
+        SET_STARTED_RECEIVING_STATE();
+        m_error = (*m_receiveDataFunc)();
+        if (m_error == IPCLIB_SUCCEED)
         {
-            SET_STARTED_RECEIVING_STATE();
-            (*m_receiveDataFunc)();
             SET_RECEIVED_STATE();
+            continue;
         }
-        catch (std::exception& e)
-        {
-            IPCLIB_WARNING("[IPCLIB] Unexpected exception while receiving data: " << e.what())
-            m_error = IPCLIB_RECEIVE_ERROR;
-            SET_ERROR_STATE();
-        }
+        SET_ERROR_STATE();
     }
 }
 
@@ -133,24 +129,25 @@ void Socket::ReceiveDataAsync()
 }
 
 /// @brief           Receive data by waiting until data has been written on the socket
-void Socket::ReceiveData()
+int Socket::ReceiveData()
 {
     Size = recv(MSocket, DataBuffer, IPC_BUFFER_BYTE_SIZE, 0);
     if (Size == SOCKET_ERROR)
     {
-        THROW_IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Failed to receive message. Error code: " << GET_LAST_ERROR());
+        IPCLIB_ERROR(SOCKET_LIBRARY_NAME "Failed to receive message. Error code: " << GET_LAST_ERROR(), GET_LAST_ERROR());
     }
     if (Size == 0)
     {
-        THROW_IPCLIB_ERROR("[IPCLIB] Received empty message, so the server was closed");
+        IPCLIB_ERROR("[IPCLIB] Received empty message, so the server was closed", -1);
     }
+    return IPCLIB_SUCCEED;
 }
 
 /// @brief Initializes the receive thread, can only be called once
 void Socket::Initialize()
 {
     auto function = [this]()
-    { ReceiveData(); };
+    { return ReceiveData(); };
     m_receivingThread = new ReceivingThread(function);
 }
 
