@@ -147,7 +147,7 @@ int Socket::ReceiveData()
 void Socket::Initialize()
 {
     auto function = [this]()
-    { ReceiveData(); };
+    { return ReceiveData(); };
     m_receivingThread = new ReceivingThread(function);
 }
 

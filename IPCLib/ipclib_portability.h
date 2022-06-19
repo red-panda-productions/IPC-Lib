@@ -40,10 +40,6 @@
 
 // ------------------------------- Common defines --------------------------------------------
 #include <iostream>
-#define THROW_IPCLIB_ERROR(p_message) \
-    std::stringstream oss;            \
-    oss << p_message;                 \
-    throw std::runtime_error(oss.str());
 
 #define IPCLIB_ERROR(p_message, p_errorCode) \
     std::cerr << p_message << std::endl;     \
