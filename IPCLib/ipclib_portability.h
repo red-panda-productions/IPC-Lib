@@ -51,8 +51,7 @@
 #define SOCKET_LIBRARY_ERROR           -1
 #define IPCLIB_SUCCEED                 0
 #define IPCLIB_SERVER_ERROR            1
-#define IPCLIB_RECEIVE_ERROR           2
-#define IPCLIB_CLOSED_CONNECTION_ERROR 3
+#define IPCLIB_CLOSED_CONNECTION_ERROR 2
 
 // ----------------------------- platform specific functions ----------------------------------------
 

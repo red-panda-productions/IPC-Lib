@@ -368,7 +368,7 @@ TEST(SocketTests, ReceivingThreadThrow)
     client.ReceiveDataAsync();
     std::this_thread::sleep_for(std::chrono::seconds(1));
     server.~ServerSocket();
-    ASSERT_EQ(client.AwaitData(buffer, 20), IPCLIB_RECEIVE_ERROR);
+    ASSERT_TRUE(client.AwaitData(buffer, 20) != IPCLIB_SUCCEED);
 }
 
 /// @brief The thread side of the exhaustion test
