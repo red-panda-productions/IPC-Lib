@@ -28,12 +28,8 @@
 #define SET_STOP_TRUE()      (m_state |= STOP_STATE)
 #define SET_ERROR_FALSE()    (m_state &= ERROR_STATE_INV)
 
-// @brief Sets the state to a predefined state
-#define SET_RECEIVED_STATE()          (m_state = RECEIVED_STATE)
-#define SET_ERROR_STATE()             (m_state = ERROR_STATE)
-#define SET_EMPTY_STATE()             (m_state = EMPTY_STATE)
-#define SET_STARTED_RECEIVING_STATE() (m_state = RECEIVING_STATE | STARTED_RECEIVING_STATE)
-
+// @brief Sets the state to a new state, while keeping the stop state if set
+#define SET_STATE(p_state) (m_state = p_state | (m_state & STOP_STATE))
 /// @brief					  The constructor of the receiving thread
 /// @param  p_receiveDataFunc The function that will receive data
 ReceivingThread::ReceivingThread(const std::function<int()>& p_receiveDataFunc)
@@ -86,7 +82,7 @@ void ReceivingThread::Stop()
 /// @brief Resets the internal booleans
 void ReceivingThread::Reset()
 {
-    SET_EMPTY_STATE();
+    SET_STATE(EMPTY_STATE);
 }
 
 ReceivingThread::~ReceivingThread()
@@ -106,14 +102,14 @@ void ReceivingThread::ReceivingLoop()
             std::this_thread::yield();
             continue;
         }
-        SET_STARTED_RECEIVING_STATE();
+        SET_STATE(RECEIVING_STATE | STARTED_RECEIVING_STATE);
         m_error = (*m_receiveDataFunc)();
         if (m_error == IPCLIB_SUCCEED)
         {
-            SET_RECEIVED_STATE();
+            SET_STATE(RECEIVED_STATE);
             continue;
         }
-        SET_ERROR_STATE();
+        SET_STATE(ERROR_STATE);
     }
 }
 

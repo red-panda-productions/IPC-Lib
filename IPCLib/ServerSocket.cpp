@@ -119,6 +119,7 @@ int ServerSocket::CloseServer()
     }
     CLOSE_SOCKET(m_serverSocket);
     CLEANUP_SOCKET();
+    Stop();
     m_open = false;
     return IPCLIB_SUCCEED;
 }
