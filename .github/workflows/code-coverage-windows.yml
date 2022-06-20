@@ -1,4 +1,4 @@
-name: Coverage Windows
+name: Code Coverage Windows
 
 on:
   pull_request:
